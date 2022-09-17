@@ -12,9 +12,8 @@ from Elements.Flow.sequence_flow import SequenceFlow
 from Elements.FlowObject.flow_object import FlowObject
 from Elements.Association.association import Association
 from Elements.PESource.pe_source import PotentialEvidenceSource
-from Elements.DataReference.data_reference import DataReference
+from Elements.DataReference.data_reference import DataObjectReference
 from Elements.EvidenceDataRelation.evidence_data_relation import EvidenceDataRelation
-
 
 from typing import Dict, Union
 
@@ -78,7 +77,7 @@ def parse_data_object(elem: ET.Element) -> DataObject:
     return DataObject(elem.attrib['id'], DataObject)
 
 
-def parse_pe_source(elem:  ET.Element) -> PotentialEvidenceSource:
+def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
     association = None
 
     for child in elem:
@@ -94,7 +93,7 @@ def parse_pe_source(elem:  ET.Element) -> PotentialEvidenceSource:
 
 
 def add_pe_source(pe_source, elements: Dict[str, Element]):
-    key = pe_source.attached_to_ref   # object id
+    key = pe_source.attached_to_ref  # object id
 
     if elements.get(key) is not None:
         obj = elements[key]
@@ -127,8 +126,8 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
                 new_elem = SequenceFlow(attr['id'], SequenceFlow, attr['sourceRef'],
                                         attr['targetRef'], attr.get('name'))
             case "dataObjectReference":
-                new_elem = DataReference(attr['id'], DataReference,
-                                         attr['dataObjectRef'], attr.get('name'))
+                new_elem = DataObjectReference(attr['id'], DataObjectReference,
+                                               attr['dataObjectRef'], attr.get('name'))
             case "dataObject":
                 new_elem = parse_data_object(child)
             case "potentialEvidenceSource":
