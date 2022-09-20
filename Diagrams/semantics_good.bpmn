@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<semantic:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss" id="_1275940932088" targetNamespace="http://www.trisotech.com/definitions/_1275940932088" exporter="Camunda Modeler" exporterVersion="1.16.0">
+  <semantic:message id="_1275940932310" />
+  <semantic:message id="_1275940932433" />
+  <semantic:message id="_1275940932198" />
+  <semantic:process id="_6-2" isExecutable="false">
+    <semantic:startEvent id="Event_0smww9y">
+      <semantic:outgoing>Flow_0bkewrz</semantic:outgoing>
+    </semantic:startEvent>
+    <semantic:task id="Activity_1fkt2zf" name="Check Data Validity">
+      <semantic:incoming>Flow_0bkewrz</semantic:incoming>
+      <semantic:outgoing>Flow_1n8auzz</semantic:outgoing>
+    </semantic:task>
+    <semantic:endEvent id="Event_170yh4q">
+      <semantic:incoming>Flow_1n8auzz</semantic:incoming>
+    </semantic:endEvent>
+    <semantic:sequenceFlow id="Flow_0bkewrz" sourceRef="Event_0smww9y" targetRef="Activity_1fkt2zf" />
+    <semantic:sequenceFlow id="Flow_1n8auzz" sourceRef="Activity_1fkt2zf" targetRef="Event_170yh4q" />
+    <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1oqydbh" attachedToRef="Activity_1fkt2zf">
+      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1oqydbh" targetRef="DataObjectReference_1ronoye" />
+    </bpmn4frss:potentialEvidenceSource>
+    <semantic:dataObjectReference id="DataObjectReference_1ronoye" name="Log" dataObjectRef="DataObject_00vdk9x" />
+    <semantic:dataObject id="DataObject_00vdk9x">
+      <bpmn4frss:potentialEvidenceType />
+    </semantic:dataObject>
+  </semantic:process>
+  <semantic:collaboration id="C1275940932557">
+    <semantic:participant id="_6-53" name="Device&#10;" processRef="_6-2" />
+  </semantic:collaboration>
+  <bpmndi:BPMNDiagram id="Trisotech.Visio-_6" name="Untitled Diagram" documentation="" resolution="96.00000267028808">
+    <bpmndi:BPMNPlane bpmnElement="C1275940932557">
+      <bpmndi:BPMNShape id="Trisotech.Visio__6-53" bpmnElement="_6-53" isHorizontal="true">
+        <dc:Bounds x="12" y="40" width="398" height="160" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="undefined_di" bpmnElement="undefined">
+        <di:waypoint x="284" y="76" />
+        <di:waypoint x="302" y="71" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bkewrz_di" bpmnElement="Flow_0bkewrz">
+        <di:waypoint x="118" y="120" />
+        <di:waypoint x="170" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n8auzz_di" bpmnElement="Flow_1n8auzz">
+        <di:waypoint x="270" y="120" />
+        <di:waypoint x="342" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0smww9y_di" bpmnElement="Event_0smww9y">
+        <dc:Bounds x="82" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fkt2zf_di" bpmnElement="Activity_1fkt2zf">
+        <dc:Bounds x="170" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_170yh4q_di" bpmnElement="Event_170yh4q">
+        <dc:Bounds x="342" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PotentialEvidenceSource_1oqydbh_di" bpmnElement="PotentialEvidenceSource_1oqydbh">
+        <dc:Bounds x="256" y="66" width="28" height="28" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1ronoye_di" bpmnElement="DataObjectReference_1ronoye">
+        <dc:Bounds x="302" y="45" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="311" y="102" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</semantic:definitions>

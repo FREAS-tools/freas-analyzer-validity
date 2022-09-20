@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<semantic:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:semantic="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss" id="_1275940932088" targetNamespace="http://www.trisotech.com/definitions/_1275940932088" exporter="Camunda Modeler" exporterVersion="1.16.0">
+  <semantic:message id="_1275940932310" />
+  <semantic:message id="_1275940932433" />
+  <semantic:process id="_6-1" isExecutable="false">
+    <semantic:laneSet id="ls_6-438" />
+    <semantic:startEvent id="OrderReceivedEvent" name="Request received">
+      <semantic:outgoing>Flow_0cnslyk</semantic:outgoing>
+      <semantic:messageEventDefinition messageRef="_1275940932310" />
+    </semantic:startEvent>
+    <semantic:task id="Activity_0pfyvl2" name="Process Data">
+      <semantic:incoming>Flow_0cnslyk</semantic:incoming>
+      <semantic:outgoing>Flow_19smzqh</semantic:outgoing>
+    </semantic:task>
+    <semantic:task id="Activity_1capgzc" name="Send Response">
+      <semantic:incoming>Flow_19smzqh</semantic:incoming>
+      <semantic:outgoing>Flow_1s2vkd3</semantic:outgoing>
+    </semantic:task>
+    <semantic:sequenceFlow id="Flow_0cnslyk" sourceRef="OrderReceivedEvent" targetRef="Activity_0pfyvl2" />
+    <semantic:sequenceFlow id="Flow_19smzqh" sourceRef="Activity_0pfyvl2" targetRef="Activity_1capgzc" />
+    <semantic:endEvent id="Event_0fkz5kz">
+      <semantic:incoming>Flow_1s2vkd3</semantic:incoming>
+    </semantic:endEvent>
+    <semantic:sequenceFlow id="Flow_1s2vkd3" sourceRef="Activity_1capgzc" targetRef="Event_0fkz5kz" />
+    <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1k4fys9" attachedToRef="OrderReceivedEvent">
+      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1k4fys9" targetRef="DataObjectReference_0imz72w" />
+    </bpmn4frss:potentialEvidenceSource>
+    <semantic:dataObjectReference id="DataObjectReference_0imz72w" name="Server Request Log" dataObjectRef="DataObject_0aacclc" />
+    <semantic:dataObject id="DataObject_0aacclc">
+      <bpmn4frss:potentialEvidenceType />
+    </semantic:dataObject>
+  </semantic:process>
+  <semantic:message id="_1275940932198" />
+  <semantic:process id="_6-2" isExecutable="false">
+    <semantic:startEvent id="_6-61">
+      <semantic:outgoing>_6-125</semantic:outgoing>
+    </semantic:startEvent>
+    <semantic:task id="Activity_5capgzo" name="Send Request">
+      <semantic:incoming>_6-125</semantic:incoming>
+      <semantic:outgoing>Flow_1bnqw1s</semantic:outgoing>
+    </semantic:task>
+    <semantic:sequenceFlow id="_6-125" name="" sourceRef="_6-61" targetRef="Activity_5capgzo">
+      <semantic:conditionExpression xsi:type="semantic:tFormalExpression">${ value &gt; 100 }</semantic:conditionExpression>
+    </semantic:sequenceFlow>
+    <semantic:sequenceFlow id="Flow_1bnqw1s" sourceRef="Activity_5capgzo" targetRef="Event_1o1itgk" />
+    <semantic:sequenceFlow id="Flow_0s240ai" sourceRef="Event_1o1itgk" targetRef="_6-406" />
+    <semantic:intermediateCatchEvent id="Event_1o1itgk" name="Response received">
+      <semantic:incoming>Flow_1bnqw1s</semantic:incoming>
+      <semantic:outgoing>Flow_0s240ai</semantic:outgoing>
+      <semantic:messageEventDefinition id="MessageEventDefinition_1lawlfd" />
+    </semantic:intermediateCatchEvent>
+    <semantic:endEvent id="_6-406">
+      <semantic:incoming>Flow_0s240ai</semantic:incoming>
+    </semantic:endEvent>
+    <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1p0n1e7" attachedToRef="Activity_5capgzo">
+      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1p0n1e7" targetRef="DataObjectReference_1oaappe" />
+    </bpmn4frss:potentialEvidenceSource>
+    <semantic:dataObjectReference id="DataObjectReference_1oaappe" name="Client Request Log" dataObjectRef="DataObject_1dvjcrp" />
+    <semantic:dataObject id="DataObject_1dvjcrp">
+      <bpmn4frss:potentialEvidenceType />
+    </semantic:dataObject>
+  </semantic:process>
+  <semantic:collaboration id="C1275940932557">
+    <semantic:participant id="_6-53" name="Client" processRef="_6-2" />
+    <semantic:participant id="_6-438" name="Server" processRef="_6-1" />
+    <semantic:messageFlow id="_6-638" sourceRef="Activity_5capgzo" targetRef="OrderReceivedEvent" />
+    <semantic:messageFlow id="Flow_0ju2vj0" sourceRef="Activity_1capgzc" targetRef="Event_1o1itgk" />
+    <bpmn4frss:evidenceDataRelation id="EvidenceDataRelation_18psi5n">
+      <bpmn4frss:sourceRef>DataObjectReference_0imz72w</bpmn4frss:sourceRef>
+      <bpmn4frss:targetRef>DataObjectReference_1oaappe</bpmn4frss:targetRef>
+    </bpmn4frss:evidenceDataRelation>
+  </semantic:collaboration>
+  <bpmndi:BPMNDiagram id="Trisotech.Visio-_6" name="Untitled Diagram" documentation="" resolution="96.00000267028808">
+    <bpmndi:BPMNPlane bpmnElement="C1275940932557">
+      <bpmndi:BPMNShape id="Trisotech.Visio__6-53" bpmnElement="_6-53" isHorizontal="true">
+        <dc:Bounds x="12" y="12" width="598" height="294" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="undefined_di" bpmnElement="undefined">
+        <di:waypoint x="234" y="159" />
+        <di:waypoint x="244" y="185" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Trisotech.Visio__6__6-125" bpmnElement="_6-125">
+        <di:waypoint x="96" y="111" />
+        <di:waypoint x="114" y="111" />
+        <di:waypoint x="145" y="111" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bnqw1s_di" bpmnElement="Flow_1bnqw1s">
+        <di:waypoint x="228" y="111" />
+        <di:waypoint x="432" y="111" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s240ai_di" bpmnElement="Flow_0s240ai">
+        <di:waypoint x="468" y="111" />
+        <di:waypoint x="554" y="111" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Trisotech.Visio__6__6-61" bpmnElement="_6-61">
+        <dc:Bounds x="66" y="96" width="30" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Trisotech.Visio__6__6-74" bpmnElement="Activity_5capgzo">
+        <dc:Bounds x="145" y="77" width="83" height="68" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jhw4bc_di" bpmnElement="Event_1o1itgk">
+        <dc:Bounds x="432" y="93" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="425" y="55.5" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Trisotech.Visio__6__6-406" bpmnElement="_6-406">
+        <dc:Bounds x="554" y="95" width="32" height="32" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="390" y="127" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PotentialEvidenceSource_1p0n1e7_di" bpmnElement="PotentialEvidenceSource_1p0n1e7">
+        <dc:Bounds x="214" y="131" width="28" height="28" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1oaappe_di" bpmnElement="DataObjectReference_1oaappe">
+        <dc:Bounds x="232" y="185" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="215" y="147.5" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Trisotech.Visio__6-438" bpmnElement="_6-438" isHorizontal="true">
+        <dc:Bounds x="12" y="330" width="598" height="210" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="undefined_di" bpmnElement="undefined">
+        <di:waypoint x="199" y="441" />
+        <di:waypoint x="233" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cnslyk_di" bpmnElement="Flow_0cnslyk">
+        <di:waypoint x="189" y="470" />
+        <di:waypoint x="240" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19smzqh_di" bpmnElement="Flow_19smzqh">
+        <di:waypoint x="340" y="470" />
+        <di:waypoint x="400" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s2vkd3_di" bpmnElement="Flow_1s2vkd3">
+        <di:waypoint x="500" y="470" />
+        <di:waypoint x="552" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Trisotech.Visio__6_OrderReceivedEvent" bpmnElement="OrderReceivedEvent">
+        <dc:Bounds x="159" y="455" width="30" height="30" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="131" y="485" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pfyvl2_di" bpmnElement="Activity_0pfyvl2">
+        <dc:Bounds x="240" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1capgzc_di" bpmnElement="Activity_1capgzc">
+        <dc:Bounds x="400" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fkz5kz_di" bpmnElement="Event_0fkz5kz">
+        <dc:Bounds x="552" y="452" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PotentialEvidenceSource_1k4fys9_di" bpmnElement="PotentialEvidenceSource_1k4fys9">
+        <dc:Bounds x="175" y="441" width="28" height="28" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_0imz72w_di" bpmnElement="DataObjectReference_0imz72w">
+        <dc:Bounds x="232" y="345" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="212" y="402" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Trisotech.Visio__6__6-638" bpmnElement="_6-638">
+        <di:waypoint x="174" y="145" />
+        <di:waypoint x="174" y="455" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="113" y="227" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ju2vj0_di" bpmnElement="Flow_0ju2vj0">
+        <di:waypoint x="450" y="430" />
+        <di:waypoint x="450" y="129" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="EvidenceDataRelation_18psi5n_di" bpmnElement="EvidenceDataRelation_18psi5n">
+        <di:waypoint x="250" y="345" />
+        <di:waypoint x="248" y="235" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</semantic:definitions>
