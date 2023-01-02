@@ -1,9 +1,9 @@
-from Elements.Element.element import Element
-from Elements.PESource.pe_source import PotentialEvidenceSource
-from Elements.Artefact.data_object import PotentialEvidenceType
-from Elements.DataReference.data_reference import DataObjectReference
+from elements.element import Element
+from elements.pe_source import PotentialEvidenceSource
+from elements.data_object import PotentialEvidenceType
+from elements.data_reference import DataObjectReference
 
-from Constrains.base_sorts import *
+from rules.base_sorts import *
 
 from typing import Dict
 

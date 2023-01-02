@@ -1,21 +1,21 @@
 import xml.etree.ElementTree as ET
 
-from Elements.Pool.pool import Pool
-from Elements.Pool.process import Process
-from Elements.FlowObject.task import Task
-from Elements.Artefact.data_object import *
-from Elements.Element.element import Element
-from Elements.FlowObject.catch_event import *
-from Elements.FlowObject.throw_event import *
-from Elements.Flow.message_flow import MessageFlow
-from Elements.Flow.sequence_flow import SequenceFlow
-from Elements.FlowObject.flow_object import FlowObject
-from Elements.Association.association import Association
-from Elements.PESource.pe_source import PotentialEvidenceSource
-from Elements.DataReference.data_reference import DataObjectReference
-from Elements.EvidenceDataRelation.evidence_data_relation import EvidenceDataRelation
+from elements.pool import Pool
+from elements.process import Process
+from elements.flow_object.task import Task
+from elements.data_object import *
+from elements.element import Element
+from elements.flow_object.catch_event import *
+from elements.flow_object.throw_event import *
+from elements.flow.message_flow import MessageFlow
+from elements.flow.sequence_flow import SequenceFlow
+from elements.flow_object.flow_object import FlowObject
+from elements.association import Association
+from elements.pe_source import PotentialEvidenceSource
+from elements.data_reference import DataObjectReference
+from elements.evidence_data_relation import EvidenceDataRelation
 
-from typing import Dict, Union
+from typing import Dict
 
 
 def get_tag(elem: ET.Element) -> str:  # without namespace

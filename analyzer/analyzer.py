@@ -1,10 +1,10 @@
 from z3 import *
-from Parser.parser import parse
+from parser.parser import parse
 
-from Constrains.pe_check import check_pe
-from Constrains.pes_check import check_pes
-from Constrains.pet_check import check_pet
-from Constrains.flow_check import check_flow
+from rules.pe_check import check_pe
+from rules.pes_check import check_pes
+from rules.pet_check import check_pet
+from rules.flow_check import check_flow
 
 
 class Checker:
@@ -49,4 +49,4 @@ class Checker:
 
 
 checker = Checker()
-checker.check("../Diagrams/recommendation.bpmn")
+checker.check("../diagrams/recommendation.bpmn")

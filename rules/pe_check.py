@@ -1,7 +1,7 @@
-from Elements.PESource.pe_source import PotentialEvidenceSource
-from Elements.Element.element import Element
+from elements.pe_source import PotentialEvidenceSource
+from elements.element import Element
 
-from Constrains.base_sorts import *
+from rules.base_sorts import *
 
 from typing import Dict
 

@@ -1,4 +1,4 @@
-from Elements.Artefact.artefact import Artefact
+from elements.artefact import Artefact
 
 
 class DataObject(Artefact):

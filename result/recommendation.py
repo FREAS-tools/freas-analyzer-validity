@@ -1,5 +1,5 @@
-from Elements.Artefact.artefact import Artefact
-from Elements.FlowObject.flow_object import FlowObject
+from elements.artefact import Artefact
+from elements.flow_object.flow_object import FlowObject
 
 
 class Recommendation:

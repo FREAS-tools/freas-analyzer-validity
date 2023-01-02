@@ -1,8 +1,8 @@
-from Elements.Element.element import Element
-from Elements.Flow.message_flow import MessageFlow
-from Elements.FlowObject.flow_object import FlowObject
+from elements.element import Element
+from elements.flow.message_flow import MessageFlow
+from elements.flow_object.flow_object import FlowObject
 
-from Constrains.base_sorts import *
+from rules.base_sorts import *
 
 from typing import Dict
 

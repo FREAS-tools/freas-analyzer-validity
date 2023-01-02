@@ -1,6 +1,6 @@
-from Elements.Artefact.artefact import Artefact
-from Elements.FlowObject.flow_object import FlowObject
-from Response.severity import Severity
+from elements.artefact import Artefact
+from elements.flow_object.flow_object import FlowObject
+from result.severity import Severity
 
 
 class Mistake:

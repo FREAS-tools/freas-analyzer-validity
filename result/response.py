@@ -1,7 +1,7 @@
 from typing import List
 
-from Response.mistake import Mistake
-from Response.recommendation import Recommendation
+from result.mistake import Mistake
+from result.recommendation import Recommendation
 
 
 class Response:

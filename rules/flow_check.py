@@ -1,7 +1,7 @@
-from Elements.Flow.flow import Flow
-from Elements.Element.element import Element
+from elements.flow.flow import Flow
+from elements.element import Element
 
-from Constrains.base_sorts import *
+from rules.base_sorts import *
 
 from typing import Dict
 
@@ -29,7 +29,8 @@ def check_flow(elem: Dict[str, Element]) -> Solver:
             # if value.target_ref == "Activity_0pfyvl2":
             #     s.add(flow(target_ref, target_ref))
 
-
+    print(s.assertions())
+    print()
     # print(s.check(Exists(flow_obj, flow(flow_obj, flow_obj))))
     # print(s.check())
     # print(s.unsat_core())

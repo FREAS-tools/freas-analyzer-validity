@@ -1,4 +1,4 @@
-from Elements.Element.element import Element
+from elements.element import Element
 
 
 # participant

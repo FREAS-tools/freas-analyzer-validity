@@ -1,4 +1,4 @@
-from Elements.FlowObject.event import Event
+from elements.flow_object.event import Event
 
 
 class ThrowEvent(Event):

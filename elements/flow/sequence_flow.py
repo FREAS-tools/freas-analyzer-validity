@@ -1,4 +1,4 @@
-from Elements.Flow.flow import Flow
+from elements.flow.flow import Flow
 
 
 class SequenceFlow(Flow):
