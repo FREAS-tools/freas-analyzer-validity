@@ -1,4 +1,4 @@
-from elements.artefact import *
+from elements.element import Element
 
 
 class DataReference(Element):

@@ -2,18 +2,18 @@ import xml.etree.ElementTree as ET
 
 from elements.pool import Pool
 from elements.process import Process
-from elements.flow_object.task import Task
-from elements.data_object import *
 from elements.element import Element
+from elements.flow_object.task import Task
+from elements.association import Association
 from elements.flow_object.catch_event import *
 from elements.flow_object.throw_event import *
 from elements.flow.message_flow import MessageFlow
 from elements.flow.sequence_flow import SequenceFlow
-from elements.flow_object.flow_object import FlowObject
-from elements.association import Association
 from elements.pe_source import PotentialEvidenceSource
 from elements.data_reference import DataObjectReference
+from elements.flow_object.flow_object import FlowObject
 from elements.evidence_data_relation import EvidenceDataRelation
+from elements.data_object import DataObject, PotentialEvidenceType
 
 from typing import Dict
 

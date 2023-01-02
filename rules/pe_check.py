@@ -1,29 +1,66 @@
-from elements.pe_source import PotentialEvidenceSource
+from z3 import *
+from zope.interface import implementer
+from typing import Dict, Optional, List
+
+from rules.rule import IRule
+from results.mistake import Mistake
+from results.response import Response
+from results.severity import Severity
 from elements.element import Element
-
-from rules.base_sorts import *
-
-from typing import Dict
+from elements.pe_source import PotentialEvidenceSource
 
 
 # Check if potential evidence is missing based on existence of pes
 # and association that should be produced from that pes
 
+@implementer(IRule)
+class MissingPotentialEvidence:
 
-def check_pe(elem: Dict[str, Element]) -> Solver:
-    s = Solver()
+    @staticmethod
+    def __create_response(solutions: List[str]) -> Response:
+        mistake = Mistake()
+        mistake.source = solutions
+        mistake.severity = Severity.HIGH
+        mistake.message = "Data Object with Potential Evidence Type is not created from Potential Evidence Source"
 
-    has_association = Function("has_association", PESourceSort, BoolSort())
-    pe_source = Const("pe_source", PESourceSort)
-    s.add(ForAll(pe_source, has_association(pe_source)))
+        return mistake
 
-    for key, value in elem.items():
-        if isinstance(value, PotentialEvidenceSource):
-            pes = Const(value.id, PESourceSort)
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+        s = Solver()
 
-            if value.association is not None:
-                s.add(has_association(pes))
-            else:
-                s.add(Not(has_association(pes)))
+        # The sort, a constructor, and the accessors
+        PESource, mkPESource, (first, second) = TupleSort("PESource", [StringSort(), BoolSort()])
 
-    return s
+        pe_sources = [mkPESource(StringVal(value.id), value.association is not None) for _, value in elements.items()
+                      if isinstance(value, PotentialEvidenceSource)]
+
+        # pe_sources += [mkPESource(StringVal("bad"), False)]
+
+        def has_association(source):
+            return simplify(second(source))
+
+        def exists(source):
+            return Or([And(first(source) == first(elem), second(source) == second(elem)) for elem in pe_sources])
+
+        # s.add([has_association(s) for s in pe_sources])
+
+        x = Consts('x', PESource)
+        s.add(Not(has_association(x)))
+        s.add(exists(x))
+
+        solutions = []
+        while s.check() == sat:
+            model = s.model()
+            # print(model)
+
+            for dec in model.decls():
+                # print("%s = %s" % (dec.name(), model[dec]))
+                s.add(dec() != model[dec])  # no duplicates
+                solutions.append(simplify(first(model[dec])))  # only element's ID
+
+        if len(solutions) == 0:
+            return None
+
+        response = self.__create_response(solutions)
+
+        return response

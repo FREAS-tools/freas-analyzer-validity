@@ -1,52 +1,32 @@
-from z3 import *
 from parser.parser import parse
 
-from rules.pe_check import check_pe
-from rules.pes_check import check_pes
-from rules.pet_check import check_pet
-from rules.flow_check import check_flow
+from rules.flow_check import FlowToItself
+from rules.pe_check import MissingPotentialEvidence
+from rules.pes_check import PotentialEvidenceExists
+
+from results.result import Result
+from results.mistake import Mistake
+from results.recommendation import Recommendation
 
 
-class Checker:
-    def check(self, file_path: str):
-        set_param(proof=True)
+class Analyzer:
 
+    @staticmethod
+    def analyze(file_path: str) -> Result:
         elements = parse(file_path)
-        s = Solver()
-        s.set(unsat_core=True)
+        result = Result()
 
-        s.push()
-        flow_solver = check_flow(elements)
-        s.add(flow_solver.assertions())
-        # s.pop()
-        #
-        # s.push()
-        # pe_solver = check_pe(elements)
-        # s.add(pe_solver.assertions())
-        # s.pop()
-        #
-        # s.push()
-        # pes_solver = check_pes(elements)
-        # s.add(pes_solver.assertions())
-        # s.pop()
-        #
-        # s.push()
-        # pet_solver = check_pet(elements)
-        # s.add(pet_solver.assertions())
-        # s.pop()
+        rules = [MissingPotentialEvidence(), FlowToItself(), PotentialEvidenceExists()]
 
-        # print(s.sexpr())
+        for rule in rules:
+            response = rule.evaluate(elements)
 
-        if s.check() == sat:
-            m = s.model()
+            if response is None:
+                continue
 
-            for dec in m.decls():
-                print("%s = %s" % (dec.name(), m[dec]))
-        else:
-            # print(s.proof())
-            print(s.check())
-            # print(s.unsat_core())
+            if isinstance(response, Mistake):
+                result.mistakes.append(response)
+            elif isinstance(response, Recommendation):
+                result.recommendations.append(response)
 
-
-checker = Checker()
-checker.check("../diagrams/recommendation.bpmn")
+        return result
