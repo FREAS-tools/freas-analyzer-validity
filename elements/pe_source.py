@@ -5,8 +5,8 @@ from elements.element import Element
 
 
 class PotentialEvidenceSource(Element):
-    def __init__(self, elem_id, elem_type, attached_to_ref, association=None):
-        super().__init__(elem_id, elem_type)
+    def __init__(self, elem_id, attached_to_ref, association=None):
+        super().__init__(elem_id)
 
         self.attached_to_ref: str = attached_to_ref  # Union[FlowObject | DataStore]
         self.association: Optional[Association] = association

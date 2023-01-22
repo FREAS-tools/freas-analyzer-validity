@@ -30,19 +30,19 @@ def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
 
         match tag:
             case 'participant':
-                new_elem = Pool(attr['id'], Pool, attr['processRef'], attr.get('name'))
+                new_elem = Pool(attr['id'], attr['processRef'], attr.get('name'))
             case 'messageFlow':
-                new_elem = MessageFlow(attr['id'], MessageFlow, attr['sourceRef'],
+                new_elem = MessageFlow(attr['id'], attr['sourceRef'],
                                        attr['targetRef'], attr.get('name'))
             case 'evidenceDataRelation':
-                new_elem = parse_evidence_dr(child)
+                new_elem = parse_evidence_data_relation(child)
 
         if new_elem is not None:
             key = new_elem.id
             elements[key] = new_elem
 
 
-def parse_evidence_dr(elem: ET.Element):
+def parse_evidence_data_relation(elem: ET.Element):
     source_ref = None
     target_ref = None
 
@@ -53,7 +53,7 @@ def parse_evidence_dr(elem: ET.Element):
         if tag == "targetRef":
             target_ref = child.text
 
-    edr = EvidenceDataRelation(elem.attrib['id'], EvidenceDataRelation, source_ref, target_ref)
+    edr = EvidenceDataRelation(elem.attrib['id'], source_ref, target_ref)
     return edr
 
 
@@ -73,8 +73,8 @@ def parse_data_object(elem: ET.Element) -> DataObject:
     for child in elem:
         tag = get_tag(child)
         if tag == "potentialEvidenceType":
-            return PotentialEvidenceType(elem.attrib['id'], PotentialEvidenceType)
-    return DataObject(elem.attrib['id'], DataObject)
+            return PotentialEvidenceType(elem.attrib['id'])
+    return DataObject(elem.attrib['id'])
 
 
 def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
@@ -87,7 +87,7 @@ def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
             association = Association(attr['sourceRef'], attr['targetRef'])
             break
 
-    pes = PotentialEvidenceSource(elem.attrib['id'], PotentialEvidenceSource,
+    pes = PotentialEvidenceSource(elem.attrib['id'],
                                   elem.attrib['attachedToRef'], association)
     return pes
 
@@ -101,7 +101,7 @@ def add_pe_source(pe_source, elements: Dict[str, Element]):
 
 
 def parse_process(elem: ET.Element, elements: Dict[str, Element]):
-    proc = Process(elem.attrib['id'], Process)
+    proc = Process(elem.attrib['id'])
     elements[proc.id] = proc
 
     for child in elem:
@@ -111,22 +111,22 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
 
         match tag:
             case "startEvent":
-                event = StartEvent(attr['id'], StartEvent)
+                event = StartEvent(attr['id'])
                 new_elem = parse_flow_object(child, event)
             case "task":
-                task = Task(attr['id'], Task)
+                task = Task(attr['id'])
                 new_elem = parse_flow_object(child, task)
             case "endEvent":
-                event = StartEvent(attr['id'], EndEvent)
+                event = StartEvent(attr['id'])
                 new_elem = parse_flow_object(child, event)
             case "intermediateCatchEvent":
-                event = IntermediateCatchEvent(attr['id'], IntermediateCatchEvent)
+                event = IntermediateCatchEvent(attr['id'])
                 new_elem = parse_flow_object(child, event)
             case "sequenceFlow":
-                new_elem = SequenceFlow(attr['id'], SequenceFlow, attr['sourceRef'],
+                new_elem = SequenceFlow(attr['id'], attr['sourceRef'],
                                         attr['targetRef'], attr.get('name'))
             case "dataObjectReference":
-                new_elem = DataObjectReference(attr['id'], DataObjectReference,
+                new_elem = DataObjectReference(attr['id'],
                                                attr['dataObjectRef'], attr.get('name'))
             case "dataObject":
                 new_elem = parse_data_object(child)
