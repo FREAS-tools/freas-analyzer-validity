@@ -102,6 +102,17 @@ def parse_data_object(elem: ET.Element) -> DataObject:
     return DataObject(elem.attrib['id'])
 
 
+def parse_data_store(elem: ET.Element) -> DataStore:
+    data_store = DataStore(elem.attrib['id'])
+
+    for child in elem:
+        tag = get_tag(child)
+        if tag == "storedPotentialEvidence":
+            data_store.stored_pe.append(child.attrib['evidenceTypeRef'])
+
+    return data_store
+
+
 def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
     association = None
 
@@ -159,7 +170,7 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
             case "dataObject":
                 new_elem = parse_data_object(child)
             case "dataStore":
-                new_elem = DataStore(attr['id'])
+                new_elem = parse_data_store(child)
             case "potentialEvidenceSource":
                 new_elem = parse_pe_source(child)
                 add_pe_source(new_elem, elements)
@@ -185,7 +196,7 @@ def parse(filename: str) -> Dict[str, Element]:
     return elements
 
 
-elems = parse("../docs/diagrams/disputable_stored_in_same_context.bpmn")
-for k, v in elems.items():
-    print(k, "   ", v.name)
+# elems = parse("../docs/diagrams/disputable_stored_in_same_context.bpmn")
+# for k, v in elems.items():
+#     print(k, "   ", v.name)
 

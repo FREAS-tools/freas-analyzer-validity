@@ -32,8 +32,8 @@ class Analyzer:
         return result
 
 
-analyzer = Analyzer()
-result = analyzer.analyze("../docs/diagrams/semantics_bad.bpmn")
-
-for mistake in result.mistakes:
-    print(mistake.message)
+# analyzer = Analyzer()
+# result = analyzer.analyze("../docs/diagrams/semantics_bad.bpmn")
+#
+# for mistake in result.mistakes:
+#     print(mistake.message)
