@@ -3,17 +3,19 @@ import xml.etree.ElementTree as ET
 from elements.pool import Pool
 from elements.process import Process
 from elements.element import Element
+from elements.data_store import DataStore
 from elements.flow_object.task import Task
-from elements.association import Association
 from elements.flow_object.catch_event import *
 from elements.flow_object.throw_event import *
 from elements.flow.message_flow import MessageFlow
 from elements.flow.sequence_flow import SequenceFlow
 from elements.pe_source import PotentialEvidenceSource
-from elements.data_reference import DataObjectReference
 from elements.flow_object.flow_object import FlowObject
 from elements.evidence_data_relation import EvidenceDataRelation
-from elements.data_object import DataObject, PotentialEvidenceType
+from elements.hash_function import HashFunction, KeyedHashFunction
+from elements.data_reference import DataObjectReference, DataStoreReference
+from elements.data_object import DataObject, PotentialEvidenceType, DataHash
+from elements.association import Association, DataInputAssociation, DataOutputAssociation
 
 from typing import Dict
 
@@ -42,18 +44,23 @@ def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
             elements[key] = new_elem
 
 
-def parse_evidence_data_relation(elem: ET.Element):
-    source_ref = None
-    target_ref = None
+def get_source_target_ref(elem: ET.Element):
+    source, target = None, None
 
     for child in elem:
         tag = get_tag(child)
         if tag == "sourceRef":
-            source_ref = child.text
+            source = child.text
         if tag == "targetRef":
-            target_ref = child.text
+            target = child.text
 
+    return source, target
+
+
+def parse_evidence_data_relation(elem: ET.Element):
+    source_ref, target_ref = get_source_target_ref(elem)
     edr = EvidenceDataRelation(elem.attrib['id'], source_ref, target_ref)
+
     return edr
 
 
@@ -62,10 +69,25 @@ def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
 
     for child in elem:
         tag = get_tag(child)
-        if tag == "incoming":
-            obj.incoming = child.text
-        if tag == "outgoing":
-            obj.outgoing = child.text
+
+        match tag:
+            case "incoming":
+                obj.incoming = child.text
+            case "outgoing":
+                obj.outgoing = child.text
+            case "dataOutputAssociation":
+                _, target = get_source_target_ref(child)
+                association = DataOutputAssociation(child.attrib['id'], obj.id, target)
+                obj.data_output.append(association)
+            case "dataInputAssociation":
+                source, _ = get_source_target_ref(child)
+                association = DataInputAssociation(child.attrib['id'], source, obj.id)
+                obj.data_input.append(association)
+            case "hashFunction":
+                obj.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'))
+            case "keyedHashFunction":
+                obj.hash_fun = KeyedHashFunction(child.attrib.get('key'))
+
     return obj
 
 
@@ -74,6 +96,9 @@ def parse_data_object(elem: ET.Element) -> DataObject:
         tag = get_tag(child)
         if tag == "potentialEvidenceType":
             return PotentialEvidenceType(elem.attrib['id'])
+        if tag == "hash":
+            return DataHash(elem.attrib['id'])
+
     return DataObject(elem.attrib['id'])
 
 
@@ -101,8 +126,8 @@ def add_pe_source(pe_source, elements: Dict[str, Element]):
 
 
 def parse_process(elem: ET.Element, elements: Dict[str, Element]):
-    proc = Process(elem.attrib['id'])
-    elements[proc.id] = proc
+    process = Process(elem.attrib['id'])
+    elements[process.id] = process
 
     for child in elem:
         tag = get_tag(child)
@@ -128,8 +153,13 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
             case "dataObjectReference":
                 new_elem = DataObjectReference(attr['id'],
                                                attr['dataObjectRef'], attr.get('name'))
+            case "dataStoreReference":
+                new_elem = DataStoreReference(attr['id'],
+                                              attr['dataStoreRef'], attr.get('name'))
             case "dataObject":
                 new_elem = parse_data_object(child)
+            case "dataStore":
+                new_elem = DataStore(attr['id'])
             case "potentialEvidenceSource":
                 new_elem = parse_pe_source(child)
                 add_pe_source(new_elem, elements)
@@ -153,3 +183,9 @@ def parse(filename: str) -> Dict[str, Element]:
                 parse_collaboration(child, elements)
 
     return elements
+
+
+elems = parse("../docs/diagrams/disputable_stored_in_same_context.bpmn")
+for k, v in elems.items():
+    print(k, "   ", v.name)
+

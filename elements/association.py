@@ -1,14 +1,24 @@
+from elements.element import Element
+
+
 class Association:
     def __init__(self, source_ref, target_ref):
         self.source_ref: str = source_ref  # FlowObject | PotentialEvidenceSource
         self.target_ref: str = target_ref  # DataReference
 
 
-class DataInputAssociation(Association):
-    def __init__(self, source_ref, target_ref):
-        super().__init__(source_ref, target_ref)
+class DataAssociation(Element):
+    def __init__(self, elem_id, source_ref, target_ref):
+        super().__init__(elem_id)
+        self.source_ref: str = source_ref  # FlowObject | PotentialEvidenceSource
+        self.target_ref: str = target_ref  # DataReference
 
 
-class DataOutputAssociation(Association):
-    def __init__(self, source_ref, target_ref):
-        super().__init__(source_ref, target_ref)
+class DataInputAssociation(DataAssociation):
+    def __init__(self, elem_id, source_ref, target_ref):
+        super().__init__(elem_id, source_ref, target_ref)
+
+
+class DataOutputAssociation(DataAssociation):
+    def __init__(self, elem_id, source_ref, target_ref):
+        super().__init__(elem_id, source_ref, target_ref)

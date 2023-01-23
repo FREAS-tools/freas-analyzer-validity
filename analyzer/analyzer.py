@@ -30,3 +30,10 @@ class Analyzer:
                 result.recommendations.append(response)
 
         return result
+
+
+analyzer = Analyzer()
+result = analyzer.analyze("../docs/diagrams/semantics_bad.bpmn")
+
+for mistake in result.mistakes:
+    print(mistake.message)
