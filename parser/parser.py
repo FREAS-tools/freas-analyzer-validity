@@ -6,15 +6,14 @@ from elements.element import Element
 from elements.data_store import DataStore
 from elements.flow_object.task import Task
 from elements.flow_object.catch_event import *
-from elements.flow_object.throw_event import *
 from elements.flow.message_flow import MessageFlow
 from elements.flow.sequence_flow import SequenceFlow
 from elements.pe_source import PotentialEvidenceSource
 from elements.flow_object.flow_object import FlowObject
+from elements.flow_object.hash_function import HashFunction
 from elements.evidence_data_relation import EvidenceDataRelation
-from elements.hash_function import HashFunction, KeyedHashFunction
 from elements.data_reference import DataObjectReference, DataStoreReference
-from elements.data_object import DataObject, PotentialEvidenceType, DataHash
+from elements.data_object import DataObject, PotentialEvidenceType, HashProof
 from elements.association import Association, DataInputAssociation, DataOutputAssociation
 
 from typing import Dict
@@ -86,7 +85,8 @@ def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
             case "hashFunction":
                 obj.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'))
             case "keyedHashFunction":
-                obj.hash_fun = KeyedHashFunction(child.attrib.get('key'))
+                obj.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'),
+                                            child.attrib.get('key'))
 
     return obj
 
@@ -97,7 +97,11 @@ def parse_data_object(elem: ET.Element) -> DataObject:
         if tag == "potentialEvidenceType":
             return PotentialEvidenceType(elem.attrib['id'])
         if tag == "hash":
-            return DataHash(elem.attrib['id'])
+            return HashProof(elem.attrib['id'])
+        if tag == "keyedHash":
+            proof = HashProof(elem.attrib['id'])
+            proof.keyed = True
+            return proof
 
     return DataObject(elem.attrib['id'])
 
