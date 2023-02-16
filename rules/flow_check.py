@@ -27,15 +27,15 @@ class FlowToItself:
 
         return mistake
 
-    def evaluate(self, element: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()
 
         # Constraint the domain just to the flowObjects
-        objs = [obj.id for _, obj in element.items() if isinstance(obj, Task) or isinstance(obj, Event)]
+        objs = [obj.id for _, obj in elements.items() if isinstance(obj, Task) or isinstance(obj, Event)]
         flowObject, flowObjectValues = EnumSort('flowObject', objs)
 
         present_flows = []
-        for _, value in element.items():
+        for _, value in elements.items():
             if isinstance(value, Flow):
 
                 # This extracts the exact value of Sort, corresponding to the name of the flow objects.
@@ -51,7 +51,7 @@ class FlowToItself:
         # This represents the existing flows between flow objects
         # Input two flow objects, return value is True, if there is a flow
         def flow(o1, o2):
-            return Or([And(o1 == s, o2 == t) for (s, t) in present_flows])
+            return Or([And(o1 == source, o2 == target) for (source, target) in present_flows])
 
         # This is the rule, that should not hold in the valid model/diagram
         # If the model is satisfiable with this rule, valuation of f will tell us where exactly is the issue

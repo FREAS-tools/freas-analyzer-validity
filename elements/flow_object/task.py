@@ -1,6 +1,6 @@
 from typing import Optional
 
-from elements.hash_function import HashFunction
+from elements.flow_object.hash_function import HashFunction
 from elements.flow_object.flow_object import FlowObject
 
 

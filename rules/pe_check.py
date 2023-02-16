@@ -4,9 +4,9 @@ from typing import Dict, Optional, List
 
 from rules.rule import IRule
 from results.mistake import Mistake
+from elements.element import Element
 from results.response import Response
 from results.severity import Severity
-from elements.element import Element
 from elements.pe_source import PotentialEvidenceSource
 
 

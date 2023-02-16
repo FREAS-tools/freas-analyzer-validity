@@ -50,7 +50,7 @@ class PotentialEvidenceExists:
             return simplify(second(source))
 
         def exists(flow_obj):
-            return Or([And(first(flow_obj) == first(o), second(flow_obj) == second(o)) for o in flow_objs])
+            return Or([And(first(flow_obj) == first(obj), second(flow_obj) == second(obj)) for obj in flow_objs])
 
         x = Consts('x', FlowObject)
         s.add(Not(has_pe_source(x)))

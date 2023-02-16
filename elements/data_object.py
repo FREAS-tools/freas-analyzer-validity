@@ -11,6 +11,17 @@ class PotentialEvidenceType(DataObject):
         super().__init__(elem_id)
 
 
-class DataHash(DataObject):
+class Proof(PotentialEvidenceType):
+    def __init__(self, elem_id):
+        super().__init__(elem_id)
+
+
+class HashProof(Proof):
+    def __init__(self, elem_id):
+        super().__init__(elem_id)
+        self.keyed: bool = False
+
+
+class TimestampProof(Proof):
     def __init__(self, elem_id):
         super().__init__(elem_id)

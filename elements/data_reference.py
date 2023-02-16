@@ -2,16 +2,16 @@ from elements.element import Element
 
 
 class DataReference(Element):
-    def __init__(self, elem_id, data_ref, name=None):
+    def __init__(self, elem_id, data, name=None):
         super().__init__(elem_id, name)
-        self.data_ref: str = data_ref   # artefact
+        self.data: str = data   # artefact
 
 
 class DataObjectReference(DataReference):
-    def __init__(self, elem_id, data_ref, name=None):
-        super().__init__(elem_id, data_ref, name)
+    def __init__(self, elem_id, data, name=None):
+        super().__init__(elem_id, data, name)
 
 
 class DataStoreReference(DataReference):
-    def __init__(self, elem_id, data_ref, name=None):
-        super().__init__(elem_id, data_ref, name)
+    def __init__(self, elem_id, data, name=None):
+        super().__init__(elem_id, data, name)

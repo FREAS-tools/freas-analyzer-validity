@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from elements.element import Element
-from elements.hash_function import HashFunction
 from elements.pe_source import PotentialEvidenceSource
 from elements.association import DataOutputAssociation, DataInputAssociation
 
