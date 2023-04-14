@@ -4,8 +4,8 @@ from typing import Dict, List, Optional
 
 from rules.rule import IRule
 from elements.flow.flow import Flow
-from elements.flow_object.task import Task
-from elements.flow_object.event import Event
+from elements.flow_object.tasks.task import Task
+from elements.flow_object.events.event import Event
 from elements.element import Element
 
 from results.mistake import Mistake
@@ -68,8 +68,4 @@ class FlowToItself:
                 s.add(dec() != model[dec])  # no duplicates
                 solutions.append(model[dec])
 
-        if len(solutions) == 0:
-            return None
-
-        response = self.__create_response(solutions)
-        return response
+        return self.__create_response(solutions) if len(solutions) > 0 else None

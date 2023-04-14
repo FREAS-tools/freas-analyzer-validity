@@ -2,14 +2,12 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from parser.parser import parse
 from rules.rule import IRule
 from results.mistake import Mistake
 from elements.element import Element
 from results.response import Response
 from results.severity import Severity
-from elements.flow_object.task import Task
-from elements.flow_object.hash_function import HashFunction
+from elements.flow_object.tasks.task import Task
 from elements.data_reference import DataObjectReference
 
 
@@ -58,7 +56,7 @@ class KeyedHashType:
                 [And(task_id(data_object) == task_id(obj), obj_type(data_object) == obj_type(obj),
                      keyed(data_object) == keyed(obj)) for obj in data_objects])
 
-        x = Consts('x', DataObject)
+        x = Const('x', DataObject)
         s.add(Not(correct_type(x)))
         s.add(exists(x))
 
@@ -72,13 +70,7 @@ class KeyedHashType:
                 s.add(dec() != model[dec])                       # no duplicates
                 solutions.append(simplify(task_id(model[dec])))  # only element's ID
 
-        if len(solutions) == 0:
-            return None
-
-        response = self.__create_response(solutions)
-
-        return response
-
+        return self.__create_response(solutions) if len(solutions) > 0 else None
 
 # elements = parse("../docs/diagrams/keyed_hash_correct_I.bpmn")
 # fun = KeyedHashType()

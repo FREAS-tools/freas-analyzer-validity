@@ -31,7 +31,8 @@ class PotentialEvidenceExists:
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()
 
-        FlowObject, mkFlowObject, (first, second) = TupleSort("FlowObject", [StringSort(), BoolSort()])
+        # The sort, a constructor, and the accessors (flow object id, has potential evidence source)
+        FlowObject, mkFlowObject, (flow_obj_id, has_pes) = TupleSort("FlowObject", [StringSort(), BoolSort()])
 
         flow_objs = []
 
@@ -47,12 +48,12 @@ class PotentialEvidenceExists:
                 flow_objs.append(mkFlowObject(StringVal(target_ref.id), target_ref.pe_source is not None))
 
         def has_pe_source(source):
-            return simplify(second(source))
+            return simplify(has_pes(source))
 
         def exists(flow_obj):
-            return Or([And(first(flow_obj) == first(obj), second(flow_obj) == second(obj)) for obj in flow_objs])
+            return Or([And(flow_obj_id(flow_obj) == flow_obj_id(obj), has_pes(flow_obj) == has_pes(obj)) for obj in flow_objs])
 
-        x = Consts('x', FlowObject)
+        x = Const('x', FlowObject)
         s.add(Not(has_pe_source(x)))
         s.add(exists(x))
 
@@ -64,11 +65,6 @@ class PotentialEvidenceExists:
             for dec in model.decls():
                 # print("%s = %s" % (dec.name(), model[dec]))
                 s.add(dec() != model[dec])                      # no duplicates
-                solutions.append(simplify(first(model[dec])))   # only element's ID
+                solutions.append(simplify(flow_obj_id(model[dec])))   # only element's ID
 
-        if len(solutions) == 0:
-            return None
-
-        response = self.__create_response(solutions)
-
-        return response
+        return self.__create_response(solutions) if len(solutions) > 0 else None

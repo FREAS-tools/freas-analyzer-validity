@@ -1,12 +1,12 @@
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from parser.parser import parse
 
 from elements.element import Element
 from results.response import Response
 from hash_proof_type import HashProofType
-from rules.hash_fun_input_type import HashFunctionInputType
-from rules.hash_fun_output import HashFunctionOutput
+from rules.integrity_rules.hash_fun_input_type import HashFunctionInputType
+from rules.integrity_rules.hash_fun_output import HashFunctionOutput
 
 
 class CorrectHashFunction:
@@ -25,6 +25,6 @@ class CorrectHashFunction:
         return responses
 
 
-elements = parse("../docs/diagrams/hash_correct.bpmn")
+elements = parse("../../docs/diagrams/hash_correct.bpmn")
 fun = CorrectHashFunction()
 fun.evaluate(elements)

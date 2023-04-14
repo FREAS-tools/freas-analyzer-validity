@@ -2,18 +2,16 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from parser.parser import parse
 from rules.rule import IRule
 from results.mistake import Mistake
 from elements.element import Element
 from results.response import Response
 from results.severity import Severity
-from elements.flow_object.task import Task
-from elements.flow_object.hash_function import HashFunction
+from elements.flow_object.tasks.task import Task
 from elements.data_reference import DataObjectReference
 
 
-# Checks if Hash Function output has Hash Proof type.
+# Checks if all tasks that execute Hash Function contain output that has Hash Proof type.
 @implementer(IRule)
 class HashProofType:
 
@@ -34,6 +32,7 @@ class HashProofType:
 
         data_objects = []
 
+        # checks only hash functions and its output
         for _, value in elements.items():
             if isinstance(value, Task) and value.hash_fun is not None:
                 data_ref: str = value.hash_fun.output  # Data Object Reference id
@@ -53,7 +52,7 @@ class HashProofType:
             return Or(
                 [And(first(data_object) == first(obj), second(data_object) == second(obj)) for obj in data_objects])
 
-        x = Consts('x', DataObject)
+        x = Const('x', DataObject)
         s.add(Not(correct_type(x)))
         s.add(exists(x))
 
@@ -67,13 +66,7 @@ class HashProofType:
                 s.add(dec() != model[dec])  # no duplicates
                 solutions.append(simplify(first(model[dec])))  # only element's ID
 
-        if len(solutions) == 0:
-            return None
-
-        response = self.__create_response(solutions)
-
-        return response
-
+        return self.__create_response(solutions) if len(solutions) > 0 else None
 
 # elements = parse("../docs/diagrams/hash_correct.bpmn")
 # fun = HashProofType()

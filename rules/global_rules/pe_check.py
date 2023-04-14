@@ -28,8 +28,8 @@ class MissingPotentialEvidence:
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()
 
-        # The sort, a constructor, and the accessors
-        PESource, mkPESource, (first, second) = TupleSort("PESource", [StringSort(), BoolSort()])
+        # The sort, a constructor, and the accessors (potential evidence source id, has association)
+        PESource, mkPESource, (pes_id, has_assoc) = TupleSort("PESource", [StringSort(), BoolSort()])
 
         pe_sources = [mkPESource(StringVal(value.id), value.association is not None) for _, value in elements.items()
                       if isinstance(value, PotentialEvidenceSource)]
@@ -37,14 +37,14 @@ class MissingPotentialEvidence:
         # pe_sources += [mkPESource(StringVal("bad"), False)]
 
         def has_association(source):
-            return simplify(second(source))
+            return simplify(has_assoc(source))
 
         def exists(source):
-            return Or([And(first(source) == first(elem), second(source) == second(elem)) for elem in pe_sources])
+            return Or([And(pes_id(source) == pes_id(elem), has_assoc(source) == has_assoc(elem)) for elem in pe_sources])
 
         # s.add([has_association(s) for s in pe_sources])
 
-        x = Consts('x', PESource)
+        x = Const('x', PESource)
         s.add(Not(has_association(x)))
         s.add(exists(x))
 
@@ -56,11 +56,6 @@ class MissingPotentialEvidence:
             for dec in model.decls():
                 # print("%s = %s" % (dec.name(), model[dec]))
                 s.add(dec() != model[dec])  # no duplicates
-                solutions.append(simplify(first(model[dec])))  # only element's ID
+                solutions.append(simplify(pes_id(model[dec])))  # only element's ID
 
-        if len(solutions) == 0:
-            return None
-
-        response = self.__create_response(solutions)
-
-        return response
+        return self.__create_response(solutions) if len(solutions) > 0 else None

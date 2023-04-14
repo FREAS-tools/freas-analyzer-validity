@@ -1,6 +1,6 @@
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-from rules.keyed_hash_type import KeyedHashType
+from rules.integrity_rules.keyed_hash_type import KeyedHashType
 from elements.element import Element
 from results.response import Response
 from hash_fun_check import CorrectHashFunction
@@ -23,6 +23,6 @@ class CorrectKeyedHashFunction:
         return responses
 
 
-elements = parse("../docs/diagrams/keyed_hash_correct.bpmn")
+elements = parse("../../docs/diagrams/keyed_hash_correct.bpmn")
 fun = CorrectHashFunction()
 fun.evaluate(elements)

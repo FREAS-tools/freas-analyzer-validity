@@ -1,11 +1,12 @@
-from parser.parser import parse
+from typing import Dict
 
-from rules.flow_check import FlowToItself
-from rules.hash_fun_check import CorrectHashFunction
-from rules.hash_fun_pes import HashFunctionPES
-from rules.keyed_hash_check import CorrectKeyedHashFunction
-from rules.pe_check import MissingPotentialEvidence
-from rules.pes_check import PotentialEvidenceExists
+from elements.element import Element
+from rules.global_rules.flow_check import FlowToItself
+from rules.integrity_rules.hash_fun_check import CorrectHashFunction
+from rules.integrity_rules.hash_fun_pes import HashFunctionPES
+from rules.integrity_rules.keyed_hash_check import CorrectKeyedHashFunction
+from rules.global_rules.pe_check import MissingPotentialEvidence
+from rules.global_rules.pes_check import PotentialEvidenceExists
 
 from results.result import Result
 from results.mistake import Mistake
@@ -15,8 +16,7 @@ from results.recommendation import Recommendation
 class Analyzer:
 
     @staticmethod
-    def analyze(file_path: str) -> Result:
-        elements = parse(file_path)
+    def analyze(elements: Dict[str, Element]) -> Result:
         result = Result()
 
         basic_rules = [MissingPotentialEvidence(), FlowToItself(), PotentialEvidenceExists(), HashFunctionPES()]
@@ -50,10 +50,3 @@ class Analyzer:
                 result.recommendations.append(response)
 
         return result
-
-
-# analyzer = Analyzer()
-# result = analyzer.analyze("../docs/diagrams/semantics_bad.bpmn")
-#
-# for mistake in result.mistakes:
-#     print(mistake.message)

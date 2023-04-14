@@ -2,8 +2,7 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from elements.flow_object.task import Task
-from parser.parser import parse
+from elements.flow_object.tasks.task import Task
 from rules.rule import IRule
 from results.response import Response
 from results.mistake import Mistake
@@ -27,9 +26,10 @@ class HashFunctionOutput:
         s = Solver()
 
         # The sort, a constructor, and the accessors (task id, data object id)
-        DataObjSort, mkDataObjSort, (first, second) = TupleSort("DataObject", [StringSort(), StringSort()])
+        DataObjSort, mkDataObjSort, (task_id, object_id) = TupleSort("DataObject", [StringSort(), StringSort()])
         solutions = []
 
+        # goes through all tasks and checks their output data objects
         for key, value in elements.items():
             if not isinstance(value, Task) or value.hash_fun is None or value.pe_source is None:
                 continue
@@ -55,13 +55,13 @@ class HashFunctionOutput:
 
             # compare hash function output data object (Hash Proof) id with the provided data object
             def correct_object(data_object):
-                return second(proof_var) == second(data_object)
+                return object_id(proof_var) == object_id(data_object)
 
             # compare output object with the provided data object
             def exists(data_object):
-                return Or([And(first(o) == first(data_object), second(o) == second(data_object)) for o in outputs])
+                return Or([And(task_id(o) == task_id(data_object), object_id(o) == object_id(data_object)) for o in outputs])
 
-            x = Consts('x', DataObjSort)
+            x = Const('x', DataObjSort)
 
             # data object different from function output exists
             s.add(Not(correct_object(x)))
@@ -74,17 +74,11 @@ class HashFunctionOutput:
                 for dec in model.decls():
                     # print("%s = %s" % (dec.name(), model[dec]))
                     s.add(dec() != model[dec])  # no duplicates
-                    solutions.append(simplify(first(model[dec])))  # only element's ID
+                    solutions.append(simplify(task_id(model[dec])))  # only element's ID
 
             s.pop()
 
-        if len(solutions) == 0:
-            return None
-
-        response = self.__create_response(solutions)
-
-        return response
-
+        return self.__create_response(solutions) if len(solutions) > 0 else None
 
 # elements = parse("../docs/diagrams/hash_correct_I.bpmn")
 # fun = HashFunctionOutput()

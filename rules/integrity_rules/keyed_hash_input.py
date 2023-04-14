@@ -2,7 +2,7 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from elements.flow_object.task import Task
+from elements.flow_object.tasks.task import Task
 from parser.parser import parse
 from rules.rule import IRule
 from results.response import Response
@@ -19,14 +19,14 @@ class KeyedHashFunctionInput:
         mistake = Mistake()
         mistake.source = solutions
         mistake.message = "Task that executes the Keyed Hash Function can have exactly two inputs: " \
-                          "one PotentialEvidence,and one key."
+                          "one PotentialEvidence, and one key."
         return mistake
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()
 
         # The sort, a constructor, and the accessors (task id, data object id)
-        DataObjSort, mkDataObjSort, (first, second) = TupleSort("DataObject", [StringSort(), StringSort()])
+        DataObjSort, mkDataObjSort, (task_id, object_id) = TupleSort("DataObject", [StringSort(), StringSort()])
         solutions = []
 
         for key, value in elements.items():
@@ -60,13 +60,13 @@ class KeyedHashFunctionInput:
 
             # check if task has exactly two input data objects and that they are Keyed HF key and input
             def correct_input(var):
-                return Or(second(var) == second(input_var), (second(var) == second(key_var)))
+                return Or(object_id(var) == object_id(input_var), (object_id(var) == object_id(key_var)))
 
             # compares id from input objects to Keyed Hash Function input object and key object
             def exists(var):
-                return Or([And(first(i) == first(var), second(i) == second(var)) for i in inputs])
+                return Or([And(task_id(i) == task_id(var), object_id(i) == object_id(var)) for i in inputs])
 
-            data_object = Consts('dataObject', DataObjSort)
+            data_object = Const('dataObject', DataObjSort)
 
             s.add(Not(correct_input(data_object)))
             s.add(exists(data_object))
@@ -77,18 +77,13 @@ class KeyedHashFunctionInput:
                 for dec in model.decls():
                     print("%s = %s" % (dec.name(), model[dec]))
                     s.add(dec() != model[dec])  # no duplicates
-                    solutions.append(simplify(first(model[dec])))  # only element's ID
+                    solutions.append(simplify(task_id(model[dec])))  # only element's ID
 
             s.pop()
 
-        if len(solutions) == 0:
-            return None
-
-        response = self.__create_response(solutions)
-
-        return response
+        return self.__create_response(solutions) if len(solutions) > 0 else None
 
 
-elements = parse("../docs/diagrams/keyed_hash_correct_I.bpmn")
+elements = parse("../../docs/diagrams/keyed_hash_correct_I.bpmn")
 fun = KeyedHashFunctionInput()
 fun.evaluate(elements)

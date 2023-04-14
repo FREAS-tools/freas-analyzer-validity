@@ -1,16 +1,16 @@
-from elements.flow_object.event import Event
+from elements.flow_object.events.event import Event
 
 
-class CatchEvent(Event):
+class ThrowEvent(Event):
     def __init__(self, elem_id, name=None, incoming=None, outgoing=None, pe_source=None):
         super().__init__(elem_id, name, incoming, outgoing, pe_source)
 
 
-class StartEvent(CatchEvent):
+class IntermediateThrowEvent(ThrowEvent):
     def __init__(self, elem_id, name=None, incoming=None, outgoing=None, pe_source=None):
         super().__init__(elem_id, name, incoming, outgoing, pe_source)
 
 
-class IntermediateCatchEvent(CatchEvent):
+class EndEvent(ThrowEvent):
     def __init__(self, elem_id, name=None, incoming=None, outgoing=None, pe_source=None):
         super().__init__(elem_id, name, incoming, outgoing, pe_source)
