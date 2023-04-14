@@ -36,7 +36,7 @@
       <semantic:dataOutputAssociation id="DataOutputAssociation_04rsdku">
         <semantic:targetRef>DataObjectReference_17vbc1z</semantic:targetRef>
       </semantic:dataOutputAssociation>
-      <bpmn4frss:keyedHashFunction key="DataObjectReference_0ghna02" />
+      <bpmn4frss:keyedHashFunction key="DataObjectReference_0ghna02" input="DataObjectReference_1v70y1a" output="DataObjectReference_17vbc1z" />
     </semantic:task>
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_12plcah" attachedToRef="Activity_0l2nqgv">
       <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_12plcah" targetRef="DataObjectReference_17vbc1z" />
