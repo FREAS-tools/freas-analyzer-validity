@@ -13,7 +13,7 @@ from elements.flow_object.flow_object import FlowObject
 from elements.flow_object.hash_function import HashFunction
 from elements.evidence_data_relation import EvidenceDataRelation
 from elements.data_reference import DataObjectReference, DataStoreReference
-from elements.data_object import DataObject, PotentialEvidenceType, HashProof
+from elements.data_object import DataObject, PotentialEvidenceType, HashProof, KeyedHashProof
 from elements.flow_object.events.catch_event import StartEvent, IntermediateCatchEvent
 from elements.data_association import DataInputAssociation, DataOutputAssociation
 
@@ -100,8 +100,7 @@ def parse_data_object(elem: ET.Element) -> DataObject:
         if tag == "hash":
             return HashProof(elem.attrib['id'])
         if tag == "keyedHash":
-            proof = HashProof(elem.attrib['id'])
-            proof.keyed = True
+            proof = KeyedHashProof(elem.attrib['id'])
             return proof
 
     return DataObject(elem.attrib['id'])

@@ -19,7 +19,11 @@ class Proof(PotentialEvidenceType):
 class HashProof(Proof):
     def __init__(self, elem_id):
         super().__init__(elem_id)
-        self.keyed: bool = False
+
+
+class KeyedHashProof(Proof):
+    def __init__(self, elem_id):
+        super().__init__(elem_id)
 
 
 class TimestampProof(Proof):
