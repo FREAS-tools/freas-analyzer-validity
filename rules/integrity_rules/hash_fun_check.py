@@ -4,16 +4,15 @@ from parser.parser import parse
 
 from elements.element import Element
 from results.response import Response
-from hash_proof_type import HashProofType
-from rules.integrity_rules.hash_fun_input_type import HashFunctionInputType
+from rules.integrity_rules.hash_fun_input import HashFunctionInput
 from rules.integrity_rules.hash_fun_output import HashFunctionOutput
 
 
-class CorrectHashFunction:
+class HashFunction:
 
     @staticmethod
     def evaluate(elements: Dict[str, Element]) -> List[Response]:
-        rules = [HashFunctionInputType(), HashProofType(), HashFunctionOutput()]
+        rules = [HashFunctionInput(), HashFunctionOutput()]
         responses = []
 
         for rule in rules:
@@ -26,5 +25,5 @@ class CorrectHashFunction:
 
 
 elements = parse("../../docs/diagrams/hash_correct.bpmn")
-fun = CorrectHashFunction()
+fun = HashFunction()
 fun.evaluate(elements)

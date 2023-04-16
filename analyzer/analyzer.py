@@ -2,9 +2,9 @@ from typing import Dict
 
 from elements.element import Element
 from rules.global_rules.flow_check import FlowToItself
-from rules.integrity_rules.hash_fun_check import CorrectHashFunction
-from rules.integrity_rules.hash_fun_pes import HashFunctionPES
-from rules.integrity_rules.keyed_hash_check import CorrectKeyedHashFunction
+from rules.integrity_rules.hash_fun_check import HashFunction
+from rules.global_rules.hash_fun_pes import HashFunctionPES
+from rules.integrity_rules.keyed_hash_check import KeyedHashFunction
 from rules.global_rules.pe_check import MissingPotentialEvidence
 from rules.global_rules.pes_check import PotentialEvidenceExists
 
@@ -37,7 +37,7 @@ class Analyzer:
         if not passed_basic:
             return result
 
-        rule_groups = [CorrectHashFunction(), CorrectKeyedHashFunction()]
+        rule_groups = [HashFunction(), KeyedHashFunction()]
         responses = []
 
         for rule in rule_groups:

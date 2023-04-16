@@ -3,27 +3,28 @@ from zope.interface import implementer
 from typing import Dict, List, Optional
 
 from elements.data_object import DataObject
-from elements.data_reference import DataObjectReference
-from elements.flow_object.tasks.task import Task
 from parser.parser import parse
 from rules.rule import IRule
-from results.response import Response
 from results.mistake import Mistake
 from elements.element import Element
+from results.response import Response
+from results.severity import Severity
+from elements.flow_object.tasks.task import Task
+from elements.data_reference import DataObjectReference
 
 
-# Check if Hash Function has exactly one output (task has one output association),
-# output is Potential Evidence, being a Hash Proof. (Data Object produced from the PES is a Hash Proof)
-# - assumes that task has PES that produces Hash Proof
+# Checks if Keyed Hash Function output has Keyed Hash type.
 @implementer(IRule)
-class HashFunctionOutput:
+class KeyedHashFunOutput:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
         mistake = Mistake()
         mistake.source = solutions
-        mistake.message = "Task that executes the Hash Function must have exactly one output, " \
-                          "Potential Evidence, being a Hash Proof."
+        mistake.severity = Severity.MEDIUM
+        mistake.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
+                          "Potential Evidence, being a Keyed Hash Proof."
+
         return mistake
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
@@ -35,9 +36,9 @@ class HashFunctionOutput:
 
         solutions = []
 
-        # goes through all tasks and checks their output data objects
         for key, elem in elements.items():
-            if not isinstance(elem, Task) or elem.hash_fun is None or elem.pe_source is None:
+            if not isinstance(elem, Task) or elem.hash_fun is None or \
+                    elem.hash_fun.key is None or elem.pe_source is None:
                 continue
 
             s.push()
@@ -66,12 +67,11 @@ class HashFunctionOutput:
             if len(outputs) == 0:
                 outputs = [mkDataObject(StringVal(key), StringVal("None"), StringVal("None"))]
 
-            # if key == 'Activity_0l2nqgv':
-            #     outputs.append(mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("DataObject")))
-            #     # outputs = [mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("DataObject"))]
-            #
-            # else:
-            #     outputs.append(mkDataObject(StringVal('MyTask'), StringVal('bad1'), StringVal("HashProof")))
+            if key == 'Activity_0l2nqgv':
+                outputs.append(mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("HashProof")))
+                # outputs = [mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("DataObject"))]
+            else:
+                outputs.append(mkDataObject(StringVal('MyTask'), StringVal('bad1'), StringVal("HashProof")))
 
             # compare hash function output data object (Hash Proof) id with the provided data object
             # also checks that the output is the same object as output of the hash function
@@ -82,9 +82,9 @@ class HashFunctionOutput:
                            object_type(hash_output) == object_type(data_object))
 
             def correct_type(data_object):
-                return simplify(object_type(data_object)) == 'HashProof'
+                return simplify(object_type(data_object)) == 'KeyedHashProof'
 
-            # compare output objects with the provided data object
+            # compare output object with the provided data object
             def exists(data_object):
                 return Or([And(task_id(o) == task_id(data_object), object_id(o) == object_id(data_object),
                                object_type(o) == object_type(data_object))
@@ -111,6 +111,10 @@ class HashFunctionOutput:
         return self.__create_response(solutions) if len(solutions) > 0 else None
 
 
-elements = parse("../../docs/diagrams/hash_correct.bpmn")
-fun = HashFunctionOutput()
+elements = parse("../../docs/diagrams/keyed_hash_correct.bpmn")
+fun = KeyedHashFunOutput()
+print("first example")
+fun.evaluate(elements)
+print("second example")
+elements = parse("../../docs/diagrams/keyed_hash_correct_I.bpmn")
 fun.evaluate(elements)
