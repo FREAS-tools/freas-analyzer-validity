@@ -5,7 +5,6 @@ from elements.process import Process
 from elements.element import Element
 from elements.data_store import DataStore
 from elements.flow_object.tasks.task import Task
-from elements.association import Association
 from elements.flow.message_flow import MessageFlow
 from elements.flow.sequence_flow import SequenceFlow
 from elements.pe_source import PotentialEvidenceSource
@@ -15,7 +14,7 @@ from elements.evidence_data_relation import EvidenceDataRelation
 from elements.data_reference import DataObjectReference, DataStoreReference
 from elements.data_object import DataObject, PotentialEvidenceType, HashProof, KeyedHashProof
 from elements.flow_object.events.catch_event import StartEvent, IntermediateCatchEvent
-from elements.data_association import DataInputAssociation, DataOutputAssociation
+from elements.association import Association, DataInputAssociation, DataOutputAssociation
 
 from typing import Dict
 

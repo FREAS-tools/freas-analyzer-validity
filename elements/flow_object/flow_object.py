@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from elements.element import Element
 from elements.pe_source import PotentialEvidenceSource
-from elements.data_association import DataOutputAssociation, DataInputAssociation
+from elements.association import DataOutputAssociation, DataInputAssociation
 
 
 class FlowObject(Element):
