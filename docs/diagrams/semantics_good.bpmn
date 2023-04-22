@@ -17,7 +17,7 @@
     <semantic:sequenceFlow id="Flow_0bkewrz" sourceRef="Event_0smww9y" targetRef="Activity_1fkt2zf" />
     <semantic:sequenceFlow id="Flow_1n8auzz" sourceRef="Activity_1fkt2zf" targetRef="Event_170yh4q" />
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1oqydbh" attachedToRef="Activity_1fkt2zf">
-      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1oqydbh" targetRef="DataObjectReference_1ronoye" />
+      <bpmn4frss:producesAssociation id="Association_4aBcD7f" sourceRef="PotentialEvidenceSource_1oqydbh" targetRef="DataObjectReference_1ronoye" />
     </bpmn4frss:potentialEvidenceSource>
     <semantic:dataObjectReference id="DataObjectReference_1ronoye" name="Log" dataObjectRef="DataObject_00vdk9x" />
     <semantic:dataObject id="DataObject_00vdk9x">

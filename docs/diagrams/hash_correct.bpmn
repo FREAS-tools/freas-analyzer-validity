@@ -22,7 +22,7 @@
       </semantic:dataOutputAssociation>
     </semantic:task>
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_0emvnzw" attachedToRef="Activity_1vhdcq6">
-      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_0emvnzw" targetRef="DataObjectReference_1v70y1a" />
+      <bpmn4frss:producesAssociation id="Association_7g9XjK4" sourceRef="PotentialEvidenceSource_0emvnzw" targetRef="DataObjectReference_1v70y1a" />
     </bpmn4frss:potentialEvidenceSource>
     <semantic:task id="Activity_0l2nqgv" name="B">
       <semantic:incoming>Flow_0baolmu</semantic:incoming>
@@ -38,7 +38,7 @@
       <bpmn4frss:hashFunction input="DataObjectReference_1v70y1a" output="DataObjectReference_17vbc1z" />
     </semantic:task>
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_12plcah" attachedToRef="Activity_0l2nqgv">
-      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_12plcah" targetRef="DataObjectReference_17vbc1z" />
+      <bpmn4frss:producesAssociation id="Association_4aBcD7f" sourceRef="PotentialEvidenceSource_12plcah" targetRef="DataObjectReference_17vbc1z" />
     </bpmn4frss:potentialEvidenceSource>
     <semantic:startEvent id="Event_1wup3lu">
       <semantic:outgoing>Flow_0ulcff6</semantic:outgoing>

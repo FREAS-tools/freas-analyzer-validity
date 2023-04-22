@@ -121,10 +121,10 @@
       <bpmn4frss:potentialEvidenceType />
     </semantic:dataObject>
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1y5z4b0" attachedToRef="Activity_19xl907">
-      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1y5z4b0" targetRef="DataObjectReference_0uc1m22" />
+      <bpmn4frss:producesAssociation id="Association_7g9XjK4" sourceRef="PotentialEvidenceSource_1y5z4b0" targetRef="DataObjectReference_0uc1m22" />
     </bpmn4frss:potentialEvidenceSource>
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1c0cd92" attachedToRef="Event_1i2umgm">
-      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1c0cd92" targetRef="DataObjectReference_0fmtnkf" />
+      <bpmn4frss:producesAssociation id="Association_4aBcD7f" sourceRef="PotentialEvidenceSource_1c0cd92" targetRef="DataObjectReference_0fmtnkf" />
     </bpmn4frss:potentialEvidenceSource>
   </semantic:process>
   <bpmndi:BPMNDiagram id="Trisotech.Visio-_6" name="Untitled Diagram" documentation="" resolution="96.00000267028808">

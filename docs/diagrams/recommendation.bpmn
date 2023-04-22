@@ -23,7 +23,7 @@
     </semantic:endEvent>
     <semantic:sequenceFlow id="Flow_1s2vkd3" sourceRef="Activity_1capgzc" targetRef="Event_0fkz5kz" />
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1k4fys9" attachedToRef="OrderReceivedEvent">
-      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1k4fys9" targetRef="DataObjectReference_0imz72w" />
+      <bpmn4frss:producesAssociation id="Association_7g9XjK4" sourceRef="PotentialEvidenceSource_1k4fys9" targetRef="DataObjectReference_0imz72w" />
     </bpmn4frss:potentialEvidenceSource>
     <semantic:dataObjectReference id="DataObjectReference_0imz72w" name="Server Request Log" dataObjectRef="DataObject_0aacclc" />
     <semantic:dataObject id="DataObject_0aacclc">
@@ -53,7 +53,7 @@
       <semantic:incoming>Flow_0s240ai</semantic:incoming>
     </semantic:endEvent>
     <bpmn4frss:potentialEvidenceSource id="PotentialEvidenceSource_1p0n1e7" attachedToRef="Activity_5capgzo">
-      <bpmn4frss:producesAssociation sourceRef="PotentialEvidenceSource_1p0n1e7" targetRef="DataObjectReference_1oaappe" />
+      <bpmn4frss:producesAssociation id="Association_4aBcD7f" sourceRef="PotentialEvidenceSource_1p0n1e7" targetRef="DataObjectReference_1oaappe" />
     </bpmn4frss:potentialEvidenceSource>
     <semantic:dataObjectReference id="DataObjectReference_1oaappe" name="Client Request Log" dataObjectRef="DataObject_1dvjcrp" />
     <semantic:dataObject id="DataObject_1dvjcrp">
