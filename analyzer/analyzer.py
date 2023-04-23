@@ -1,6 +1,7 @@
 from typing import Dict
 
 from elements.element import Element
+from results.response import Response
 from rules.global_rules.flow_check import FlowToItself
 from rules.integrity_rules.hash_fun_check import HashFunction
 from rules.global_rules.hash_fun_pes import HashFunctionPES
@@ -22,6 +23,7 @@ class Analyzer:
         basic_rules = [MissingPotentialEvidence(), FlowToItself(), PotentialEvidenceExists(), HashFunctionPES()]
         passed_basic = True
 
+        # GLOBAL RULES
         for rule in basic_rules:
             response = rule.evaluate(elements)
 
@@ -37,16 +39,22 @@ class Analyzer:
         if not passed_basic:
             return result
 
+        # INTEGRITY RULES
         rule_groups = [HashFunction(), KeyedHashFunction()]
         responses = []
 
         for rule in rule_groups:
             responses += rule.evaluate(elements)
 
+        # EVIDENCE QUALITY ANALYSIS
+        # TODO
+
         for response in responses:
             if isinstance(response, Mistake):
                 result.mistakes.append(response)
             elif isinstance(response, Recommendation):
                 result.recommendations.append(response)
+            elif isinstance(response, Response):
+                result.evidence_stores.append(response)
 
         return result

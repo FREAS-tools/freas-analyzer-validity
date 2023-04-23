@@ -123,7 +123,7 @@ def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
         tag = get_tag(child)
         attr = child.attrib
         if tag == "producesAssociation":
-            association = Association(attr['sourceRef'], attr['targetRef'])
+            association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
             break
 
     pes = PotentialEvidenceSource(elem.attrib['id'],
