@@ -1,6 +1,7 @@
 from z3 import *
 
 from elements.data_object import DataObject
+from elements.evidence_data_relation import EvidenceDataRelation
 from elements.flow.message_flow import MessageFlow
 from elements.flow.sequence_flow import SequenceFlow
 from parser.parser import parse
@@ -31,12 +32,17 @@ class CompromisedFlowObject:
         data_objects = []
 
         for input_assoc in flow_obj.data_input:
-            data_object_ref = input_assoc.source_ref
+            data_object_ref = input_assoc.source_ref  # reference
             data_obj_id = elements[data_object_ref].data
-
-            assert isinstance(elements[data_obj_id], DataObject)
-
+            # add data object that is a direct input to the flow object
             data_objects.append(StringVal(data_obj_id))
+
+            # add also all data objects that have outgoing evidence relation to that data object
+            for elem in elements.values():
+                if isinstance(elem, EvidenceDataRelation) and elem.target_ref == data_object_ref:
+                    source_ref = elem.source_ref
+                    data_obj_id = elements[source_ref].data
+                    data_objects.append(StringVal(data_obj_id))
 
         return data_objects
 
@@ -82,7 +88,7 @@ class CompromisedFlowObject:
 
         return data_stores
 
-    def evaluate(self, elements: Dict[str, Element], flow_obj_id: str, data_object_id: Optional[str] = None):
+    def evaluate(self, elements: Dict[str, Element], flow_obj_id: str) -> Optional[Response]:
         s = Solver()
 
         flow_obj: FlowObject = elements[flow_obj_id]
@@ -151,9 +157,11 @@ class CompromisedFlowObject:
         if len(liability) == 0:
             return None
 
-        return liability
+        # print(liability)
+
+        return self.__create_response(liability) if len(liability) > 0 else None
 
 
 # elements = parse("../../docs/diagrams/disputable_stored_in_same_context.bpmn")
 # kls = CompromisedFlowObject()
-# sol = kls.evaluate(elements, "Activity_1c3i9ew")
+# sol = kls.evaluate(elements, "Activity_1ueekhj")
