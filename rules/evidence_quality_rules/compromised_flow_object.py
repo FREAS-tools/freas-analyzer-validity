@@ -19,30 +19,30 @@ from elements.element import Element
 @implementer(IRule)
 class CompromisedFlowObject:
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_response(solutions: List[str], flow_object) -> Response:
         response = Response()
         response.source = solutions
         response.message = "Data Stores that contain potential evidence relevant in " \
-                           "case that the marked flow object is compromised."
+                           "case that the flow object \"" + flow_object + "\" is compromised."
 
         return response
 
     @staticmethod
     def __get_data_objects(elements: Dict[str, Element], flow_obj: FlowObject):
-        data_objects = []
+        data_objects = set()
 
         for input_assoc in flow_obj.data_input:
             data_object_ref = input_assoc.source_ref  # reference
             data_obj_id = elements[data_object_ref].data
             # add data object that is a direct input to the flow object
-            data_objects.append(StringVal(data_obj_id))
+            data_objects.add(StringVal(data_obj_id))
 
             # add also all data objects that have outgoing evidence relation to that data object
             for elem in elements.values():
                 if isinstance(elem, EvidenceDataRelation) and elem.target_ref == data_object_ref:
                     source_ref = elem.source_ref
                     data_obj_id = elements[source_ref].data
-                    data_objects.append(StringVal(data_obj_id))
+                    data_objects.add(StringVal(data_obj_id))
 
         return data_objects
 
@@ -159,9 +159,9 @@ class CompromisedFlowObject:
 
         # print(liability)
 
-        return self.__create_response(liability) if len(liability) > 0 else None
+        return self.__create_response(liability, flow_obj.name) if len(liability) > 0 else None
 
 
-# elements = parse("../../docs/diagrams/disputable_stored_in_same_context.bpmn")
+# elements = parse("../../docs/diagrams/disputable_stored_in_same_store.bpmn")
 # kls = CompromisedFlowObject()
 # sol = kls.evaluate(elements, "Activity_1ueekhj")
