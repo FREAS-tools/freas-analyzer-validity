@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from elements.flow_object.tasks.task import Task
 from rules.rule import IRule
 from results.response import Response
-from results.mistake import Mistake
+from results.error import BPMN4FRSSError
 from elements.element import Element
 
 
@@ -15,11 +15,11 @@ class HashFunctionPES:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        mistake = Mistake()
-        mistake.source = solutions
-        mistake.message = "Tasks that execute (Keyed) Hash function must have Potential Evidence Source label"
+        error = BPMN4FRSSError()
+        error.source = solutions
+        error.message = "Tasks that execute (Keyed) Hash function must have Potential Evidence Source label"
 
-        return mistake
+        return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()

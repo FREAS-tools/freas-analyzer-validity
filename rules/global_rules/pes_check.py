@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 from rules.rule import IRule
 from results.response import Response
-from results.recommendation import Recommendation
+from results.warning import BPMN4FRSSWarning
 from elements.pool import Pool
 from elements.element import Element
 from elements.flow.message_flow import MessageFlow
@@ -21,12 +21,12 @@ class PotentialEvidenceExists:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        recommendation = Recommendation()
-        recommendation.source = solutions
-        recommendation.message = "Flow Objects that are source or target of Message Flow " \
+        warning = BPMN4FRSSWarning()
+        warning.source = solutions
+        warning.message = "Flow Objects that are source or target of Message Flow " \
                                  "should have Potential Evidence Source label"
 
-        return recommendation
+        return warning
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()

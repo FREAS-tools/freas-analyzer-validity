@@ -8,7 +8,7 @@ from elements.flow_object.tasks.task import Task
 from elements.flow_object.events.event import Event
 from elements.element import Element
 
-from results.mistake import Mistake
+from results.error import BPMN4FRSSError
 from results.response import Response
 from results.severity import Severity
 
@@ -20,12 +20,12 @@ class FlowToItself:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        mistake = Mistake()
-        mistake.source = solutions
-        mistake.severity = Severity.LOW
-        mistake.message = "Flow Object cannot contain Flow to itself"
+        error = BPMN4FRSSError()
+        error.source = solutions
+        error.severity = Severity.LOW
+        error.message = "Flow Object cannot contain Flow to itself"
 
-        return mistake
+        return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()

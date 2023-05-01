@@ -3,7 +3,7 @@ from zope.interface import implementer
 from typing import Dict, Optional, List
 
 from rules.rule import IRule
-from results.mistake import Mistake
+from results.error import BPMN4FRSSError
 from elements.element import Element
 from results.response import Response
 from results.severity import Severity
@@ -18,12 +18,12 @@ class MissingPotentialEvidence:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        mistake = Mistake()
-        mistake.source = solutions
-        mistake.severity = Severity.HIGH
-        mistake.message = "Data Object with Potential Evidence Type is not created from Potential Evidence Source"
+        error = BPMN4FRSSError()
+        error.source = solutions
+        error.severity = Severity.HIGH
+        error.message = "Data Object with Potential Evidence Type is not created from Potential Evidence Source"
 
-        return mistake
+        return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()

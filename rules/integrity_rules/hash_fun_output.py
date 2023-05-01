@@ -8,7 +8,7 @@ from elements.flow_object.tasks.task import Task
 from parser.parser import parse
 from rules.rule import IRule
 from results.response import Response
-from results.mistake import Mistake
+from results.error import BPMN4FRSSError
 from elements.element import Element
 
 
@@ -20,11 +20,11 @@ class HashFunctionOutput:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        mistake = Mistake()
-        mistake.source = solutions
-        mistake.message = "Task that executes the Hash Function must have exactly one output, " \
+        error = BPMN4FRSSError()
+        error.source = solutions
+        error.message = "Task that executes the Hash Function must have exactly one output, " \
                           "Potential Evidence, being a Hash Proof."
-        return mistake
+        return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()
@@ -103,7 +103,7 @@ class HashFunctionOutput:
             # no need for while loop since we need the task not particular data objects
             if s.check() == sat:
                 model = s.model()
-                print(model)
+                # print(model)
                 solutions.append(simplify(task_id(model[x])))  # only element's ID
 
             s.pop()
@@ -111,6 +111,6 @@ class HashFunctionOutput:
         return self.__create_response(solutions) if len(solutions) > 0 else None
 
 
-elements = parse("../../docs/diagrams/hash_correct.bpmn")
-fun = HashFunctionOutput()
-fun.evaluate(elements)
+# elements = parse("../../docs/diagrams/hash_correct.bpmn")
+# fun = HashFunctionOutput()
+# fun.evaluate(elements)

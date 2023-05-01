@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from elements.data_object import DataObject
 from parser.parser import parse
 from rules.rule import IRule
-from results.mistake import Mistake
+from results.error import BPMN4FRSSError
 from elements.element import Element
 from results.response import Response
 from results.severity import Severity
@@ -19,13 +19,13 @@ class KeyedHashFunOutput:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        mistake = Mistake()
-        mistake.source = solutions
-        mistake.severity = Severity.MEDIUM
-        mistake.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
-                          "Potential Evidence, being a Keyed Hash Proof."
+        error = BPMN4FRSSError()
+        error.source = solutions
+        error.severity = Severity.MEDIUM
+        error.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
+                        "Potential Evidence, being a Keyed Hash Proof."
 
-        return mistake
+        return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()

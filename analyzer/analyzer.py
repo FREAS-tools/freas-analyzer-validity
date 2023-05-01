@@ -10,8 +10,8 @@ from rules.global_rules.pe_check import MissingPotentialEvidence
 from rules.global_rules.pes_check import PotentialEvidenceExists
 
 from results.result import Result
-from results.mistake import Mistake
-from results.recommendation import Recommendation
+from results.error import BPMN4FRSSError
+from results.warning import BPMN4FRSSWarning
 
 
 class Analyzer:
@@ -31,10 +31,10 @@ class Analyzer:
                 continue
 
             passed_basic = False
-            if isinstance(response, Mistake):
-                result.mistakes.append(response)
-            elif isinstance(response, Recommendation):
-                result.recommendations.append(response)
+            if isinstance(response, BPMN4FRSSError):
+                result.errors.append(response)
+            elif isinstance(response, BPMN4FRSSWarning):
+                result.warnings.append(response)
 
         if not passed_basic:
             return result
@@ -50,10 +50,10 @@ class Analyzer:
         # TODO
 
         for response in responses:
-            if isinstance(response, Mistake):
-                result.mistakes.append(response)
-            elif isinstance(response, Recommendation):
-                result.recommendations.append(response)
+            if isinstance(response, BPMN4FRSSError):
+                result.errors.append(response)
+            elif isinstance(response, BPMN4FRSSWarning):
+                result.warnings.append(response)
             elif isinstance(response, Response):
                 result.evidence_stores.append(response)
 
