@@ -1,9 +1,6 @@
 from z3 import *
 
-from elements.data_object import DataObject
-from elements.data_reference import DataStoreReference, DataObjectReference
-from elements.evidence_data_relation import EvidenceDataRelation
-from parser.parser import parse
+from elements.data_reference import DataStoreReference
 
 from zope.interface import implementer
 from typing import Dict, List, Optional
@@ -12,6 +9,8 @@ from results.response import BPMN4FRSSResponse
 from rules.rule import IRule
 from elements.data_store import DataStore
 from elements.element import Element
+
+from rules.utils.disputable import get_disputable_data_objects
 
 
 @implementer(IRule)
@@ -25,35 +24,6 @@ class CompromisedDataStore:
 
         return response
 
-    @staticmethod
-    def __get_data_objects(elements: Dict[str, Element], data_store: DataStore):
-        data_objects = set()  # data object that could have been altered
-
-        for p_evidence in data_store.stored_pe:
-            data_objects.add(StringVal(p_evidence))
-
-            p_evidence_ref: Optional[str] = None
-            for elem in elements.values():
-                if isinstance(elem, DataObjectReference) and elem.data == p_evidence:
-                    p_evidence_ref = elem.id
-                    break
-
-            assert p_evidence_ref is not None
-
-            # add also all data objects that have outgoing evidence relation to that data object
-            for elem in elements.values():
-                if isinstance(elem, EvidenceDataRelation):
-                    if elem.source_ref == p_evidence_ref:
-                        target_ref = elem.target_ref
-                        data_obj_id = elements[target_ref].data
-                        data_objects.add(StringVal(data_obj_id))
-                    elif elem.target_ref == p_evidence_ref:
-                        source_ref = elem.source_ref
-                        data_obj_id = elements[source_ref].data
-                        data_objects.add(StringVal(data_obj_id))
-
-        return data_objects
-
     def evaluate(self, elements: Dict[str, Element], data_store_ref: str) -> Optional[BPMN4FRSSResponse]:
         s = Solver()
 
@@ -65,7 +35,7 @@ class CompromisedDataStore:
             TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort()])
 
         # Data Objects that could be stored somewhere with unaltered information
-        data_objects = self.__get_data_objects(elements, data_store)  # problem with duplicates
+        data_objects = get_disputable_data_objects(elements, data_store)  # problem with duplicates
 
         data_stores = []  # slow
         for obj_id, obj in elements.items():

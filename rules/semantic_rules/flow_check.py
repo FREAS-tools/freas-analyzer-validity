@@ -9,7 +9,7 @@ from elements.flow_object.events.event import Event
 from elements.element import Element
 
 from results.error import BPMN4FRSSError
-from results.response import Response
+from results.response import BPMN4FRSSResponse as Response
 from results.severity import Severity
 
 
