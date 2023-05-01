@@ -4,9 +4,9 @@ from typing import Dict, List, Optional
 
 from elements.flow_object.tasks.task import Task
 from rules.rule import IRule
-from results.response import Response
 from results.error import BPMN4FRSSError
 from elements.element import Element
+from results.response import BPMN4FRSSResponse as Response
 
 
 # Check if every Task that executes (Keyed) Hash function has PES label

@@ -3,8 +3,8 @@ from typing import Dict, List
 from rules.semantic_rules.keyed_hash_input import KeyedHashFunInput
 from rules.semantic_rules.keyed_hash_output import KeyedHashFunOutput
 from elements.element import Element
-from results.response import Response
 from parser.parser import parse
+from results.response import BPMN4FRSSResponse as Response
 
 
 class KeyedHashFunction:

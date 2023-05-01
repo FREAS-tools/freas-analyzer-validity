@@ -1,7 +1,8 @@
 from typing import Dict
 
 from elements.element import Element
-from results.response import Response
+from results.response import BPMN4FRSSResponse as Response
+
 from rules.semantic_rules.flow_check import FlowToItself
 from rules.semantic_rules.hash_fun_check import HashFunction
 from rules.semantic_rules.hash_fun_pes import HashFunctionPES
@@ -55,6 +56,6 @@ class Analyzer:
             elif isinstance(response, BPMN4FRSSWarning):
                 result.warnings.append(response)
             elif isinstance(response, Response):
-                result.evidence_stores.append(response)
+                result.evidence_sources.append(response)
 
         return result

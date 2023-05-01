@@ -3,7 +3,7 @@ from typing import Dict, List
 from parser.parser import parse
 
 from elements.element import Element
-from results.response import Response
+from results.response import BPMN4FRSSResponse as Response
 from rules.semantic_rules.hash_fun_input import HashFunctionInput
 from rules.semantic_rules.hash_fun_output import HashFunctionOutput
 

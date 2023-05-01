@@ -7,9 +7,9 @@ from elements.data_reference import DataObjectReference
 from elements.flow_object.tasks.task import Task
 from parser.parser import parse
 from rules.rule import IRule
-from results.response import Response
 from results.error import BPMN4FRSSError
 from elements.element import Element
+from results.response import BPMN4FRSSResponse as Response
 
 
 # Check if Hash Function has exactly one output (task has one output association),

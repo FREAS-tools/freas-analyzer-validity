@@ -9,18 +9,18 @@ from parser.parser import parse
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from results.response import Response
 from rules.rule import IRule
 from elements.data_store import DataStore
 from elements.flow_object.flow_object import FlowObject
 from elements.element import Element
+from results.response import BPMN4FRSSResponse
 
 
 @implementer(IRule)
 class CompromisedFlowObject:
     @staticmethod
-    def __create_response(solutions: List[str], flow_object) -> Response:
-        response = Response()
+    def __create_response(solutions: List[str], flow_object) -> BPMN4FRSSResponse:
+        response = BPMN4FRSSResponse()
         response.source = solutions
         response.message = "Data Stores that contain potential evidence relevant in " \
                            "case that the flow object \"" + flow_object + "\" is compromised."
@@ -88,7 +88,7 @@ class CompromisedFlowObject:
 
         return data_stores
 
-    def evaluate(self, elements: Dict[str, Element], flow_obj_id: str) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element], flow_obj_id: str) -> Optional[BPMN4FRSSResponse]:
         s = Solver()
 
         flow_obj: FlowObject = elements[flow_obj_id]

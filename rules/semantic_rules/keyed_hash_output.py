@@ -7,10 +7,10 @@ from parser.parser import parse
 from rules.rule import IRule
 from results.error import BPMN4FRSSError
 from elements.element import Element
-from results.response import Response
 from results.severity import Severity
 from elements.flow_object.tasks.task import Task
 from elements.data_reference import DataObjectReference
+from results.response import BPMN4FRSSResponse as Response
 
 
 # Checks if Keyed Hash Function output has Keyed Hash type.

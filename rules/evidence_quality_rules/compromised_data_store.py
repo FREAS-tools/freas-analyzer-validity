@@ -8,18 +8,17 @@ from parser.parser import parse
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from results.response import Response
+from results.response import BPMN4FRSSResponse
 from rules.rule import IRule
 from elements.data_store import DataStore
-from elements.flow_object.flow_object import FlowObject
 from elements.element import Element
 
 
 @implementer(IRule)
 class CompromisedDataStore:
     @staticmethod
-    def __create_response(solutions: List[str], data_store) -> Response:
-        response = Response()
+    def __create_response(solutions: List[str], data_store) -> BPMN4FRSSResponse:
+        response = BPMN4FRSSResponse()
         response.source = solutions
         response.message = "Data Stores that contain potential evidence relevant in " \
                            "case that the data store \"" + data_store + "\" is compromised."
@@ -55,7 +54,7 @@ class CompromisedDataStore:
 
         return data_objects
 
-    def evaluate(self, elements: Dict[str, Element], data_store_ref: str) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element], data_store_ref: str) -> Optional[BPMN4FRSSResponse]:
         s = Solver()
 
         data_store_ref_obj: DataStoreReference = elements[data_store_ref]
@@ -122,6 +121,6 @@ class CompromisedDataStore:
         return self.__create_response(liability, data_store_ref_obj.name) if len(liability) > 0 else None
 
 
-# elements = parse("../../docs/diagrams/disputable_stored_in_same_store.bpmn")
+# elements = parse("../../docs/diagrams/disputable_stored_in_same_context_test_1.bpmn")
 # kls = CompromisedDataStore()
-# sol = kls.evaluate(elements, "DataStoreReference_1qqlqq2")
+# sol = kls.evaluate(elements, "DataStoreReference_mydatas_1")
