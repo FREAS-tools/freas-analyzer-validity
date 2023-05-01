@@ -24,7 +24,7 @@ class PotentialEvidenceExists:
         warning = BPMN4FRSSWarning()
         warning.source = solutions
         warning.message = "Flow Objects that are source or target of Message Flow " \
-                                 "should have Potential Evidence Source label"
+                          "should have Potential Evidence Source label"
 
         return warning
 
@@ -51,7 +51,8 @@ class PotentialEvidenceExists:
             return simplify(has_pes(source))
 
         def exists(flow_obj):
-            return Or([And(flow_obj_id(flow_obj) == flow_obj_id(obj), has_pes(flow_obj) == has_pes(obj)) for obj in flow_objs])
+            return Or([And(flow_obj_id(flow_obj) == flow_obj_id(obj), has_pes(flow_obj) == has_pes(obj)) for obj in
+                       flow_objs])
 
         x = Const('x', FlowObject)
         s.add(Not(has_pe_source(x)))
@@ -64,7 +65,7 @@ class PotentialEvidenceExists:
 
             for dec in model.decls():
                 # print("%s = %s" % (dec.name(), model[dec]))
-                s.add(dec() != model[dec])                      # no duplicates
-                solutions.append(simplify(flow_obj_id(model[dec])))   # only element's ID
+                s.add(dec() != model[dec])  # no duplicates
+                solutions.append(simplify(flow_obj_id(model[dec])))  # only element's ID
 
         return self.__create_response(solutions) if len(solutions) > 0 else None

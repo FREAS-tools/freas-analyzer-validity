@@ -1,18 +1,19 @@
 from typing import Dict, List
 
-from rules.integrity_rules.keyed_hash_input import KeyedHashFunInput
-from rules.integrity_rules.keyed_hash_output import KeyedHashFunOutput
-from elements.element import Element
-from results.response import Response
 from parser.parser import parse
 
+from elements.element import Element
+from results.response import Response
+from rules.semantic_rules.hash_fun_input import HashFunctionInput
+from rules.semantic_rules.hash_fun_output import HashFunctionOutput
 
-class KeyedHashFunction:
+
+class HashFunction:
 
     @staticmethod
     def evaluate(elements: Dict[str, Element]) -> List[Response]:
-        rules = []
-        responses = [KeyedHashFunInput(), KeyedHashFunOutput()]
+        rules = [HashFunctionInput(), HashFunctionOutput()]
+        responses = []
 
         for rule in rules:
             response = rule.evaluate(elements)
@@ -23,6 +24,6 @@ class KeyedHashFunction:
         return responses
 
 
-elements = parse("../../docs/diagrams/keyed_hash_correct.bpmn")
-fun = KeyedHashFunction()
+elements = parse("../../docs/diagrams/hash_correct.bpmn")
+fun = HashFunction()
 fun.evaluate(elements)
