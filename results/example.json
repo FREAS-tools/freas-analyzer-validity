@@ -1,0 +1,36 @@
+{
+  "errors": [
+    {
+      "source": [
+        "PotentialEvidenceSource_1oqydbh"
+      ],
+      "message": "Data Object with Potential Evidence Type is not created from Potential Evidence Source",
+      "severity": "HIGH"
+    },
+    {
+      "source": [
+        "Activity_0l2nqgv"
+      ],
+      "message": "Task that executes the Hash Function must have exactly one output, being a Hash Proof.",
+      "severity": "MEDIUM"
+    }
+  ],
+  "warnings": [
+    {
+      "source": [
+        "Activity_1ueekhj",
+        "Activity_1nh0ige",
+        "Event_0872n2x"
+      ],
+      "message": "Flow Objects that are source or target of Message Flow should have Potential Evidence Source label"
+    }
+  ],
+  "evidence_sources": {
+      "source": [
+        "DataStore_mydatas",
+        "DataStore_mydatas1",
+        "DataStore_1qqlqq2"
+      ],
+      "message": "Returned Data Stores contain potential evidence relevant in case of \"Send parking permit\" compromise."
+    }
+}
