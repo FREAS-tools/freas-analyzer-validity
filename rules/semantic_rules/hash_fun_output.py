@@ -6,6 +6,7 @@ from elements.data_object import DataObject
 from elements.data_reference import DataObjectReference
 from elements.flow_object.tasks.task import Task
 from parser.parser import parse
+from results.severity import Severity
 from rules.rule import IRule
 from results.error import BPMN4FRSSError
 from elements.element import Element
@@ -22,6 +23,7 @@ class HashFunctionOutput:
     def __create_response(solutions: List[str]) -> Response:
         error = BPMN4FRSSError()
         error.source = solutions
+        error.severity = Severity.MEDIUM
         error.message = "Task that executes the Hash Function must have exactly one output, " \
                           "Potential Evidence, being a Hash Proof."
         return error

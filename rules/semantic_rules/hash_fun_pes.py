@@ -3,6 +3,7 @@ from zope.interface import implementer
 from typing import Dict, List, Optional
 
 from elements.flow_object.tasks.task import Task
+from results.severity import Severity
 from rules.rule import IRule
 from results.error import BPMN4FRSSError
 from elements.element import Element
@@ -17,6 +18,7 @@ class HashFunctionPES:
     def __create_response(solutions: List[str]) -> Response:
         error = BPMN4FRSSError()
         error.source = solutions
+        error.severity = Severity.MEDIUM
         error.message = "Tasks that execute (Keyed) Hash function must have Potential Evidence Source label"
 
         return error
