@@ -12,7 +12,8 @@ from elements.flow_object.flow_object import FlowObject
 from elements.flow_object.hash_function import HashFunction
 from elements.evidence_data_relation import EvidenceDataRelation
 from elements.data_reference import DataObjectReference, DataStoreReference
-from elements.data_object import DataObject, PotentialEvidenceType, HashProof, KeyedHashProof
+from elements.data_object import DataObject, PotentialEvidenceType
+from elements.proof import HashProof, KeyedHashProof
 from elements.flow_object.events.catch_event import StartEvent, IntermediateCatchEvent
 from elements.association import Association, DataInputAssociation, DataOutputAssociation
 
@@ -91,18 +92,18 @@ def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
     return obj
 
 
-def parse_data_object(elem: ET.Element) -> DataObject:
+def parse_data_object(elem: ET.Element, process_id: str) -> DataObject:
     for child in elem:
         tag = get_tag(child)
         if tag == "potentialEvidenceType":
-            return PotentialEvidenceType(elem.attrib['id'])
+            return PotentialEvidenceType(elem.attrib['id'], process_id)
         if tag == "hash":
-            return HashProof(elem.attrib['id'])
+            return HashProof(elem.attrib['id'], process_id)
         if tag == "keyedHash":
-            proof = KeyedHashProof(elem.attrib['id'])
+            proof = KeyedHashProof(elem.attrib['id'], process_id)
             return proof
 
-    return DataObject(elem.attrib['id'])
+    return DataObject(elem.attrib['id'], process_id)
 
 
 def parse_data_store(elem: ET.Element) -> DataStore:
@@ -149,12 +150,12 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
         new_elem = None
 
         match tag:
-            case "startEvent":
-                event = StartEvent(attr['id'])
-                new_elem = parse_flow_object(child, event)
             case "task":
                 task = Task(attr['id'])
                 new_elem = parse_flow_object(child, task)
+            case "startEvent":
+                event = StartEvent(attr['id'])
+                new_elem = parse_flow_object(child, event)
             case "endEvent":
                 event = StartEvent(attr['id'])
                 new_elem = parse_flow_object(child, event)
@@ -171,7 +172,7 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
                 new_elem = DataStoreReference(attr['id'],
                                               attr['dataStoreRef'], attr.get('name'))
             case "dataObject":
-                new_elem = parse_data_object(child)
+                new_elem = parse_data_object(child, process.id)
             case "dataStore":
                 new_elem = parse_data_store(child)
             case "potentialEvidenceSource":

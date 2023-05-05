@@ -1,31 +1,14 @@
+from typing import Optional
+
 from elements.artefact import Artefact
 
 
 class DataObject(Artefact):
-    def __init__(self, elem_id):
-        super().__init__(elem_id)
+    def __init__(self, elem_id: str, process_id: str, name: Optional[str] = None):
+        super().__init__(elem_id, name)
+        self.process_id = process_id
 
 
 class PotentialEvidenceType(DataObject):
-    def __init__(self, elem_id):
-        super().__init__(elem_id)
-
-
-class Proof(PotentialEvidenceType):
-    def __init__(self, elem_id):
-        super().__init__(elem_id)
-
-
-class HashProof(Proof):
-    def __init__(self, elem_id):
-        super().__init__(elem_id)
-
-
-class KeyedHashProof(Proof):
-    def __init__(self, elem_id):
-        super().__init__(elem_id)
-
-
-class TimestampProof(Proof):
-    def __init__(self, elem_id):
-        super().__init__(elem_id)
+    def __init__(self, elem_id: str, process_id: str, name: Optional[str] = None):
+        super().__init__(elem_id, process_id, name)
