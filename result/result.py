@@ -1,9 +1,9 @@
 from json import JSONEncoder
 from typing import List, Optional
 
-from results.error import BPMN4FRSSError
-from results.warning import BPMN4FRSSWarning
-from results.response import BPMN4FRSSResponse
+from result.error import BPMN4FRSSError
+from result.warning import BPMN4FRSSWarning
+from result.response import BPMN4FRSSResponse
 
 
 class Result:

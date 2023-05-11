@@ -1,7 +1,7 @@
 from typing import Optional, List
 
-from results.response import BPMN4FRSSResponse
-from results.severity import Severity
+from result.response import BPMN4FRSSResponse
+from result.severity import Severity
 
 
 class BPMN4FRSSError(BPMN4FRSSResponse):

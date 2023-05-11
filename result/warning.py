@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from results.response import BPMN4FRSSResponse
+from result.response import BPMN4FRSSResponse
 
 
 class BPMN4FRSSWarning(BPMN4FRSSResponse):
