@@ -1,21 +1,22 @@
 import xml.etree.ElementTree as ET
 
-from elements.pool import Pool
-from elements.process import Process
+from elements.container.pool import Pool
+from elements.container.process import Process
 from elements.element import Element
-from elements.data_store import DataStore
-from elements.flow_object.tasks.task import Task
+from elements.artefact.data_store.data_store import DataStore
+from elements.flow_object.gateway.gateway import ExclusiveGateway, Gateway
+from elements.flow_object.task.task import Task
 from elements.flow.message_flow import MessageFlow
 from elements.flow.sequence_flow import SequenceFlow
-from elements.pe_source import PotentialEvidenceSource
+from elements.pot_evidence_source import PotentialEvidenceSource
 from elements.flow_object.flow_object import FlowObject
 from elements.flow_object.hash_function import HashFunction
-from elements.evidence_data_relation import EvidenceDataRelation
-from elements.data_reference import DataObjectReference, DataStoreReference
-from elements.data_object import DataObject, PotentialEvidenceType
-from elements.proof import HashProof, KeyedHashProof
-from elements.flow_object.events.catch_event import StartEvent, IntermediateCatchEvent
-from elements.association import Association, DataInputAssociation, DataOutputAssociation
+from elements.artefact.data_object.evidence_data_relation import EvidenceDataRelation
+from elements.artefact.data_reference import DataObjectReference, DataStoreReference
+from elements.artefact.data_object.data_object import DataObject, PotentialEvidenceType
+from elements.artefact.data_object.proof import HashProof, KeyedHashProof
+from elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
+from elements.flow_object.task.association import Association, DataInputAssociation, DataOutputAssociation
 
 from typing import Dict
 
@@ -72,9 +73,15 @@ def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
 
         match tag:
             case "incoming":
-                obj.incoming = child.text
+                if isinstance(obj, Gateway):
+                    obj.incoming.append(child.text)
+                else:
+                    obj.incoming = child.text
             case "outgoing":
-                obj.outgoing = child.text
+                if isinstance(obj, Gateway):
+                    obj.outgoing.append(child.text)
+                else:
+                    obj.outgoing = child.text
             case "dataOutputAssociation":
                 _, target = get_source_target_ref(child)
                 association = DataOutputAssociation(child.attrib['id'], obj.id, target)
@@ -178,6 +185,9 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
             case "potentialEvidenceSource":
                 new_elem = parse_pe_source(child)
                 add_pe_source(new_elem, elements)
+            case "exclusiveGateway":
+                gateway = ExclusiveGateway(attr['id'])
+                new_elem = parse_flow_object(child, gateway)
 
         if new_elem is not None:
             key = new_elem.id
@@ -200,7 +210,7 @@ def parse(filename: str) -> Dict[str, Element]:
     return elements
 
 
-# elems = parse("../docs/diagrams/disputable_stored_in_same_context.bpmn")
+# elems = parse("../documentation/diagrams/disputable_stored_in_same_context.bpmn")
 # for k, v in elems.items():
 #     print(k, "   ", v.name)
 
