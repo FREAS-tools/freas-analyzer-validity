@@ -6,7 +6,7 @@ from rules.rule import IRule
 from results.error import BPMN4FRSSError
 from elements.element import Element
 from results.severity import Severity
-from elements.pe_source import PotentialEvidenceSource
+from elements.pot_evidence_source import PotentialEvidenceSource
 from results.response import BPMN4FRSSResponse as Response
 
 

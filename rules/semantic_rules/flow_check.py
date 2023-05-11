@@ -4,8 +4,8 @@ from typing import Dict, List, Optional
 
 from rules.rule import IRule
 from elements.flow.flow import Flow
-from elements.flow_object.tasks.task import Task
-from elements.flow_object.events.event import Event
+from elements.flow_object.task.task import Task
+from elements.flow_object.event.event import Event
 from elements.element import Element
 
 from results.error import BPMN4FRSSError

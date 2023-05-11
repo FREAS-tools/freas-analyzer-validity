@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from rules.rule import IRule
 from results.response import BPMN4FRSSResponse as Response
 from results.warning import BPMN4FRSSWarning
-from elements.pool import Pool
+from elements.container.pool import Pool
 from elements.element import Element
 from elements.flow.message_flow import MessageFlow
 

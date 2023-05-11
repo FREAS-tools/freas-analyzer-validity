@@ -1,6 +1,6 @@
 from typing import Optional
 
-from elements.association import Association
+from elements.flow_object.task.association import Association
 from elements.element import Element
 
 

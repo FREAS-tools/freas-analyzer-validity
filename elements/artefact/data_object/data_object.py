@@ -1,6 +1,6 @@
 from typing import Optional
 
-from elements.artefact import Artefact
+from elements.artefact.artefact import Artefact
 
 
 class DataObject(Artefact):
