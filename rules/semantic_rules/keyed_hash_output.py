@@ -2,15 +2,14 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from elements.data_object import DataObject
-from parser.parser import parse
+from elements.artefact.data_object.data_object import DataObject
 from rules.rule import IRule
-from results.error import BPMN4FRSSError
+from response.error import Error
 from elements.element import Element
-from results.severity import Severity
-from elements.flow_object.tasks.task import Task
-from elements.data_reference import DataObjectReference
-from results.response import BPMN4FRSSResponse as Response
+from response.severity import Severity
+from elements.flow_object.task.task import Task
+from elements.artefact.data_reference import DataObjectReference
+from response.response import Response
 
 
 # Checks if Keyed Hash Function output has Keyed Hash type.
@@ -19,7 +18,7 @@ class KeyedHashFunOutput:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        error = BPMN4FRSSError()
+        error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
         error.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
@@ -111,10 +110,10 @@ class KeyedHashFunOutput:
         return self.__create_response(solutions) if len(solutions) > 0 else None
 
 
-elements = parse("../../docs/diagrams/keyed_hash_correct.bpmn")
-fun = KeyedHashFunOutput()
-print("first example")
-fun.evaluate(elements)
-print("second example")
-elements = parse("../../docs/diagrams/keyed_hash_correct_I.bpmn")
-fun.evaluate(elements)
+# elements = parse("../../documentation/diagrams/keyed_hash_correct.bpmn")
+# fun = KeyedHashFunOutput()
+# print("first example")
+# fun.evaluate(elements)
+# print("second example")
+# elements = parse("../../documentation/diagrams/keyed_hash_correct_I.bpmn")
+# fun.evaluate(elements)

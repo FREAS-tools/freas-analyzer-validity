@@ -3,8 +3,8 @@ from zope.interface import implementer
 from typing import Dict, List, Optional
 
 from rules.rule import IRule
-from results.response import BPMN4FRSSResponse as Response
-from results.warning import BPMN4FRSSWarning
+from response.response import Response
+from response.warning import Warning
 from elements.container.pool import Pool
 from elements.element import Element
 from elements.flow.message_flow import MessageFlow
@@ -21,7 +21,7 @@ class PotentialEvidenceExists:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        warning = BPMN4FRSSWarning()
+        warning = Warning()
         warning.source = solutions
         warning.message = "Flow Objects that are source or target of Message Flow " \
                           "should have Potential Evidence Source label"

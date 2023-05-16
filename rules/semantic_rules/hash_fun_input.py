@@ -2,15 +2,14 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from elements.data_object import DataObject
-from parser.parser import parse
+from elements.artefact.data_object.data_object import DataObject
 from rules.rule import IRule
-from results.error import BPMN4FRSSError
+from response.error import Error
 from elements.element import Element
-from results.severity import Severity
-from elements.flow_object.tasks.task import Task
-from elements.data_reference import DataObjectReference
-from results.response import BPMN4FRSSResponse as Response
+from response.severity import Severity
+from elements.flow_object.task.task import Task
+from elements.artefact.data_reference import DataObjectReference
+from response.response import Response
 
 
 # Check if Hash Function has input of Potential Evidence Type
@@ -20,7 +19,7 @@ class HashFunctionInput:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        error = BPMN4FRSSError()
+        error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
         error.message = "Task that executes the Hash Function must have exactly one input, " \
@@ -37,13 +36,14 @@ class HashFunctionInput:
 
         solutions = []
 
-        # goes through all tasks and checks their output data objects
+        # goes through all task and checks their output data objects
         for key, elem in elements.items():
-            if not isinstance(elem, Task) or elem.hash_fun is None:
+            if not isinstance(elem, Task) or elem.hash_fun is None or elem.hash_fun.key is not None:
                 continue
 
             s.push()
 
+            # fix
             data_ref: str = elem.hash_fun.input
             ref_obj: Optional[DataObjectReference] = elements.get(data_ref)
             data_obj: Optional[DataObject] = elements.get(ref_obj.data)
@@ -110,9 +110,9 @@ class HashFunctionInput:
 
 # fun = HashFunctionInput()
 # print('1. ')
-# elements = parse("../../docs/diagrams/hash_correct.bpmn")
+# elements = parse("../../documentation/diagrams/hash_correct.bpmn")
 # fun.evaluate(elements)
 # print('2. ')
-# elements = parse("../../docs/diagrams/keyed_hash_correct.bpmn")
+# elements = parse("../../documentation/diagrams/keyed_hash_correct.bpmn")
 # fun.evaluate(elements)
 

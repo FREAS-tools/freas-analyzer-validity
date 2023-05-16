@@ -2,12 +2,12 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from elements.flow_object.tasks.task import Task
-from results.severity import Severity
+from elements.flow_object.task.task import Task
+from response.severity import Severity
 from rules.rule import IRule
-from results.error import BPMN4FRSSError
+from response.error import Error
 from elements.element import Element
-from results.response import BPMN4FRSSResponse as Response
+from response.response import Response
 
 
 # Check if every Task that executes (Keyed) Hash function has PES label
@@ -16,7 +16,7 @@ class HashFunctionPES:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        error = BPMN4FRSSError()
+        error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
         error.message = "Tasks that execute (Keyed) Hash function must have Potential Evidence Source label"

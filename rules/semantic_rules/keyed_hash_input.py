@@ -1,13 +1,12 @@
 from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
-from elements.flow_object.tasks.task import Task
-from parser.parser import parse
-from results.severity import Severity
+from elements.flow_object.task.task import Task
+from response.severity import Severity
 from rules.rule import IRule
-from results.error import BPMN4FRSSError
+from response.error import Error
 from elements.element import Element
-from results.response import BPMN4FRSSResponse as Response
+from response.response import Response
 
 
 # Check if Keyed Hash Function has exactly two inputs: one PotentialEvidence, and one key.
@@ -19,7 +18,7 @@ class KeyedHashFunInput:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        error = BPMN4FRSSError()
+        error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
         error.message = "Task that executes the Keyed Hash Function must have exactly two inputs, " \
@@ -38,7 +37,6 @@ class KeyedHashFunInput:
             # check if element is a task, and if it has a hash function
             if not isinstance(elem, Task) or elem.hash_fun is None or elem.hash_fun.key is None:
                 continue
-            print("first for loop ", key)
 
             s.push()
 
@@ -101,6 +99,6 @@ class KeyedHashFunInput:
         return self.__create_response(solutions) if len(solutions) > 0 else None
 
 
-# elements = parse("../../docs/diagrams/keyed_hash_correct.bpmn")
+# elements = parse("../../documentation/diagrams/keyed_hash_correct.bpmn")
 # fun = KeyedHashFunInput()
 # fun.evaluate(elements)

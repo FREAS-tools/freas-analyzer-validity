@@ -3,8 +3,7 @@ from typing import Dict, List
 from rules.semantic_rules.keyed_hash_input import KeyedHashFunInput
 from rules.semantic_rules.keyed_hash_output import KeyedHashFunOutput
 from elements.element import Element
-from parser.parser import parse
-from results.response import BPMN4FRSSResponse as Response
+from response.response import Response
 
 
 class KeyedHashFunction:
@@ -16,13 +15,13 @@ class KeyedHashFunction:
 
         for rule in rules:
             response = rule.evaluate(elements)
-            print(response)
+            # print(response)
             if response is not None:
                 responses.append(response)
 
         return responses
 
 
-elements = parse("../../docs/diagrams/keyed_hash_correct.bpmn")
-fun = KeyedHashFunction()
-fun.evaluate(elements)
+# elements = parse("../../documentation/diagrams/keyed_hash_correct.bpmn")
+# fun = KeyedHashFunction()
+# fun.evaluate(elements)

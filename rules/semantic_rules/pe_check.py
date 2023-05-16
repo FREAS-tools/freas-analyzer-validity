@@ -3,11 +3,11 @@ from zope.interface import implementer
 from typing import Dict, Optional, List
 
 from rules.rule import IRule
-from results.error import BPMN4FRSSError
+from response.error import Error
 from elements.element import Element
-from results.severity import Severity
+from response.severity import Severity
 from elements.pot_evidence_source import PotentialEvidenceSource
-from results.response import BPMN4FRSSResponse as Response
+from response.response import Response
 
 
 # Check if potential evidence is missing based on existence of pes
@@ -18,7 +18,7 @@ class MissingPotentialEvidence:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        error = BPMN4FRSSError()
+        error = Error()
         error.source = solutions
         error.severity = Severity.HIGH
         error.message = "Data Object with Potential Evidence Type is not created from Potential Evidence Source"

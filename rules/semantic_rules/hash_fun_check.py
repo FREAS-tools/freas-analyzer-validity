@@ -1,9 +1,7 @@
 from typing import Dict, List
 
-from parser.parser import parse
-
 from elements.element import Element
-from results.response import BPMN4FRSSResponse as Response
+from response.response import Response
 from rules.semantic_rules.hash_fun_input import HashFunctionInput
 from rules.semantic_rules.hash_fun_output import HashFunctionOutput
 
@@ -17,13 +15,13 @@ class HashFunction:
 
         for rule in rules:
             response = rule.evaluate(elements)
-            print(response)
+            # print(response)
             if response is not None:
                 responses.append(response)
 
         return responses
 
 
-elements = parse("../../docs/diagrams/hash_correct.bpmn")
-fun = HashFunction()
-fun.evaluate(elements)
+# elements = parse("../../documentation/diagrams/hash_correct.bpmn")
+# fun = HashFunction()
+# fun.evaluate(elements)

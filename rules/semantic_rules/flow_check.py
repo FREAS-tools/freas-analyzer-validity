@@ -8,9 +8,9 @@ from elements.flow_object.task.task import Task
 from elements.flow_object.event.event import Event
 from elements.element import Element
 
-from results.error import BPMN4FRSSError
-from results.response import BPMN4FRSSResponse as Response
-from results.severity import Severity
+from response.error import Error
+from response.response import Response
+from response.severity import Severity
 
 
 # Check if there is a flow from task to itself
@@ -20,7 +20,7 @@ class FlowToItself:
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
-        error = BPMN4FRSSError()
+        error = Error()
         error.source = solutions
         error.severity = Severity.LOW
         error.message = "Flow Object cannot contain Flow to itself"
