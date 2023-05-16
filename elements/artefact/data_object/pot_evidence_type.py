@@ -1,20 +1,19 @@
 from typing import Optional
 
-from elements.artefact.artefact import Artefact
+from elements.artefact.data_object.data_object import DataObject
 
 
-class DataObject(Artefact):
+class PotentialEvidenceType(DataObject):
     """
-    Represents a BPMN4FRSS Data Object.
+    Represents a BPMN4FRSS Potential Evidence Type.
     """
     def __init__(self, elem_id: str, process_id: str, name: Optional[str] = None):
         """
-        Constructor for DataObject class.
+        Constructor for PotentialEvidenceType class.
 
         Parameters:
             elem_id (str): Element id
             process_id (str): Process id in which the Data Object is created
             name (Optional[str]): Element name
         """
-        super().__init__(elem_id, name)
-        self.process_id = process_id
+        super().__init__(elem_id, process_id, name)
