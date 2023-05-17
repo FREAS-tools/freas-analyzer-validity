@@ -8,13 +8,15 @@ from response.error import Error
 from elements.element import Element
 from response.response import Response
 
-
-# Check if Keyed Hash Function has exactly two inputs: one PotentialEvidence, and one key.
 from rules.utils.semantic import add_mock_inputs
 
 
 @implementer(IRule)
 class KeyedHashFunInput:
+    """
+    Rule: Keyed Hash Function Input
+    Description: This rule checks if Keyed Hash Function receives a Potential Evidence Type and a key as an input.
+    """
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
@@ -27,14 +29,14 @@ class KeyedHashFunInput:
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         # The sort, a constructor, and the accessors (task id, data object id, data object name, data object type)
-        DataObjectSort, mkDataObject, (task_id, object_id, object_name, object_type) = \
+        data_object_sort, mk_data_object, (task_id, object_id, object_name, object_type) = \
             TupleSort("DataObject", [StringSort(), StringSort(), StringSort(), StringSort()])
 
         s = Solver()
         solutions = []
 
         for key, elem in elements.items():
-            # check if element is a task, and if it has a hash function
+            # Check if element is a task, and if it has a hash function
             if not isinstance(elem, Task) or elem.hash_fun is None or elem.hash_fun.key is None:
                 continue
 
@@ -49,12 +51,12 @@ class KeyedHashFunInput:
 
                 assert data_obj is not None
 
-                inputs.append(mkDataObject(StringVal(key), StringVal(data_obj.id),
-                                           StringVal(data_ref.name), StringVal(type(data_obj).__name__)))
+                inputs.append(mk_data_object(StringVal(key), StringVal(data_obj.id),
+                                             StringVal(data_ref.name), StringVal(type(data_obj).__name__)))
 
             inputs = []
             if 0 <= len(inputs) < 2:
-                inputs += add_mock_inputs(key, len(inputs), mkDataObject)
+                inputs += add_mock_inputs(key, len(inputs), mk_data_object)
 
             def two_inputs():
                 return len(inputs) == 2
@@ -74,8 +76,8 @@ class KeyedHashFunInput:
                                object_name(i) == object_name(data_object), object_type(i) == object_type(data_object))
                            for i in inputs])
 
-            input_one = Const('input_one', DataObjectSort)
-            input_two = Const('input_two', DataObjectSort)
+            input_one = Const('input_one', data_object_sort)
+            input_two = Const('input_two', data_object_sort)
 
             correct_types = Or(And(correct_data_type(input_one), correct_key_type(input_two)),
                                And(correct_data_type(input_two), correct_key_type(input_one)))
@@ -88,17 +90,10 @@ class KeyedHashFunInput:
                 model = s.model()
 
                 for dec in model.decls():
-                    print("%s = %s" % (dec.name(), model[dec]))
                     s.add(dec() != model[dec])  # no duplicates
-                    solutions.append(simplify(task_id(model[dec])))  # only element's ID
+                    solutions.append(str(simplify(task_id(model[dec]))).strip('"'))  # only element's ID
                     break
 
-            # print(solutions)
             s.pop()
 
         return self.__create_response(solutions) if len(solutions) > 0 else None
-
-
-# elements = parse("../../documentation/diagrams/keyed_hash_correct.bpmn")
-# fun = KeyedHashFunInput()
-# fun.evaluate(elements)

@@ -10,9 +10,12 @@ from elements.element import Element
 from response.response import Response
 
 
-# Check if every Task that executes (Keyed) Hash function has PES label
 @implementer(IRule)
 class HashFunctionPES:
+    """
+    Rule: Hash Function and Potential Evidence Source
+    Description: This rule checks if every Task that executes (Keyed) Hash function has Potential Evidence Source label.
+    """
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
@@ -24,34 +27,35 @@ class HashFunctionPES:
         return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
-        s = Solver()
+        # Define Z3 tuple representing a task with its ID and whether it has a PE source
+        task_sort, mk_task, (first, second) = TupleSort("Task", [StringSort(), BoolSort()])
 
-        TaskSort, mkTaskSort, (first, second) = TupleSort("Task", [StringSort(), BoolSort()])
+        z3_tasks = []
 
-        tasks = []
-
+        # Collect all tasks that have hash_fun
         for key, value in elements.items():
             if isinstance(value, Task) and value.hash_fun is not None:
-                tasks.append(mkTaskSort(StringVal(key), value.pe_source is not None))
+                z3_tasks.append(mk_task(StringVal(key), value.pe_source is not None))
 
         def has_pe_source(task):
             return simplify(second(task))
 
         def exists(obj):
-            return Or([And(first(task) == first(obj), second(task) == second(obj)) for task in tasks])
+            return Or([obj == task for task in z3_tasks])
 
-        x = Const('x', TaskSort)
-        s.add(Not(has_pe_source(x)))
-        s.add(exists(x))
+        s = Solver()
+        z3_task = Const('z3_task', task_sort)
+
+        # Constraints
+        s.add(Not(has_pe_source(z3_task)))
+        s.add(exists(z3_task))
 
         solutions = []
         while s.check() == sat:
             model = s.model()
-            # print(model)
 
             for dec in model.decls():
-                # print("%s = %s" % (dec.name(), model[dec]))
-                s.add(dec() != model[dec])                      # no duplicates
-                solutions.append(simplify(first(model[dec])))   # only element's ID
+                s.add(dec() != model[dec])                                      # no duplicates
+                solutions.append(str(simplify(first(model[dec]))).strip('"'))   # only element's ID
 
         return self.__create_response(solutions) if len(solutions) > 0 else None

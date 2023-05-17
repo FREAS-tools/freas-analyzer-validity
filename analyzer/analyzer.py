@@ -3,18 +3,19 @@ from typing import Dict, List
 from elements.artefact.data_reference import DataStoreReference
 from elements.element import Element
 from elements.flow_object.flow_object import FlowObject
+from input.analysis_types import AnalysisType
 from input.input import Input
 from response.response import Response
 from rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
 from rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
-from rules.semantic_hints.keyed_hash_key import ReusedKeyedHashKey
+from rules.semantic_hints.reused_key import ReusedKey
 from rules.semantic_hints.same_evidence_store import SameEvidenceStore
 
 from rules.semantic_rules.hash_fun_check import HashFunction
 from rules.semantic_rules.hash_fun_pes import HashFunctionPES
 from rules.semantic_rules.keyed_hash_check import KeyedHashFunction
-from rules.semantic_rules.pe_check import MissingPotentialEvidence
-from rules.semantic_hints.pes_check import PotentialEvidenceExists
+from rules.semantic_rules.missing_pot_evidence import MissingPotentialEvidence
+from rules.semantic_hints.missing_pes import MissingPES
 
 from result.result import Result
 from response.error import Error
@@ -44,17 +45,13 @@ class Analyzer:
         result = Result()
 
         match params.analysis_type:
-            case "SEMANTIC_RULES":
-                print("SEMANTIC_RULES")
+            case AnalysisType.SEMANTIC_RULES:
                 responses = Analyzer.__analyze_semantic_rules(elements)
-            case "SEMANTIC_HINTS":
-                print("SEMANTIC_HINTS")
+            case AnalysisType.SEMANTIC_HINTS:
                 responses = Analyzer.__analyze_semantic_hints(elements)
-            case "EVIDENCE_QUALITY_ANALYSIS":
-                print("EVIDENCE_QUALITY_ANALYSIS")
+            case AnalysisType.EVIDENCE_QUALITY_ANALYSIS:
                 responses = Analyzer.__analyze_evidence_quality_rules(elements, params.element_id)
             case _:
-                print("SEMANTIC_ALL")
                 responses = Analyzer.__analyze_semantic_all(elements)
 
         for response in responses:
@@ -89,7 +86,8 @@ class Analyzer:
                 passed_base = False
                 responses.append(response)
 
-        if not passed_base:  # if base rules are not passed, stop the analysis
+        # if base rules are not passed, stop the analysis
+        if not passed_base:
             return responses
 
         # INTEGRITY RULES
@@ -111,7 +109,7 @@ class Analyzer:
         Returns:
             List[Response]: List of responses, containing the Warning objects.
         """
-        semantic_hints_rules = [PotentialEvidenceExists(), ReusedKeyedHashKey(), SameEvidenceStore()]
+        semantic_hints_rules = [MissingPES(), ReusedKey(), SameEvidenceStore()]
         responses = []
 
         for rule in semantic_hints_rules:

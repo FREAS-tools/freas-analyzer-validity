@@ -25,12 +25,10 @@ def get_flow_data_objects(elements: Dict[str, Element], flow_obj: Activity) -> T
         data_object_ref = output_assoc.target_ref  # reference
         if not isinstance(elements[data_object_ref], DataObjectReference):
             continue
+
         ref_name = elements[data_object_ref].name
-        # add data object that is an output to the flow object
         altered_data_objects.add(StringVal(ref_name))
 
-        # add also all data objects that have outgoing evidence relation to that data object
-        # similar to get_potential_evidence
         for elem in elements.values():
             if isinstance(elem, EvidenceDataRelation) and elem.target_ref == data_object_ref:
                 source_ref = elem.source_ref
@@ -42,15 +40,11 @@ def get_flow_data_objects(elements: Dict[str, Element], flow_obj: Activity) -> T
 
 def get_sequence_flow_targets(elements: Dict[str, Element], flow_object: FlowObject) -> List[FlowObject]:
     flow_ids = []
-    # print(flow_object.id + " " + flow_object.name)
     if isinstance(flow_object, Activity) and flow_object.outgoing is not None:
         flow_ids = [flow_object.outgoing]
-        # print("flo")
     elif isinstance(flow_object, Gateway):
         flow_ids = flow_object.outgoing
-    # flow_ids = [flow_object.outgoing] if isinstance(flow_object, Activity) else flow_object.outgoing
 
-    # print(flow_ids)
     targets = []
     for flow_id in flow_ids:
         flow: SequenceFlow = elements[flow_id]

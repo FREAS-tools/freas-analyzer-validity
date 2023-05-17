@@ -7,7 +7,7 @@ class Warning(Response):
     """
     Represents a rule response in case of Semantic Hints analysis.
     """
-    def __init__(self, message: str = "", source: Optional[List[str]] = None,):
+    def __init__(self, message: str = "", source: Optional[List[str]] = None):
         """
         Constructor for Warning class.
 

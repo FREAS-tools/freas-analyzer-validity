@@ -17,7 +17,7 @@ from parser.parser import parse
 def test_parse():
     # Test the parse function
     try:
-        elements = parse("../../../documentation/diagrams/recommendation.bpmn")
+        elements = parse("../../../documentation/diagrams/missing_evidence_source.bpmn")
         assert isinstance(elements, dict)
         # Add assertions for the expected elements of the parsing process
         assert len(elements) == 27

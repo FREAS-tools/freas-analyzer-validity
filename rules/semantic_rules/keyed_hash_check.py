@@ -20,8 +20,3 @@ class KeyedHashFunction:
                 responses.append(response)
 
         return responses
-
-
-# elements = parse("../../documentation/diagrams/keyed_hash_correct.bpmn")
-# fun = KeyedHashFunction()
-# fun.evaluate(elements)

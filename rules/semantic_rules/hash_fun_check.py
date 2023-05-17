@@ -15,13 +15,7 @@ class HashFunction:
 
         for rule in rules:
             response = rule.evaluate(elements)
-            # print(response)
             if response is not None:
                 responses.append(response)
 
         return responses
-
-
-# elements = parse("../../documentation/diagrams/hash_correct.bpmn")
-# fun = HashFunction()
-# fun.evaluate(elements)

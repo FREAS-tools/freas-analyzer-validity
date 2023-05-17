@@ -1,0 +1,22 @@
+[
+  {
+    "bpmn4frss_model": "documentation/diagrams/disputable_stored_in_same_store.bpmn",
+    "analysis_type": "EVIDENCE_QUALITY_ANALYSIS",
+    "element_id": "Activity_19xl907"
+  },
+  {
+    "bpmn4frss_model": "documentation/diagrams/missing_potential_evidence.bpmn",
+    "analysis_type": "SEMANTIC_RULES",
+    "element_id": null
+  },
+  {
+    "bpmn4frss_model": "documentation/diagrams/keyed_hash_reused.bpmn",
+    "analysis_type": "SEMANTIC_HINTS",
+    "element_id": null
+  },
+  {
+    "bpmn4frss_model": "documentation/diagrams/disputable_stored_in_same_context.bpmn",
+    "analysis_type": "SEMANTIC_ALL",
+    "element_id": null
+  }
+]

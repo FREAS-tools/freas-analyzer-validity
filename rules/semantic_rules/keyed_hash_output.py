@@ -12,9 +12,12 @@ from elements.artefact.data_reference import DataObjectReference
 from response.response import Response
 
 
-# Checks if Keyed Hash Function output has Keyed Hash type.
 @implementer(IRule)
 class KeyedHashFunOutput:
+    """
+    Rule: Keyed Hash Function Output
+    Description: This rule checks if Keyed Hash Function has exactly one output, being a Keyed Hash Proof.
+    """
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
@@ -30,7 +33,7 @@ class KeyedHashFunOutput:
         s = Solver()
 
         # The sort, a constructor, and the accessors (task id, data object id, data object type)
-        DataObjectSort, mkDataObject, (task_id, object_id, object_type) = \
+        data_object_sort, mk_data_object, (task_id, object_id, object_type) = \
             TupleSort("DataObject", [StringSort(), StringSort(), StringSort()])
 
         solutions = []
@@ -48,7 +51,7 @@ class KeyedHashFunOutput:
 
             assert data_obj is not None
 
-            hash_output = mkDataObject(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__))
+            hash_output = mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__))
 
             # data needed to check that task contains only one output
             outputs = []  # contains all output data objects from the current task
@@ -60,17 +63,11 @@ class KeyedHashFunOutput:
 
                 assert data_obj is not None
 
-                outputs.append(mkDataObject(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__)))
+                outputs.append(mk_data_object(StringVal(key),
+                                              StringVal(data_obj.id), StringVal(type(data_obj).__name__)))
 
-            # outputs = []
             if len(outputs) == 0:
-                outputs = [mkDataObject(StringVal(key), StringVal("None"), StringVal("None"))]
-
-            if key == 'Activity_0l2nqgv':
-                outputs.append(mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("HashProof")))
-                # outputs = [mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("DataObject"))]
-            else:
-                outputs.append(mkDataObject(StringVal('MyTask'), StringVal('bad1'), StringVal("HashProof")))
+                outputs = [mk_data_object(StringVal(key), StringVal("None"), StringVal("None"))]
 
             # compare hash function output data object (Hash Proof) id with the provided data object
             # also checks that the output is the same object as output of the hash function
@@ -83,37 +80,26 @@ class KeyedHashFunOutput:
             def correct_type(data_object):
                 return simplify(object_type(data_object)) == 'KeyedHashProof'
 
-            # compare output object with the provided data object
+            # Compare output object with the provided data object
             def exists(data_object):
                 return Or([And(task_id(o) == task_id(data_object), object_id(o) == object_id(data_object),
                                object_type(o) == object_type(data_object))
                            for o in outputs])
 
-            x = Const('x', DataObjectSort)
+            z3_data_object = Const('z3_data_object', data_object_sort)
 
-            # data object different from function output exists => multiple data outputs
+            # Data object different from function output exists => multiple data outputs
             # or data object has different type then Hash Proof
-            s.add(Or(Not(single_output(x)), Not(correct_type(x))))
-            # s.add(Not(single_output(x)))
+            s.add(Or(Not(single_output(z3_data_object)), Not(correct_type(z3_data_object))))
 
-            # data object is contained in task output objects
-            s.add(exists(x))
+            # Data object is contained in task output objects
+            s.add(exists(z3_data_object))
 
-            # no need for while loop since we need the task not particular data objects
             if s.check() == sat:
                 model = s.model()
                 print(model)
-                solutions.append(simplify(task_id(model[x])))  # only element's ID
+                solutions.append(str(simplify(task_id(model[z3_data_object]))).strip('"'))  # only element's ID
 
             s.pop()
 
         return self.__create_response(solutions) if len(solutions) > 0 else None
-
-
-# elements = parse("../../documentation/diagrams/keyed_hash_correct.bpmn")
-# fun = KeyedHashFunOutput()
-# print("first example")
-# fun.evaluate(elements)
-# print("second example")
-# elements = parse("../../documentation/diagrams/keyed_hash_correct_I.bpmn")
-# fun.evaluate(elements)

@@ -21,9 +21,6 @@ def add_mock_inputs(task_id, count, constructor): # add cur and wanted num
     return mock_inputs
 
 
-# def add_mock_outputs(task_id, count, constructor):
-
-
 def get_participant(elements: Dict[str, Element], process_id) -> str:
     for elem in elements.values():
         if isinstance(elem, Pool) and elem.process_ref == process_id:

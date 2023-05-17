@@ -52,7 +52,10 @@
     <dataObject id="DataObject_0b84vcg" />
     <dataObjectReference id="DataObjectReference_0r1xu5p" name="Parking service credential" dataObjectRef="DataObject_0ws7na4" />
     <dataObject id="DataObject_0ws7na4" />
-    <dataStoreReference id="DataStoreReference_0d7totn" name="AV Parking service credential storage" />
+    <dataStoreReference id="DataStoreReference_0d7totn" name="AV Parking service credential storage"  dataStoreRef="DataStore_03ub5ip"/>
+    <dataStore id="DataStore_03ub5ip" >
+      <storedPotentialEvidence evidenceTypeRef="DataObject_0ws7na4" />
+    </dataStore>
     <sequenceFlow id="Flow_1bkq7o0" sourceRef="StartEvent_1" targetRef="Activity_0vqb0h1" />
     <sequenceFlow id="Flow_0vlzbv3" sourceRef="Activity_0vqb0h1" targetRef="Event_0e8vxiy" />
     <sequenceFlow id="Flow_0tg8p0q" sourceRef="Event_0e8vxiy" targetRef="Activity_15t262y" />
@@ -103,7 +106,10 @@
     <dataObject id="DataObject_0hrcqay" />
     <dataObjectReference id="DataObjectReference_1g4vc2z" name="Parking service credential" dataObjectRef="DataObject_1fqzgel" />
     <dataObject id="DataObject_1fqzgel" />
-    <dataStoreReference id="DataStoreReference_006t496" name="PSP Parking service credential storage" />
+    <dataStoreReference id="DataStoreReference_006t496" name="PSP Parking service credential storage" dataStoreRef="DataStore_02ub8ip" />
+    <dataStore id="DataStore_02ub8ip" >
+      <storedPotentialEvidence evidenceTypeRef="DataObject_1fqzgel" />
+    </dataStore>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0spvpap">

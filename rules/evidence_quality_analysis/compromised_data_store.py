@@ -26,16 +26,12 @@ class CompromisedDataStore:
         response = Response()
         response.source = solutions
 
-        if len(solutions) == 0:
-            response.message = "No Data Stores contain potential evidence relevant in " \
-                               "case of \"" + data_store + "\" compromise."
-
         response.message = "Returned Data Stores contain potential evidence relevant in " \
-                           "case of \"" + data_store + "\" compromise."
+                           "case that " + data_store + " is compromised."
 
         return response
 
-    def evaluate(self, elements: Dict[str, Element], data_store_ref: str) -> Response:
+    def evaluate(self, elements: Dict[str, Element], data_store_ref: str) -> Optional[Response]:
 
         data_store_ref_obj: Optional[DataStoreReference] = elements.get(data_store_ref)
         if data_store_ref_obj is None:
@@ -46,7 +42,7 @@ class CompromisedDataStore:
 
         # Define the Z3 tuple sort representing data store, containing the following fields:
         # data store ID, array of stored potential evidence and their number
-        DataStoreSort, mkDataStoreSort, (store_id, stored_pe, pe_number) = \
+        data_store_sort, mk_data_store, (store_id, stored_pe, pe_number) = \
             TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort()])
 
         # Get a list of data object that could indicate data store compromise
@@ -55,16 +51,15 @@ class CompromisedDataStore:
         max_pe_number = get_max_number_of_pe(elements)
 
         # Create a list of all data stores present in the model
-        z3_data_stores = get_model_data_stores(elements, mkDataStoreSort)
+        z3_data_stores = get_model_data_stores(elements, mk_data_store)
 
-        # CONSTRAINTS
+        # Check if the data store exists in the model
         def exists(data_str):
             return Or(
-                [And(store_id(data_str) == store_id(store), stored_pe(data_str) == stored_pe(store),
-                     pe_number(data_str) == pe_number(store)) for store in z3_data_stores]
+                [data_str == store for store in z3_data_stores]
             )
 
-        # check if at least one data object is stored in the data store
+        # Check if at least one data object is stored in the data store
         def contains_relevant_evidence(data_str):
             constraint = []
             for data_obj in z3_data_objects:
@@ -74,14 +69,14 @@ class CompromisedDataStore:
 
         # Set up the Z3 solver and add the constraints
         s = Solver()
-        data_store = Consts('data_store', DataStoreSort)
+        data_store = Consts('data_store', data_store_sort)
 
         s.add(exists(data_store))                                # limit to data stores from the model
         s.add(contains_relevant_evidence(data_store))            # check if data store contains relevant evidence
         s.add(store_id(data_store) != StringVal(data_store_id))  # exclude marked data store
         s.add(pe_number(data_store) != 0)                        # exclude empty data stores
 
-        # MODEL
+        # Model generation
         solution = []
         while s.check() == sat:
             model = s.model()
@@ -95,12 +90,6 @@ class CompromisedDataStore:
                 # Add a constraint that excludes the current solution from the next iteration
                 s.add(store_id(dec()) != store_id(model[dec]))
                 # Add the ID of the found data store to the list
-                solution.append(simplify(store_id(model[dec])))
+                solution.append(str(simplify(store_id(model[dec]))).strip('"'))
 
-        # print(solution)
-        return self.__create_response(solution, data_store_ref_obj.name)
-
-
-# elements = parse("../../tests/diagrams/disputable_stored_in_same_context_test_1.bpmn")
-# kls = CompromisedDataStore()
-# sol = kls.evaluate(elements, "DataStoreReference_mydatas_1")
+        return self.__create_response(solution, data_store_ref_obj.name) if len(solution) > 0 else None

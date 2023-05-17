@@ -12,11 +12,12 @@ from elements.element import Element
 from response.response import Response
 
 
-# Check if Hash Function has exactly one output (task has one output association),
-# output is Potential Evidence, being a Hash Proof. (Data Object produced from the PES is a Hash Proof)
-# - assumes that task has PES that produces Hash Proof
 @implementer(IRule)
 class HashFunctionOutput:
+    """
+    Rule: Hash Function Output
+    Description: This rule checks if Hash Function has exactly one output, being a Hash Proof.
+    """
 
     @staticmethod
     def __create_response(solutions: List[str]) -> Response:
@@ -24,19 +25,19 @@ class HashFunctionOutput:
         error.source = solutions
         error.severity = Severity.MEDIUM
         error.message = "Task that executes the Hash Function must have exactly one output, " \
-                          "Potential Evidence, being a Hash Proof."
+                        "Potential Evidence, being a Hash Proof."
         return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
         s = Solver()
 
         # The sort, a constructor, and the accessors (task id, data object id, data object type)
-        DataObjectSort, mkDataObject, (task_id, object_id, object_type) = \
+        data_object_sort, mk_data_object, (task_id, object_id, object_type) = \
             TupleSort("DataObject", [StringSort(), StringSort(), StringSort()])
 
         solutions = []
 
-        # goes through all task and checks their output data objects
+        # Goes through all tasks and checks their output data objects
         for key, elem in elements.items():
             if not isinstance(elem, Task) or elem.hash_fun is None or elem.pe_source is None:
                 continue
@@ -49,10 +50,10 @@ class HashFunctionOutput:
 
             assert data_obj is not None
 
-            hash_output = mkDataObject(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__))
+            hash_output = mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__))
 
-            # data needed to check that task contains only one output
-            outputs = []  # contains all output data objects from the current task
+            # Data needed to check that task contains only one output
+            outputs = []
 
             for output in elem.data_output:
                 data_ref: str = output.target_ref
@@ -61,20 +62,12 @@ class HashFunctionOutput:
 
                 assert data_obj is not None
 
-                outputs.append(mkDataObject(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__)))
+                outputs.append(mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__)))
 
-            # outputs = []
             if len(outputs) == 0:
-                outputs = [mkDataObject(StringVal(key), StringVal("None"), StringVal("None"))]
+                outputs = [mk_data_object(StringVal(key), StringVal("None"), StringVal("None"))]
 
-            # if key == 'Activity_0l2nqgv':
-            #     outputs.append(mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("DataObject")))
-            #     # outputs = [mkDataObject(StringVal('Activity_0l2nqgv'), StringVal('bad'), StringVal("DataObject"))]
-            #
-            # else:
-            #     outputs.append(mkDataObject(StringVal('MyTask'), StringVal('bad1'), StringVal("HashProof")))
-
-            # compare hash function output data object (Hash Proof) id with the provided data object
+            # Compare hash function output data object (Hash Proof) id with the provided data object
             # also checks that the output is the same object as output of the hash function
             # then we know that both task output assoc and pes output assoc point to the same object
             def single_output(data_object):
@@ -91,7 +84,7 @@ class HashFunctionOutput:
                                object_type(o) == object_type(data_object))
                            for o in outputs])
 
-            x = Const('x', DataObjectSort)
+            x = Const('x', data_object_sort)
 
             # data object different from function output exists => multiple data outputs
             # or data object has different type then Hash Proof
@@ -105,12 +98,11 @@ class HashFunctionOutput:
             if s.check() == sat:
                 model = s.model()
                 # print(model)
-                solutions.append(simplify(task_id(model[x])))  # only element's ID
+                solutions.append(str(simplify(task_id(model[x]))).strip('"'))  # only element's ID
 
             s.pop()
 
         return self.__create_response(solutions) if len(solutions) > 0 else None
-
 
 # elements = parse("../../documentation/diagrams/hash_correct.bpmn")
 # fun = HashFunctionOutput()

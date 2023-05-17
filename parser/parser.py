@@ -1,9 +1,11 @@
 import xml.etree.ElementTree as ET
 
+from elements.artefact.data_object.pot_evidence_type import PotentialEvidenceType
 from elements.container.pool import Pool
 from elements.container.process import Process
 from elements.element import Element
 from elements.artefact.data_store.data_store import DataStore
+from elements.flow_object.event.throw_event import EndEvent
 from elements.flow_object.gateway.gateway import ExclusiveGateway, Gateway
 from elements.flow_object.task.task import Task
 from elements.flow.message_flow import MessageFlow
@@ -13,16 +15,24 @@ from elements.flow_object.flow_object import FlowObject
 from elements.flow_object.hash_function import HashFunction
 from elements.artefact.data_object.evidence_data_relation import EvidenceDataRelation
 from elements.artefact.data_reference import DataObjectReference, DataStoreReference
-from elements.artefact.data_object.data_object import DataObject, PotentialEvidenceType
+from elements.artefact.data_object.data_object import DataObject
 from elements.artefact.data_object.proof import HashProof, KeyedHashProof
 from elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
 from elements.flow_object.task.association import Association, DataInputAssociation, DataOutputAssociation
 
 from typing import Dict
 
+"""
+Responsible for parsing BPMN4FRSS XML file into a dictionary of elements.
+"""
+
 
 def get_tag(elem: ET.Element) -> str:  # without namespace
-    return elem.tag.split('}')[1]
+    tag_list = elem.tag.split('}')
+
+    if len(tag_list) > 1:
+        return tag_list[1]
+    return tag_list[0]
 
 
 def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
@@ -164,7 +174,7 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
                 event = StartEvent(attr['id'])
                 new_elem = parse_flow_object(child, event)
             case "endEvent":
-                event = StartEvent(attr['id'])
+                event = EndEvent(attr['id'])
                 new_elem = parse_flow_object(child, event)
             case "intermediateCatchEvent":
                 event = IntermediateCatchEvent(attr['id'])
@@ -177,7 +187,7 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
                                                attr['dataObjectRef'], attr.get('name'))
             case "dataStoreReference":
                 new_elem = DataStoreReference(attr['id'],
-                                              attr['dataStoreRef'], attr.get('name'))
+                                              attr.get('dataStoreRef'), attr.get('name'))
             case "dataObject":
                 new_elem = parse_data_object(child, process.id)
             case "dataStore":
@@ -208,9 +218,3 @@ def parse(filename: str) -> Dict[str, Element]:
                 parse_collaboration(child, elements)
 
     return elements
-
-
-# elems = parse("../documentation/diagrams/disputable_stored_in_same_context.bpmn")
-# for k, v in elems.items():
-#     print(k, "   ", v.name)
-
