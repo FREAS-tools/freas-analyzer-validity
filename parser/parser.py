@@ -112,7 +112,7 @@ def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
 def parse_data_object(elem: ET.Element, process_id: str) -> DataObject:
     for child in elem:
         tag = get_tag(child)
-        if tag == "potentialEvidenceType":
+        if tag == "potentialEvidence":
             return PotentialEvidenceType(elem.attrib['id'], process_id)
         if tag == "hash":
             return HashProof(elem.attrib['id'], process_id)
@@ -140,7 +140,7 @@ def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
     for child in elem:
         tag = get_tag(child)
         attr = child.attrib
-        if tag == "producesAssociation":
+        if tag == "produces":
             association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
             break
 
@@ -192,12 +192,16 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
                 new_elem = parse_data_object(child, process.id)
             case "dataStore":
                 new_elem = parse_data_store(child)
-            case "potentialEvidenceSource":
+            case "evidenceSource":
                 new_elem = parse_pe_source(child)
                 add_pe_source(new_elem, elements)
             case "exclusiveGateway":
                 gateway = ExclusiveGateway(attr['id'])
                 new_elem = parse_flow_object(child, gateway)
+            case "produces":
+                association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
+                pe_source_id = attr['sourceRef']
+                elements[pe_source_id].association = association
 
         if new_elem is not None:
             key = new_elem.id

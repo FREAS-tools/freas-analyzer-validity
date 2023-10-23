@@ -56,20 +56,21 @@ class CompromisedDataStore:
         # Check if the data store exists in the model
         def exists(data_str):
             return Or(
-                [data_str == store for store in z3_data_stores]
+                [And(store_id(data_str) == store_id(store), stored_pe(data_str) == stored_pe(store),
+                     pe_number(data_str) == pe_number(store)) for store in z3_data_stores]
             )
 
         # Check if at least one data object is stored in the data store
         def contains_relevant_evidence(data_str):
             constraint = []
             for data_obj in z3_data_objects:
-                constraint.append(Or([Select(stored_pe(data_str), i) == data_obj for i in range(max_pe_number)]))
+                constraint.append(Or([And(Select(stored_pe(data_str), i) == data_obj, i < pe_number(data_str)) for i in range(max_pe_number)]))
 
             return Or(constraint)
 
         # Set up the Z3 solver and add the constraints
         s = Solver()
-        data_store = Consts('data_store', data_store_sort)
+        data_store = Const('data_store', data_store_sort)
 
         s.add(exists(data_store))                                # limit to data stores from the model
         s.add(contains_relevant_evidence(data_store))            # check if data store contains relevant evidence
@@ -82,9 +83,10 @@ class CompromisedDataStore:
             model = s.model()
 
             for dec in model.decls():
-                if dec != model.decls()[0]:
+                if dec.name() != 'data_store': # This is the const with solution
                     continue
 
+                # print(model.decls())
                 # print("%s = %s" % (dec.name(), model[dec]))
 
                 # Add a constraint that excludes the current solution from the next iteration
