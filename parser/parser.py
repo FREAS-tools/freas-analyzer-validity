@@ -47,9 +47,6 @@ def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
             case 'messageFlow':
                 new_elem = MessageFlow(attr['id'], attr['sourceRef'],
                                        attr['targetRef'], attr.get('name'))
-            case 'evidenceDataRelation':
-                new_elem = parse_evidence_data_relation(child)
-
         if new_elem is not None:
             key = new_elem.id
             elements[key] = new_elem
@@ -67,12 +64,6 @@ def get_source_target_ref(elem: ET.Element):
 
     return source, target
 
-
-def parse_evidence_data_relation(elem: ET.Element):
-    source_ref, target_ref = get_source_target_ref(elem)
-    edr = EvidenceDataRelation(elem.attrib['id'], source_ref, target_ref)
-
-    return edr
 
 
 def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
@@ -195,6 +186,9 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
             case "produces":
                 association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
                 attach_association(association, elements)
+            case "evidenceAssociation":
+                new_elem = EvidenceDataRelation(attr['id'], attr['sourceRef'], attr['targetRef'])
+
 
         if new_elem is not None:
             key = new_elem.id
