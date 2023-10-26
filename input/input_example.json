@@ -1,5 +1,5 @@
 {
-  "bpmn4frss_model": "input/diagrams/scenario_fix.bpmn",
+  "bpmn4frss_model": "input/diagrams/scenario_fix_ds.bpmn",
   "analysis_type": "EVIDENCE_QUALITY_ANALYSIS",
   "element_id": "DataStoreReference_0a5zo83"
 }

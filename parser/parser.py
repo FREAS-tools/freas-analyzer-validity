@@ -113,12 +113,11 @@ def parse_data_object(elem: ET.Element, process_id: str) -> DataObject:
     for child in elem:
         tag = get_tag(child)
         if tag == "potentialEvidence":
-            return PotentialEvidenceType(elem.attrib['id'], process_id)
+            return PotentialEvidenceType(child.attrib['id'], process_id)
         if tag == "hash":
-            return HashProof(elem.attrib['id'], process_id)
+            return HashProof(child.attrib['id'], process_id)
         if tag == "keyedHash":
-            proof = KeyedHashProof(elem.attrib['id'], process_id)
-            return proof
+            return KeyedHashProof(child.attrib['id'], process_id)
 
     return DataObject(elem.attrib['id'], process_id)
 
@@ -128,25 +127,14 @@ def parse_data_store(elem: ET.Element) -> DataStore:
 
     for child in elem:
         tag = get_tag(child)
-        if tag == "storedPotentialEvidence":
-            data_store.stored_pe.append(child.attrib['evidenceTypeRef'])
-
-    return data_store
-
-
-def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
-    association = None
-
-    for child in elem:
-        tag = get_tag(child)
-        attr = child.attrib
-        if tag == "produces":
-            association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
+        if tag == "evidenceDataStore":
+            for subchild in child:
+                subtag = get_tag(subchild)
+                if subtag == "stores":
+                    data_store.stored_pe.append(subchild.text)
             break
 
-    pes = PotentialEvidenceSource(elem.attrib['id'],
-                                  elem.attrib['attachedToRef'], association)
-    return pes
+    return data_store
 
 
 def add_pe_source(pe_source, elements: Dict[str, Element]):
@@ -155,6 +143,12 @@ def add_pe_source(pe_source, elements: Dict[str, Element]):
     if elements.get(key) is not None:
         obj = elements[key]
         obj.pe_source = pe_source
+
+
+def attach_association(association: Association, elements:  Dict[str, Element]):
+    pe_source_id = association.source_ref
+    pe_source = elements.get(pe_source_id)
+    pe_source.association = association if pe_source else None
 
 
 def parse_process(elem: ET.Element, elements: Dict[str, Element]):
@@ -193,15 +187,14 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
             case "dataStore":
                 new_elem = parse_data_store(child)
             case "evidenceSource":
-                new_elem = parse_pe_source(child)
+                new_elem = PotentialEvidenceSource(attr['id'], attr['attachedToRef'])
                 add_pe_source(new_elem, elements)
             case "exclusiveGateway":
                 gateway = ExclusiveGateway(attr['id'])
                 new_elem = parse_flow_object(child, gateway)
             case "produces":
                 association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
-                pe_source_id = attr['sourceRef']
-                elements[pe_source_id].association = association
+                attach_association(association, elements)
 
         if new_elem is not None:
             key = new_elem.id
