@@ -47,12 +47,8 @@ def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
             case 'messageFlow':
                 new_elem = MessageFlow(attr['id'], attr['sourceRef'],
                                        attr['targetRef'], attr.get('name'))
-            case 'evidenceDataRelation':
-                new_elem = parse_evidence_data_relation(child)
-
-        if new_elem is not None:
-            key = new_elem.id
-            elements[key] = new_elem
+                
+        store_element(new_elem, elements)
 
 
 def get_source_target_ref(elem: ET.Element):
@@ -67,12 +63,6 @@ def get_source_target_ref(elem: ET.Element):
 
     return source, target
 
-
-def parse_evidence_data_relation(elem: ET.Element):
-    source_ref, target_ref = get_source_target_ref(elem)
-    edr = EvidenceDataRelation(elem.attrib['id'], source_ref, target_ref)
-
-    return edr
 
 
 def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
@@ -112,13 +102,12 @@ def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
 def parse_data_object(elem: ET.Element, process_id: str) -> DataObject:
     for child in elem:
         tag = get_tag(child)
-        if tag == "potentialEvidenceType":
+        if tag == "potentialEvidence":
             return PotentialEvidenceType(elem.attrib['id'], process_id)
         if tag == "hash":
             return HashProof(elem.attrib['id'], process_id)
         if tag == "keyedHash":
-            proof = KeyedHashProof(elem.attrib['id'], process_id)
-            return proof
+            return KeyedHashProof(elem.attrib['id'], process_id)
 
     return DataObject(elem.attrib['id'], process_id)
 
@@ -128,25 +117,14 @@ def parse_data_store(elem: ET.Element) -> DataStore:
 
     for child in elem:
         tag = get_tag(child)
-        if tag == "storedPotentialEvidence":
-            data_store.stored_pe.append(child.attrib['evidenceTypeRef'])
-
-    return data_store
-
-
-def parse_pe_source(elem: ET.Element) -> PotentialEvidenceSource:
-    association = None
-
-    for child in elem:
-        tag = get_tag(child)
-        attr = child.attrib
-        if tag == "producesAssociation":
-            association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
+        if tag == "evidenceDataStore":
+            for subchild in child:
+                subtag = get_tag(subchild)
+                if subtag == "stores":
+                    data_store.stored_pe.append(subchild.text)
             break
 
-    pes = PotentialEvidenceSource(elem.attrib['id'],
-                                  elem.attrib['attachedToRef'], association)
-    return pes
+    return data_store
 
 
 def add_pe_source(pe_source, elements: Dict[str, Element]):
@@ -155,6 +133,12 @@ def add_pe_source(pe_source, elements: Dict[str, Element]):
     if elements.get(key) is not None:
         obj = elements[key]
         obj.pe_source = pe_source
+
+
+def attach_association(association: Association, elements:  Dict[str, Element]):
+    pe_source_id = association.source_ref
+    pe_source = elements.get(pe_source_id)
+    pe_source.association = association if pe_source else None
 
 
 def parse_process(elem: ET.Element, elements: Dict[str, Element]):
@@ -192,16 +176,25 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
                 new_elem = parse_data_object(child, process.id)
             case "dataStore":
                 new_elem = parse_data_store(child)
-            case "potentialEvidenceSource":
-                new_elem = parse_pe_source(child)
+            case "evidenceSource":
+                new_elem = PotentialEvidenceSource(attr['id'], attr['attachedToRef'])
                 add_pe_source(new_elem, elements)
             case "exclusiveGateway":
                 gateway = ExclusiveGateway(attr['id'])
                 new_elem = parse_flow_object(child, gateway)
+            case "produces":
+                association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
+                attach_association(association, elements)
+            case "evidenceAssociation":
+                new_elem = EvidenceDataRelation(attr['id'], attr['sourceRef'], attr['targetRef'])
 
-        if new_elem is not None:
-            key = new_elem.id
-            elements[key] = new_elem
+        store_element(new_elem, elements)
+
+
+def store_element(new_elem: Element, elements: Dict[str, Element]):
+    if new_elem is not None:
+        key = new_elem.id
+        elements[key] = new_elem
 
 
 def parse(filename: str) -> Dict[str, Element]:

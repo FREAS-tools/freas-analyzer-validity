@@ -91,36 +91,34 @@ def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[
 
 def get_potential_evidence(elements: Dict[str, Element], data_store: DataStore) -> Set[StringVal]:
     """
-    Get all data object stored in the provided data store along with the data objects
+    Get all potential evidence objects stored in the provided data store along with the data objects
     connected to them via evidence relations.
     Parameters:
         elements (Dict[str, Element]): model elements.
         data_store (DataStore): compromised data store.
     Returns:
-        Set[StringVal]: A set of Z3 `StringVal` objects representing data object name.
+        Set[StringVal]: A set of Z3 `StringVal` objects representing potential evidence name.
+
+        NOTE: It is necessary to use potential evidence names because more data objects with 
+        different IDs can represent the same potential evidence.
     """
     data_objects = set()
 
     for evidence_id in data_store.stored_pe:
         # Get the data object reference of the evidence
-        pot_evidence_ref: Optional[DataObjectReference] = get_data_object_reference(elements, evidence_id)
-
-        if pot_evidence_ref is None:
-            continue
-
-        data_objects.add(StringVal(pot_evidence_ref.name))
-
+        evidence_name: str = get_data_object_name(elements, evidence_id)
+        data_objects.add(StringVal(evidence_name))
+            
         # Add all data objects names connected with evidence relation to the potential evidence
         for elem in elements.values():
             if isinstance(elem, EvidenceDataRelation):
-                if elem.source_ref == pot_evidence_ref.id:
-                    target_ref = elem.target_ref
-                    ref_name = elements[target_ref].name
-                    data_objects.add(StringVal(ref_name))
-                elif elem.target_ref == pot_evidence_ref.id:
-                    source_ref = elem.source_ref
-                    ref_name = elements[source_ref].name
-                    data_objects.add(StringVal(ref_name))
+                source: DataObjectReference = elements[elem.source_ref]
+                target: DataObjectReference = elements[elem.target_ref]
+                
+                if source.data == evidence_id:
+                    data_objects.add(StringVal(target.name))
+                elif target.data == evidence_id:
+                    data_objects.add(StringVal(source.name))
 
     return data_objects
 
@@ -157,7 +155,7 @@ def get_data_object_name(elements: Dict[str, Element], data_object: str) -> str:
     return data_object_ref.name if data_object_ref.name is not None else ""
 
 
-def get_model_data_stores(elements: Dict[str, Element], constructor) -> List[DataStore]:
+def get_all_data_stores(elements: Dict[str, Element], mk_data_store) -> List[DataStore]:
     """
     Return all data stores from the model in Z3 representation.
     Parameters:
@@ -177,12 +175,12 @@ def get_model_data_stores(elements: Dict[str, Element], constructor) -> List[Dat
 
         for i in range(len(elem.stored_pe)):
             evidence_id = elem.stored_pe[i]
-            pot_evidence_name = get_data_object_name(elements, evidence_id)
-            # Add stored potential evidence name to the array
-            z3_stored_pe = Store(z3_stored_pe, i, StringVal(pot_evidence_name))
+            evidence_name = get_data_object_name(elements, evidence_id)
+            # Store potential evidence name to the array
+            z3_stored_pe = Store(z3_stored_pe, i, StringVal(evidence_name))
 
         # Create a Z3 tuple representing the data store
-        z3_data_store = constructor(StringVal(elem_id), z3_stored_pe, IntVal(len(elem.stored_pe)))
+        z3_data_store = mk_data_store(StringVal(elem_id), z3_stored_pe, IntVal(len(elem.stored_pe)))
         z3_data_stores.append(z3_data_store)
 
     return z3_data_stores
@@ -196,11 +194,11 @@ def get_max_number_of_pe(elements: Dict[str, Element]) -> int:
     Returns:
         int: maximum number of potential evidence.
     """
-    max_pe = 0
+    evidence_count = 0
 
     for elem in elements.values():
         if isinstance(elem, DataStore):
-            if len(elem.stored_pe) > max_pe:
-                max_pe = len(elem.stored_pe)
+            if len(elem.stored_pe) > evidence_count:
+                evidence_count = len(elem.stored_pe)
 
-    return max_pe
+    return evidence_count

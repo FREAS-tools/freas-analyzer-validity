@@ -8,7 +8,7 @@ from elements.flow_object.flow_object import FlowObject
 from elements.element import Element
 from response.response import Response
 
-from rules.utils.evidence_quality import get_flow_data_objects, get_disputable_data_stores, get_model_data_stores, \
+from rules.utils.evidence_quality import get_flow_data_objects, get_disputable_data_stores, get_all_data_stores, \
     get_max_number_of_pe
 
 
@@ -49,7 +49,7 @@ class CompromisedFlowObject:
 
         z3_altered_data_objects, z3_unaltered_data_objects = get_flow_data_objects(elements, flow_object)
 
-        z3_data_stores = get_model_data_stores(elements, mk_data_store_sort)
+        z3_data_stores = get_all_data_stores(elements, mk_data_store_sort)
         max_pe_number = get_max_number_of_pe(elements)
 
         # CONSTRAINTS
