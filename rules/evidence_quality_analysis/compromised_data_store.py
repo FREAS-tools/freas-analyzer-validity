@@ -10,7 +10,7 @@ from rules.rule import IRule
 from elements.artefact.data_store.data_store import DataStore
 from elements.element import Element
 
-from rules.utils.evidence_quality import get_potential_evidence, get_model_data_stores, get_max_number_of_pe
+from rules.utils.evidence_quality import get_potential_evidence, get_all_data_stores, get_max_number_of_pe
 
 
 @implementer(IRule)
@@ -18,7 +18,7 @@ class CompromisedDataStore:
     """
     Rule: Compromised Data Store
     Description: This rule checks availability of Data Stores that contain potential evidence
-    relevant in case of a compromise of the marked Data Store.
+    relevant in case the marked Data Store is compromised.
     """
 
     @staticmethod
@@ -45,26 +45,27 @@ class CompromisedDataStore:
         data_store_sort, mk_data_store, (store_id, stored_pe, pe_number) = \
             TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort()])
 
-        # Get a list of data object that could indicate data store compromise
+        # Get a list of potential evidence that could indicate data store compromise
         z3_data_objects = get_potential_evidence(elements, data_store)
+        
         # Return the maximum number of potential evidence that is stored in a data store
         max_pe_number = get_max_number_of_pe(elements)
 
         # Create a list of all data stores present in the model
-        z3_data_stores = get_model_data_stores(elements, mk_data_store)
+        z3_data_stores = get_all_data_stores(elements, mk_data_store)
 
         # Check if the data store exists in the model
-        def exists(data_str):
+        def exists(data_store):
             return Or(
-                [And(store_id(data_str) == store_id(store), stored_pe(data_str) == stored_pe(store),
-                     pe_number(data_str) == pe_number(store)) for store in z3_data_stores]
+                [And(store_id(data_store) == store_id(store), stored_pe(data_store) == stored_pe(store),
+                     pe_number(data_store) == pe_number(store)) for store in z3_data_stores]
             )
 
-        # Check if at least one data object is stored in the data store
-        def contains_relevant_evidence(data_str):
+        # Check if at least one potential evidence is stored in the data store
+        def contains_relevant_evidence(data_store):
             constraint = []
             for data_obj in z3_data_objects:
-                constraint.append(Or([And(Select(stored_pe(data_str), i) == data_obj, i < pe_number(data_str)) for i in range(max_pe_number)]))
+                constraint.append(Or([And(Select(stored_pe(data_store), i) == data_obj, i < pe_number(data_store)) for i in range(max_pe_number)]))
 
             return Or(constraint)
 
