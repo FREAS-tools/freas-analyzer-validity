@@ -64,7 +64,7 @@
         <bpmn:dataStoreReference id="DataStoreReference_0kxtat1" name="AV Parking permit storage" dataStoreRef="DataStore_0kxtat1" />
         <bpmn:dataStore id="DataStore_0kxtat1">
             <bpmn4frss:evidenceDataStore>
-                <bpmn4frss:stores>DataStore_0kxtat1</bpmn4frss:stores>
+                <bpmn4frss:stores>DataObject_01r3i4a</bpmn4frss:stores>
             </bpmn4frss:evidenceDataStore>
         </bpmn:dataStore>
          <bpmn:dataObjectReference id="DataObjectReference_1qpqjq5" name="Parking request"
