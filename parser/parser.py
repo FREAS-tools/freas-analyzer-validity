@@ -47,9 +47,8 @@ def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
             case 'messageFlow':
                 new_elem = MessageFlow(attr['id'], attr['sourceRef'],
                                        attr['targetRef'], attr.get('name'))
-        if new_elem is not None:
-            key = new_elem.id
-            elements[key] = new_elem
+                
+        store_element(new_elem, elements)
 
 
 def get_source_target_ref(elem: ET.Element):
@@ -104,11 +103,11 @@ def parse_data_object(elem: ET.Element, process_id: str) -> DataObject:
     for child in elem:
         tag = get_tag(child)
         if tag == "potentialEvidence":
-            return PotentialEvidenceType(child.attrib['id'], process_id)
+            return PotentialEvidenceType(elem.attrib['id'], process_id)
         if tag == "hash":
-            return HashProof(child.attrib['id'], process_id)
+            return HashProof(elem.attrib['id'], process_id)
         if tag == "keyedHash":
-            return KeyedHashProof(child.attrib['id'], process_id)
+            return KeyedHashProof(elem.attrib['id'], process_id)
 
     return DataObject(elem.attrib['id'], process_id)
 
@@ -189,10 +188,13 @@ def parse_process(elem: ET.Element, elements: Dict[str, Element]):
             case "evidenceAssociation":
                 new_elem = EvidenceDataRelation(attr['id'], attr['sourceRef'], attr['targetRef'])
 
+        store_element(new_elem, elements)
 
-        if new_elem is not None:
-            key = new_elem.id
-            elements[key] = new_elem
+
+def store_element(new_elem: Element, elements: Dict[str, Element]):
+    if new_elem is not None:
+        key = new_elem.id
+        elements[key] = new_elem
 
 
 def parse(filename: str) -> Dict[str, Element]:
