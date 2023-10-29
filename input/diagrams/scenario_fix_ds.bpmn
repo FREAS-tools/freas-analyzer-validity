@@ -64,7 +64,7 @@
         <bpmn:dataStoreReference id="DataStoreReference_0kxtat1" name="AV Parking permit storage" dataStoreRef="DataStore_0kxtat1" />
         <bpmn:dataStore id="DataStore_0kxtat1">
             <bpmn4frss:evidenceDataStore>
-                <bpmn4frss:stores>PotentialEvidence_0ku5jjb</bpmn4frss:stores>
+                <bpmn4frss:stores>DataStore_0kxtat1</bpmn4frss:stores>
             </bpmn4frss:evidenceDataStore>
         </bpmn:dataStore>
          <bpmn:dataObjectReference id="DataObjectReference_1qpqjq5" name="Parking request"
@@ -174,7 +174,7 @@
         <bpmn:dataStoreReference id="DataStoreReference_1dansao" name="Parking permit proof store" dataStoreRef="DataStore_1dansao"/>
         <bpmn:dataStore id="DataStore_1dansao">
             <bpmn4frss:evidenceDataStore>
-                <bpmn4frss:stores>PotentialEvidence_0lcb1pg</bpmn4frss:stores>
+                <bpmn4frss:stores>DataObject_0mokdfn</bpmn4frss:stores>
             </bpmn4frss:evidenceDataStore>
         </bpmn:dataStore>
         <bpmn:task id="Task_1iv1h0i" name="11. Send parking permit to user&#39;s device">
@@ -370,7 +370,7 @@
         <bpmn:dataStoreReference id="DataStoreReference_0a5zo83" name="PLT parking permit storage" dataStoreRef="DataStore_0a5zo83"/>
         <bpmn:dataStore id="DataStore_0a5zo83">
             <bpmn4frss:evidenceDataStore>
-                <bpmn4frss:stores>PotentialEvidence_19zy3t2</bpmn4frss:stores>
+                <bpmn4frss:stores>DataObject_14ecdxy</bpmn4frss:stores>
             </bpmn4frss:evidenceDataStore>
         </bpmn:dataStore>
         <bpmn4frss:produces id="Produces_1wcouc2" sourceRef="EvidenceSource_15sme29"
@@ -414,8 +414,8 @@
         <bpmn:dataStoreReference id="DataStoreReference_1v5xm09" name="PSP Log Storage" dataStoreRef="DataStore_1v5xm09" />
         <bpmn:dataStore id="DataStore_1v5xm09">
             <bpmn4frss:evidenceDataStore>
-                <bpmn4frss:stores>PotentialEvidence_1lhnm1t</bpmn4frss:stores>
-                <bpmn4frss:stores>PotentialEvidence_0ppokgg</bpmn4frss:stores>
+                <bpmn4frss:stores>DataObject_125o9yx</bpmn4frss:stores>
+                <bpmn4frss:stores>DataObject_14um9n6</bpmn4frss:stores>
             </bpmn4frss:evidenceDataStore>
         </bpmn:dataStore>
         <bpmn:sequenceFlow id="SequenceFlow_00ul7w7" sourceRef="StartEvent_1recwab"
