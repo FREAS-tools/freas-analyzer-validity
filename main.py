@@ -1,15 +1,15 @@
 import json
 
-from analyzer.analyzer import Analyzer
-from input.analysis_types import AnalysisType
-from input.input import Input
-from parser.parser import parse
-from result.result import ResultEncoder
+from src.analyzer.analyzer import Analyzer
+from src.input.input import AnalysisType
+from src.input.input import Input
+from src.parser.parser import parse
+from src.result.result import ResultEncoder
 
 
 def main():
     # Define the input file name
-    input_path = 'input/input_example.json'
+    input_path = 'src/input/input_example.json'
 
     # Load the JSON file
     with open(input_path, 'r') as file:

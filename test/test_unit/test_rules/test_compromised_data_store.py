@@ -1,6 +1,5 @@
-from rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
-from response.response import Response
-from fixtures.example_elements import disputable_same_store_elements, disputable_same_context_elements
+from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
+from src.response.response import Response
 
 
 def test_compromised_data_store_no_pe(disputable_same_store_elements):

@@ -1,23 +1,23 @@
 import pytest
 
-from elements.artefact.data_object.evidence_data_relation import EvidenceDataRelation
-from elements.artefact.data_object.pot_evidence_type import PotentialEvidenceType
-from elements.artefact.data_reference import DataObjectReference
-from elements.container.pool import Pool
-from elements.container.process import Process
-from elements.flow.message_flow import MessageFlow
-from elements.flow.sequence_flow import SequenceFlow
-from elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
-from elements.flow_object.event.throw_event import EndEvent
-from elements.flow_object.task.task import Task
-from elements.pot_evidence_source import PotentialEvidenceSource
-from parser.parser import parse
+from src.elements.artefact.data_object.evidence_data_relation import EvidenceDataRelation
+from src.elements.artefact.data_object.pot_evidence_type import PotentialEvidenceType
+from src.elements.artefact.data_reference import DataObjectReference
+from src.elements.container.pool import Pool
+from src.elements.container.process import Process
+from src.elements.flow.message_flow import MessageFlow
+from src.elements.flow.sequence_flow import SequenceFlow
+from src.elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
+from src.elements.flow_object.event.throw_event import EndEvent
+from src.elements.flow_object.task.task import Task
+from src.elements.pot_evidence_source import PotentialEvidenceSource
 
 
-def test_parse():
+def test_parse(missing_pes_elements):
     # Test the parse function
     try:
-        elements = parse("../../../documentation/diagrams/missing_evidence_source.bpmn")
+        # elements = parse("../../../documentation/diagrams/missing_evidence_source.bpmn")
+        elements = missing_pes_elements
         assert isinstance(elements, dict)
         # Add assertions for the expected elements of the parsing process
         assert len(elements) == 27
