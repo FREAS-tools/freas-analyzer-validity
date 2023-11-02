@@ -7,7 +7,8 @@ from src.parser.parser import parse
 The following fixtures are used to test the implemented rules.
 """
 
-data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../documentation/diagrams/'))
+data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/diagrams/'))
+
 
 @pytest.fixture
 def new_av_scenario():

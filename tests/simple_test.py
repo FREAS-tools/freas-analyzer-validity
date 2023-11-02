@@ -7,7 +7,7 @@ import os
 
 def test_compromised_data_store_pe():
     file_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             '../documentation/diagrams/new_av_scenario.bpmn'))
+                                             '../data/diagrams/new_av_scenario.bpmn'))
 
     elements = parse(file_path)
     rule = CompromisedDataStore()
