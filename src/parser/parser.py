@@ -117,10 +117,10 @@ def parse_data_store(elem: ET.Element) -> DataStore:
     for child in elem:
         tag = get_tag(child)
         if tag == "evidenceDataStore":
-            for subchild in child:
-                subtag = get_tag(subchild)
+            for sub_child in child:
+                subtag = get_tag(sub_child)
                 if subtag == "stores":
-                    data_store.stored_pe.append(subchild.text)
+                    data_store.stored_pe.append(sub_child.text)
             break
 
     return data_store

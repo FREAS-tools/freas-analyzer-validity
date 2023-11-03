@@ -3,8 +3,8 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
+from src.elements.flow_object.activity import Activity
 from src.rules.rule import IRule
-from src.elements.flow_object.flow_object import FlowObject
 from src.elements.element import Element
 from src.response.response import Response
 
@@ -21,7 +21,7 @@ class CompromisedFlowObject:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str], flow_object) -> Response:
+    def __create_response(solutions: List[str], flow_object: str) -> Response:
         response = Response()
         response.source = solutions
 
@@ -32,24 +32,23 @@ class CompromisedFlowObject:
 
     def evaluate(self, elements: Dict[str, Element], flow_obj_id: str) -> Optional[Response]:
 
-        flow_object: Optional[FlowObject] = elements.get(flow_obj_id)
+        flow_object: Optional[Activity] = elements.get(flow_obj_id)
         if flow_object is None:
             return self.__create_response([], flow_obj_id)
 
         # Define the Z3 tuple sort representing data stores, containing the following fields:
         # data store ID, array of stored potential evidence and their number
-        data_store_sort, mk_data_store_sort, (store_id, stored_pe, pe_number) = \
+        data_store_sort, mk_data_store, (store_id, stored_pe, pe_number) = \
             TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort()])
 
-        # these already contain altered information and do not need to be attacked
+        # These already contain altered information and do not need to be attacked
         disputable_data_stores = []
         get_disputable_data_stores(elements, flow_object, disputable_data_stores)
 
         # Get a list of data object that could indicate data store compromise
-
         z3_altered_data_objects, z3_unaltered_data_objects = get_flow_data_objects(elements, flow_object)
 
-        z3_data_stores = get_all_data_stores(elements, mk_data_store_sort)
+        z3_data_stores = get_all_data_stores(elements, mk_data_store)
         max_pe_number = get_max_number_of_pe(elements)
 
         # CONSTRAINTS
@@ -66,7 +65,7 @@ class CompromisedFlowObject:
         def has_unaltered_data_object(data_str):
             constraint = []
             for data_obj in z3_unaltered_data_objects:
-                constraint.append(Or([Select(stored_pe(data_str), i) == data_obj
+                constraint.append(Or([And(Select(stored_pe(data_str), i) == data_obj, i < pe_number(data_str))
                                       for i in range(max_pe_number)]))
 
             return Or(constraint)
@@ -75,20 +74,20 @@ class CompromisedFlowObject:
         def has_copy_of_altered_data_object(data_str):
             constraint = []
             for data_obj in z3_altered_data_objects:
-                constraint.append(Or([Select(stored_pe(data_str), i) == data_obj
+                constraint.append(Or([And(Select(stored_pe(data_str), i) == data_obj, i < pe_number(data_str))
                                       for i in range(max_pe_number)]))
 
             return Or(constraint)
 
         s = Solver()
-        data_store = Consts('data_store', data_store_sort)
-
-        s.add(exists(data_store))
+        data_store = Const('data_store', data_store_sort)
 
         unaltered = And(valid_data_store(data_store), has_copy_of_altered_data_object(data_store))
         altered = has_unaltered_data_object(data_store)
+
+        s.add(exists(data_store))
         s.add(Or(unaltered, altered))
-        s.add(pe_number(data_store) != 0)
+        s.add(pe_number(data_store) != 0)   # exclude empty data stores
 
         # MODEL
         solutions = []
@@ -96,7 +95,7 @@ class CompromisedFlowObject:
             model = s.model()
 
             for dec in model.decls():
-                if dec != model.decls()[0]:
+                if dec.name() != 'data_store':
                     continue
 
                 s.add(store_id(dec()) != store_id(model[dec]))                    # no duplicates

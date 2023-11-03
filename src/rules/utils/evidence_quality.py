@@ -22,15 +22,15 @@ def get_flow_data_objects(elements: Dict[str, Element], flow_obj: Activity) -> T
     unaltered_data_objects = set()
 
     for output_assoc in flow_obj.data_output:
-        data_object_ref = output_assoc.target_ref  # reference
-        if not isinstance(elements[data_object_ref], DataObjectReference):
+        data_object_ref = elements[output_assoc.target_ref]
+        if not isinstance(data_object_ref, DataObjectReference):
             continue
 
-        ref_name = elements[data_object_ref].name
+        ref_name = data_object_ref.name
         altered_data_objects.add(StringVal(ref_name))
 
         for elem in elements.values():
-            if isinstance(elem, EvidenceDataRelation) and elem.target_ref == data_object_ref:
+            if isinstance(elem, EvidenceDataRelation) and elem.target_ref == data_object_ref.id:
                 source_ref = elem.source_ref
                 ref_name = elements[source_ref].name
                 unaltered_data_objects.add(StringVal(ref_name))
@@ -158,7 +158,7 @@ def get_all_data_stores(elements: Dict[str, Element], mk_data_store) -> List[Dat
     Return all data stores from the model in Z3 representation.
     Parameters:
         elements (Dict[str, Element]): model elements.
-        constructor (Callable): Z3 data store constructor.
+        mk_data_store (Callable): Z3 data store constructor.
     Returns:
         List[DataStore]: A list of data stores.
     """

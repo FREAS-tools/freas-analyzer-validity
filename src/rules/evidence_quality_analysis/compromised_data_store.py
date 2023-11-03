@@ -55,17 +55,18 @@ class CompromisedDataStore:
         z3_data_stores = get_all_data_stores(elements, mk_data_store)
 
         # Check if the data store exists in the model
-        def exists(data_store):
+        def exists(data_str):
             return Or(
-                [And(store_id(data_store) == store_id(store), stored_pe(data_store) == stored_pe(store),
-                     pe_number(data_store) == pe_number(store)) for store in z3_data_stores]
+                [And(store_id(data_str) == store_id(store), stored_pe(data_str) == stored_pe(store),
+                     pe_number(data_str) == pe_number(store)) for store in z3_data_stores]
             )
 
         # Check if at least one potential evidence is stored in the data store
-        def contains_relevant_evidence(data_store):
+        def contains_relevant_evidence(data_str):
             constraint = []
             for data_obj in z3_data_objects:
-                constraint.append(Or([And(Select(stored_pe(data_store), i) == data_obj, i < pe_number(data_store)) for i in range(max_pe_number)]))
+                constraint.append(Or([And(Select(stored_pe(data_str), i) == data_obj, i < pe_number(data_str))
+                                      for i in range(max_pe_number)]))
 
             return Or(constraint)
 
@@ -84,7 +85,7 @@ class CompromisedDataStore:
             model = s.model()
 
             for dec in model.decls():
-                if dec.name() != 'data_store': # This is the const with solution
+                if dec.name() != 'data_store':  # This is the const with solution
                     continue
 
                 # print(model.decls())

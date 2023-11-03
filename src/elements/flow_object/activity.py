@@ -28,5 +28,5 @@ class Activity(FlowObject):
         self.incoming: str = incoming
         self.outgoing: str = outgoing
         self.pe_source: Optional[PotentialEvidenceSource] = pe_source
-        self.data_output: List[DataOutputAssociation] = []
         self.data_input: List[DataInputAssociation] = []
+        self.data_output: List[DataOutputAssociation] = []

@@ -30,7 +30,7 @@ class DataInputAssociation(Association):
 
         Parameters:
             elem_id (str): Element id
-            source_ref (str): Data Object id
+            source_ref (str): Data Object Ref id
             target_ref (str): Element id
         """
         super().__init__(elem_id, source_ref, target_ref)
@@ -47,6 +47,6 @@ class DataOutputAssociation(Association):
         Parameters:
             elem_id (str): Element id
             source_ref (str): Element id
-            target_ref (str): Data Object id
+            target_ref (str): Data Object Ref id/ Data Store Ref id
         """
         super().__init__(elem_id, source_ref, target_ref)

@@ -4,18 +4,17 @@ from src.response.response import Response
 
 def test_compromised_data_store_no_pe(disputable_same_store_elements):
     rule = CompromisedDataStore()
-    result = rule.evaluate(disputable_same_store_elements, "DataStoreReference_1qqlqq2")
+    result = rule.evaluate(disputable_same_store_elements, "DataStoreReference_0zf3t9g")
 
     assert result is None
 
 
-def test_compromised_data_store_has_pe(new_av_scenario):
+def test_compromised_data_store_has_pe(disputable_same_context_elements):
     rule = CompromisedDataStore()
-    result = rule.evaluate(new_av_scenario, "DataStoreReference_0a5zo83")
+    result = rule.evaluate(disputable_same_context_elements, "DataStoreReference_0i2rn37")
 
     expected_result = Response()
-    expected_result.source = ["DataStore_0kxtat1"]
+    expected_result.source = ["DataStore_1t4979h"]
 
     assert isinstance(result, Response)
     assert sorted(result.source) == sorted(expected_result.source)
-
