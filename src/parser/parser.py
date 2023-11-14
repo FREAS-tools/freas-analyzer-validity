@@ -1,25 +1,26 @@
 from defusedxml.ElementTree import parse, fromstring
 from xml.etree.ElementTree import Element as XmlElement
 
-from src.elements.artefact.data_object.pot_evidence_type import PotentialEvidenceType
+from src.elements.artefact.data_store.data_store import DataStore
+from src.elements.frss.evidence_type.potential_evidence_type import PotentialEvidenceType
 from src.elements.container.pool import Pool
 from src.elements.container.process import Process
 from src.elements.element import Element
-from src.elements.artefact.data_store.data_store import DataStore
+from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.flow_object.event.throw_event import EndEvent
 from src.elements.flow_object.gateway.gateway import ExclusiveGateway, Gateway
 from src.elements.flow_object.task.task import Task
 from src.elements.flow.message_flow import MessageFlow
 from src.elements.flow.sequence_flow import SequenceFlow
-from src.elements.pot_evidence_source import PotentialEvidenceSource
+from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
 from src.elements.flow_object.flow_object import FlowObject
-from src.elements.flow_object.hash_function import HashFunction
-from src.elements.artefact.data_object.evidence_data_relation import EvidenceDataRelation
+from src.elements.frss.forensic_ready_task.hash_function import HashFunction
+from src.elements.frss.evidence_data_relation import EvidenceDataRelation
 from src.elements.artefact.data_reference import DataObjectReference, DataStoreReference
 from src.elements.artefact.data_object.data_object import DataObject
-from src.elements.artefact.data_object.proof import HashProof, KeyedHashProof
+from src.elements.frss.evidence_type.proof import HashProof, KeyedHashProof
 from src.elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
-from src.elements.flow_object.task.association import Association, DataInputAssociation, DataOutputAssociation
+from src.elements.flow.association import Association, DataInputAssociation, DataOutputAssociation
 
 from typing import Dict
 
@@ -113,18 +114,17 @@ def parse_data_object(elem: XmlElement, process_id: str) -> DataObject:
 
 
 def parse_data_store(elem: XmlElement) -> DataStore:
-    data_store = DataStore(elem.attrib['id'])
-
     for child in elem:
         tag = get_tag(child)
         if tag == "evidenceDataStore":
+            ev_data_store = EvidenceDataStore(elem.attrib['id'])
             for sub_child in child:
                 subtag = get_tag(sub_child)
                 if subtag == "stores":
-                    data_store.stored_pe.append(sub_child.text)
-            break
+                    ev_data_store.stored_pe.append(sub_child.text)
+            return ev_data_store
 
-    return data_store
+    return DataStore(elem.attrib['id'])
 
 
 def add_pe_source(pe_source, elements: Dict[str, Element]):

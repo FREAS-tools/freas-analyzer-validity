@@ -7,10 +7,10 @@ from typing import Dict, List, Optional
 
 from src.response.response import Response
 from src.rules.rule import IRule
-from src.elements.artefact.data_store.data_store import DataStore
+from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.element import Element
 
-from src.rules.utils.evidence_quality import get_potential_evidence, get_all_data_stores, get_max_number_of_pe
+from src.rules.utils.evidence_quality import get_potential_evidence, get_all_ev_data_stores, get_max_number_of_pe
 
 
 @implementer(IRule)
@@ -38,7 +38,10 @@ class CompromisedDataStore:
             return self.__create_response([], data_store_ref)
 
         data_store_id: str = data_store_ref_obj.data
-        data_store: DataStore = elements[data_store_id]
+        data_store = elements[data_store_id]
+
+        if not isinstance(data_store, EvidenceDataStore):
+            return self.__create_response([], data_store_ref)
 
         # Define the Z3 tuple sort representing data store, containing the following fields:
         # data store ID, array of stored potential evidence and their number
@@ -52,7 +55,7 @@ class CompromisedDataStore:
         max_pe_number = get_max_number_of_pe(elements)
 
         # Create a list of all data stores present in the model
-        z3_data_stores = get_all_data_stores(elements, mk_data_store)
+        z3_data_stores = get_all_ev_data_stores(elements, mk_data_store)
 
         # Check if the data store exists in the model
         def exists(data_str):

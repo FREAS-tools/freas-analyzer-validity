@@ -1,12 +1,12 @@
 from z3 import *
 
 from src.elements.artefact.data_reference import DataObjectReference
-from src.elements.artefact.data_object.evidence_data_relation import EvidenceDataRelation
+from src.elements.frss.evidence_data_relation import EvidenceDataRelation
 from src.elements.flow.message_flow import MessageFlow
 from src.elements.flow.sequence_flow import SequenceFlow
 from typing import Dict, List, Optional, Set, Tuple
 
-from src.elements.artefact.data_store.data_store import DataStore
+from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.flow_object.activity import Activity
 from src.elements.flow_object.flow_object import FlowObject
 from src.elements.element import Element
@@ -71,7 +71,7 @@ def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[
             data_obj_id = elements[data_ref].data
             data_obj = elements[data_obj_id]
 
-            if isinstance(data_obj, DataStore):
+            if isinstance(data_obj, EvidenceDataStore):
                 data_stores.append(StringVal(data_obj_id))
 
     seq_flow_targets = get_sequence_flow_targets(elements, flow_obj)
@@ -87,13 +87,13 @@ def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[
     return data_stores
 
 
-def get_potential_evidence(elements: Dict[str, Element], data_store: DataStore) -> Set[StringVal]:
+def get_potential_evidence(elements: Dict[str, Element], data_store: EvidenceDataStore) -> Set[StringVal]:
     """
-    Get all potential evidence objects stored in the provided data store along with the data objects
+    Get all potential evidence objects stored in the provided evidence data store along with the data objects
     connected to them via evidence relations.
     Parameters:
         elements (Dict[str, Element]): model elements.
-        data_store (DataStore): compromised data store.
+        data_store (EvidenceDataStore): compromised data store.
     Returns:
         Set[StringVal]: A set of Z3 `StringVal` objects representing potential evidence name.
 
@@ -153,19 +153,19 @@ def get_data_object_name(elements: Dict[str, Element], data_object: str) -> str:
     return data_object_ref.name if data_object_ref.name is not None else ""
 
 
-def get_all_data_stores(elements: Dict[str, Element], mk_data_store) -> List[DataStore]:
+def get_all_ev_data_stores(elements: Dict[str, Element], mk_data_store) -> List[EvidenceDataStore]:
     """
-    Return all data stores from the model in Z3 representation.
+    Return all evidence data stores from the model in Z3 representation.
     Parameters:
         elements (Dict[str, Element]): model elements.
         mk_data_store (Callable): Z3 data store constructor.
     Returns:
-        List[DataStore]: A list of data stores.
+        List[EvidenceDataStore]: A list of data stores.
     """
     z3_data_stores = []
 
     for elem_id, elem in elements.items():
-        if not isinstance(elem, DataStore):
+        if not isinstance(elem, EvidenceDataStore):
             continue
 
         # Declare a Z3 array for stored potential evidence from the data store
@@ -195,7 +195,7 @@ def get_max_number_of_pe(elements: Dict[str, Element]) -> int:
     evidence_count = 0
 
     for elem in elements.values():
-        if isinstance(elem, DataStore):
+        if isinstance(elem, EvidenceDataStore):
             if len(elem.stored_pe) > evidence_count:
                 evidence_count = len(elem.stored_pe)
 

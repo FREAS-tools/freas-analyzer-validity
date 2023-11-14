@@ -8,7 +8,7 @@ from src.rules.rule import IRule
 from src.elements.element import Element
 from src.response.response import Response
 
-from src.rules.utils.evidence_quality import get_flow_data_objects, get_disputable_data_stores, get_all_data_stores, \
+from src.rules.utils.evidence_quality import get_flow_data_objects, get_disputable_data_stores, get_all_ev_data_stores, \
     get_max_number_of_pe
 
 
@@ -48,7 +48,7 @@ class CompromisedFlowObject:
         # Get a list of data object that could indicate data store compromise
         z3_altered_data_objects, z3_unaltered_data_objects = get_flow_data_objects(elements, flow_object)
 
-        z3_data_stores = get_all_data_stores(elements, mk_data_store)
+        z3_data_stores = get_all_ev_data_stores(elements, mk_data_store)
         max_pe_number = get_max_number_of_pe(elements)
 
         # CONSTRAINTS
