@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from src.elements.flow_object.activity import Activity
 from src.rules.rule import IRule
 from src.elements.element import Element
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 
 from src.rules.utils.evidence_quality import get_flow_data_objects, get_disputable_data_stores, get_all_ev_data_stores, \
     get_max_number_of_pe
@@ -21,20 +21,20 @@ class CompromisedFlowObject:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str], flow_object: str) -> Response:
-        response = Response()
-        response.source = solutions
+    def __create_result(solutions: List[str], flow_object: str) -> Result:
+        result = Result()
+        result.source = solutions
 
-        response.message = "Returned Data Stores contain potential evidence relevant in " \
+        result.message = "Returned Data Stores contain potential evidence relevant in " \
                            "case that " + flow_object + " is compromised."
 
-        return response
+        return result
 
-    def evaluate(self, elements: Dict[str, Element], flow_obj_id: str) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element], flow_obj_id: str) -> Optional[Result]:
 
         flow_object: Optional[Activity] = elements.get(flow_obj_id)
         if flow_object is None:
-            return self.__create_response([], flow_obj_id)
+            return self.__create_result([], flow_obj_id)
 
         # Define the Z3 tuple sort representing data stores, containing the following fields:
         # data store ID, array of stored potential evidence and their number
@@ -101,4 +101,4 @@ class CompromisedFlowObject:
                 s.add(store_id(dec()) != store_id(model[dec]))                    # no duplicates
                 solutions.append(str(simplify(store_id(model[dec]))).strip('"'))  # only element's ID
 
-        return self.__create_response(solutions, flow_object.name) if len(solutions) > 0 else None
+        return self.__create_result(solutions, flow_object.name) if len(solutions) > 0 else None

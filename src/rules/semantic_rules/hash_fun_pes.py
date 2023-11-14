@@ -3,11 +3,11 @@ from zope.interface import implementer
 from typing import Dict, List, Optional
 
 from src.elements.flow_object.task.task import Task
-from src.response.severity import Severity
+from src.rules.rule_result.severity import Severity
 from src.rules.rule import IRule
-from src.response.error import Error
+from src.rules.rule_result.error import Error
 from src.elements.element import Element
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 
 
 @implementer(IRule)
@@ -18,7 +18,7 @@ class HashFunctionPES:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_result(solutions: List[str]) -> Result:
         error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
@@ -26,7 +26,7 @@ class HashFunctionPES:
 
         return error
 
-    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         # Define Z3 tuple representing a task with its ID and whether it has a PE source
         task_sort, mk_task, (first, second) = TupleSort("Task", [StringSort(), BoolSort()])
 
@@ -58,4 +58,4 @@ class HashFunctionPES:
                 s.add(dec() != model[dec])                                      # no duplicates
                 solutions.append(str(simplify(first(model[dec]))).strip('"'))   # only element's ID
 
-        return self.__create_response(solutions) if len(solutions) > 0 else None
+        return self.__create_result(solutions) if len(solutions) > 0 else None

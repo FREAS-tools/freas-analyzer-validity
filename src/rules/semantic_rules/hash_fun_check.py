@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from src.elements.element import Element
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 from src.rules.semantic_rules.hash_fun_input import HashFunctionInput
 from src.rules.semantic_rules.hash_fun_output import HashFunctionOutput
 
@@ -9,13 +9,13 @@ from src.rules.semantic_rules.hash_fun_output import HashFunctionOutput
 class HashFunction:
 
     @staticmethod
-    def evaluate(elements: Dict[str, Element]) -> List[Response]:
+    def evaluate(elements: Dict[str, Element]) -> List[Result]:
         rules = [HashFunctionInput(), HashFunctionOutput()]
-        responses = []
+        results = []
 
         for rule in rules:
-            response = rule.evaluate(elements)
-            if response is not None:
-                responses.append(response)
+            result = rule.evaluate(elements)
+            if result is not None:
+                results.append(result)
 
-        return responses
+        return results

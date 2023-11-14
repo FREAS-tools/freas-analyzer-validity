@@ -20,11 +20,11 @@
 
 #     result = Analyzer.analyze(analysis_input, bpmn4frss_elements)
 
-#     expected_response = Response()
-#     expected_response.source = ["DataStore_1qqlqq2"]
+#     expected_result = Result()
+#     expected_result.source = ["DataStore_1qqlqq2"]
 
 #     expected_result = Result()
-#     expected_result.evidence_sources = expected_response
+#     expected_result.evidence_sources = expected_result
 
 #     assert isinstance(result, Result)
 

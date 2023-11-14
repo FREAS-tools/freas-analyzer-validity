@@ -1,12 +1,12 @@
 from typing import Optional, List
 
-from src.response.response import Response
-from src.response.severity import Severity
+from src.rules.rule_result.result import Result
+from src.rules.rule_result.severity import Severity
 
 
-class Error(Response):
+class Error(Result):
     """
-    Represents a rule response in case of 'SEMANTIC_RULES' analysis.
+    Represents a rule result in case of 'SEMANTIC_RULES' analysis.
     """
     def __init__(self, message: str = "", source: Optional[List[str]] = None, severity: Optional[Severity] = None):
         """

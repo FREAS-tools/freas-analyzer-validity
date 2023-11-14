@@ -3,11 +3,11 @@ from zope.interface import implementer
 from typing import Dict, Optional, List
 
 from src.rules.rule import IRule
-from src.response.error import Error
+from src.rules.rule_result.error import Error
 from src.elements.element import Element
-from src.response.severity import Severity
+from src.rules.rule_result.severity import Severity
 from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 
 
 @implementer(IRule)
@@ -18,7 +18,7 @@ class MissingPotentialEvidence:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_result(solutions: List[str]) -> Result:
         error = Error()
         error.source = solutions
         error.severity = Severity.HIGH
@@ -26,7 +26,7 @@ class MissingPotentialEvidence:
 
         return error
 
-    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()
 
         # Define Z3 tuple representing Potential Evidence Source, containing the following fields:
@@ -58,4 +58,4 @@ class MissingPotentialEvidence:
                 s.add(dec() != model[dec])                                      # no duplicates
                 solutions.append(str(simplify(pes_id(model[dec]))).strip('"'))  # only element's ID
 
-        return self.__create_response(solutions) if len(solutions) > 0 else None
+        return self.__create_result(solutions) if len(solutions) > 0 else None

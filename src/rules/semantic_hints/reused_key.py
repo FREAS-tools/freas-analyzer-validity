@@ -5,8 +5,8 @@ from zope.interface import implementer
 
 from src.elements.element import Element
 from src.elements.flow_object.task.task import Task
-from src.response.response import Response
-from src.response.warning import Warning
+from src.rules.rule_result.result import Result
+from src.rules.rule_result.warning import Warning
 from src.rules.rule import IRule
 from src.rules.utils.semantic import get_participant
 
@@ -20,14 +20,14 @@ class ReusedKey:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_result(solutions: List[str]) -> Result:
         warning = Warning()
         warning.source = solutions
         warning.message = "The key used in Keyed Hash Function must not be used in different Pool."
 
         return warning
 
-    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
 
         # Define the Z3 tuple representing the key, containing the participant ID, key ID and key name
         key_sort, mk_key, (participant_id, key_id, key_name) = \
@@ -71,6 +71,6 @@ class ReusedKey:
                 solutions.append(str(simplify(participant_id(model[dec]))).strip('"'))  # only element's ID
                 break
 
-        return self.__create_response(solutions) if len(solutions) > 0 else None
+        return self.__create_result(solutions) if len(solutions) > 0 else None
 
 

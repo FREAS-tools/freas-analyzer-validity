@@ -2,11 +2,11 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 from src.elements.flow_object.task.task import Task
-from src.response.severity import Severity
+from src.rules.rule_result.severity import Severity
 from src.rules.rule import IRule
-from src.response.error import Error
+from src.rules.rule_result.error import Error
 from src.elements.element import Element
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 
 from src.rules.utils.semantic import add_mock_inputs
 
@@ -19,7 +19,7 @@ class KeyedHashFunInput:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_result(solutions: List[str]) -> Result:
         error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
@@ -27,7 +27,7 @@ class KeyedHashFunInput:
                         "one being a Potential Evidence Type, and a key."
         return error
 
-    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         # The sort, a constructor, and the accessors (task id, data object id, data object name, data object type)
         data_object_sort, mk_data_object, (task_id, object_id, object_name, object_type) = \
             TupleSort("DataObject", [StringSort(), StringSort(), StringSort(), StringSort()])
@@ -96,4 +96,4 @@ class KeyedHashFunInput:
 
             s.pop()
 
-        return self.__create_response(solutions) if len(solutions) > 0 else None
+        return self.__create_result(solutions) if len(solutions) > 0 else None

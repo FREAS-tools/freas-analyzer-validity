@@ -5,11 +5,11 @@ from typing import Dict, List, Optional
 from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.flow_object.task.task import Task
-from src.response.severity import Severity
+from src.rules.rule_result.severity import Severity
 from src.rules.rule import IRule
-from src.response.error import Error
+from src.rules.rule_result.error import Error
 from src.elements.element import Element
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 
 
 @implementer(IRule)
@@ -20,7 +20,7 @@ class HashFunctionOutput:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_result(solutions: List[str]) -> Result:
         error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
@@ -28,7 +28,7 @@ class HashFunctionOutput:
                         "Potential Evidence, being a Hash Proof."
         return error
 
-    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()
 
         # The sort, a constructor, and the accessors (task id, data object id, data object type)
@@ -101,4 +101,4 @@ class HashFunctionOutput:
 
             s.pop()
 
-        return self.__create_response(solutions) if len(solutions) > 0 else None
+        return self.__create_result(solutions) if len(solutions) > 0 else None

@@ -3,8 +3,8 @@ from zope.interface import implementer
 from typing import Dict, List, Optional
 
 from src.rules.rule import IRule
-from src.response.response import Response
-from src.response.warning import Warning
+from src.rules.rule_result.result import Result
+from src.rules.rule_result.warning import Warning
 from src.elements.container.pool import Pool
 from src.elements.element import Element
 from src.elements.flow.message_flow import MessageFlow
@@ -19,7 +19,7 @@ class MissingPES:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_result(solutions: List[str]) -> Result:
         warning = Warning()
         warning.source = solutions
         warning.message = "Flow Objects that are the source or target element of a Message Flow" \
@@ -27,7 +27,7 @@ class MissingPES:
 
         return warning
 
-    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         # Define Z3 tuple representing Flow Object, containing the following fields:
         # Flow Object ID, boolean value indicating whether the Flow Object has a Potential Evidence Source label
         flow_object_sort, mk_flow_object_sort, (flow_obj_id, has_pes) = \
@@ -73,4 +73,4 @@ class MissingPES:
                 s.add(dec() != model[dec])  # no duplicates
                 solutions.append(str(simplify(flow_obj_id(model[dec]))).strip('"'))  # only element's ID
 
-        return self.__create_response(solutions) if len(solutions) > 0 else None
+        return self.__create_result(solutions) if len(solutions) > 0 else None
