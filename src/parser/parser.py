@@ -1,28 +1,29 @@
 from defusedxml.ElementTree import parse, fromstring
 from xml.etree.ElementTree import Element as XmlElement
 
-from src.elements.artefact.data_store.data_store import DataStore
-from src.elements.frss.evidence_type.potential_evidence_type import PotentialEvidenceType
+from typing import Dict
+
+from src.elements.element import Element
 from src.elements.container.pool import Pool
 from src.elements.container.process import Process
-from src.elements.element import Element
-from src.elements.frss.evidence_data_store import EvidenceDataStore
-from src.elements.flow_object.event.throw_event import EndEvent
-from src.elements.flow_object.gateway.gateway import ExclusiveGateway, Gateway
 from src.elements.flow_object.task.task import Task
+from src.elements.flow_object.activity import Activity
 from src.elements.flow.message_flow import MessageFlow
 from src.elements.flow.sequence_flow import SequenceFlow
-from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
 from src.elements.flow_object.flow_object import FlowObject
-from src.elements.frss.forensic_ready_task.hash_function import HashFunction
-from src.elements.frss.evidence_data_relation import EvidenceDataRelation
-from src.elements.artefact.data_reference import DataObjectReference, DataStoreReference
+from src.elements.flow_object.event.throw_event import EndEvent
+from src.elements.artefact.data_store.data_store import DataStore
+from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.artefact.data_object.data_object import DataObject
+from src.elements.frss.evidence_data_relation import EvidenceDataRelation
 from src.elements.frss.evidence_type.proof import HashProof, KeyedHashProof
+from src.elements.frss.forensic_ready_task.hash_function import HashFunction
+from src.elements.flow_object.gateway.gateway import ExclusiveGateway, Gateway
+from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
+from src.elements.artefact.data_reference import DataObjectReference, DataStoreReference
 from src.elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
+from src.elements.frss.evidence_type.potential_evidence_type import PotentialEvidenceType
 from src.elements.flow.association import Association, DataInputAssociation, DataOutputAssociation
-
-from typing import Dict
 
 """
 Responsible for parsing BPMN4FRSS XML file into a dictionary of elements.
@@ -49,7 +50,7 @@ def parse_collaboration(elem: XmlElement, elements: Dict[str, Element]):
             case 'messageFlow':
                 new_elem = MessageFlow(attr['id'], attr['sourceRef'],
                                        attr['targetRef'], attr.get('name'))
-                
+
         store_element(new_elem, elements)
 
 
@@ -66,38 +67,68 @@ def get_source_target_ref(elem: XmlElement):
     return source, target
 
 
-def parse_flow_object(elem: XmlElement, obj: FlowObject) -> FlowObject:
-    obj.name = elem.attrib.get('name')
 
+def parse_gateway(gateway: Gateway, elem: XmlElement):
     for child in elem:
         tag = get_tag(child)
 
         match tag:
             case "incoming":
-                if isinstance(obj, Gateway):
-                    obj.incoming.append(child.text)
-                else:
-                    obj.incoming = child.text
+                gateway.incoming.append(child.text)
             case "outgoing":
-                if isinstance(obj, Gateway):
-                    obj.outgoing.append(child.text)
-                else:
-                    obj.outgoing = child.text
+                gateway.outgoing.append(child.text)
+    return
+
+
+def parse_activity(activity: Activity, elem: XmlElement):
+    for child in elem:
+        tag = get_tag(child)
+
+        match tag:
+            case "incoming":
+                activity.incoming = child.text
+            case "outgoing":
+                activity.outgoing = child.text
             case "dataOutputAssociation":
                 _, target = get_source_target_ref(child)
-                association = DataOutputAssociation(child.attrib['id'], obj.id, target)
-                obj.data_output.append(association)
+                association = DataOutputAssociation(child.attrib['id'], activity.id, target)
+                activity.data_output.append(association)
             case "dataInputAssociation":
                 source, _ = get_source_target_ref(child)
-                association = DataInputAssociation(child.attrib['id'], source, obj.id)
-                obj.data_input.append(association)
+                association = DataInputAssociation(child.attrib['id'], source, activity.id)
+                activity.data_input.append(association)
             case "hashFunction":
-                obj.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'))
+                activity.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'))
             case "keyedHashFunction":
-                obj.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'),
-                                            child.attrib.get('key'))
+                activity.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'),
+                                                 child.attrib.get('key'))
+    return
 
-    return obj
+
+def parse_flow_object(tag: str, elem: XmlElement) -> FlowObject:
+    attr = elem.attrib
+    flow_object = None
+
+    match tag:
+        case "task":
+            flow_object = Task(attr['id'])
+            parse_activity(flow_object, elem)
+        case "startEvent":
+            flow_object = StartEvent(attr['id'])
+            parse_activity(flow_object, elem)
+        case "endEvent":
+            flow_object = EndEvent(attr['id'])
+            parse_activity(flow_object, elem)
+        case "intermediateCatchEvent":
+            flow_object = IntermediateCatchEvent(attr['id'])
+            parse_activity(flow_object, elem)
+        case "exclusiveGateway":
+            flow_object = ExclusiveGateway(attr['id'])
+            parse_gateway(flow_object, elem)
+
+    flow_object.name = attr.get('name') if flow_object else None
+
+    return flow_object
 
 
 def parse_data_object(elem: XmlElement, process_id: str) -> DataObject:
@@ -135,7 +166,7 @@ def add_pe_source(pe_source, elements: Dict[str, Element]):
         obj.pe_source = pe_source
 
 
-def attach_association(association: Association, elements:  Dict[str, Element]):
+def attach_association(association: Association, elements: Dict[str, Element]):
     pe_source_id = association.source_ref
     pe_source = elements.get(pe_source_id)
     pe_source.association = association if pe_source else None
@@ -151,18 +182,8 @@ def parse_process(elem: XmlElement, elements: Dict[str, Element]):
         new_elem = None
 
         match tag:
-            case "task":
-                task = Task(attr['id'])
-                new_elem = parse_flow_object(child, task)
-            case "startEvent":
-                event = StartEvent(attr['id'])
-                new_elem = parse_flow_object(child, event)
-            case "endEvent":
-                event = EndEvent(attr['id'])
-                new_elem = parse_flow_object(child, event)
-            case "intermediateCatchEvent":
-                event = IntermediateCatchEvent(attr['id'])
-                new_elem = parse_flow_object(child, event)
+            case "task" | "startEvent" | "endEvent" | "intermediateCatchEvent" | "exclusiveGateway":
+                new_elem = parse_flow_object(tag, child)
             case "sequenceFlow":
                 new_elem = SequenceFlow(attr['id'], attr['sourceRef'],
                                         attr['targetRef'], attr.get('name'))
@@ -179,9 +200,6 @@ def parse_process(elem: XmlElement, elements: Dict[str, Element]):
             case "evidenceSource":
                 new_elem = PotentialEvidenceSource(attr['id'], attr['attachedToRef'])
                 add_pe_source(new_elem, elements)
-            case "exclusiveGateway":
-                gateway = ExclusiveGateway(attr['id'])
-                new_elem = parse_flow_object(child, gateway)
             case "produces":
                 association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
                 attach_association(association, elements)
