@@ -1,7 +1,7 @@
 from typing import Optional
 
 from src.elements.flow_object.activity import Activity
-from src.elements.flow_object.hash_function import HashFunction
+from src.elements.frss.forensic_ready_task.hash_function import HashFunction
 
 
 class Task(Activity):

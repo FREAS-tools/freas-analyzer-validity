@@ -1,8 +1,8 @@
 from typing import Optional, List
 
 from src.elements.flow_object.flow_object import FlowObject
-from src.elements.pot_evidence_source import PotentialEvidenceSource
-from src.elements.flow_object.task.association import DataOutputAssociation, DataInputAssociation
+from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
+from src.elements.flow.association import DataOutputAssociation, DataInputAssociation
 
 
 class Activity(FlowObject):

@@ -122,6 +122,22 @@ class Analyzer:
         return responses
 
     @classmethod
+    def __analyze_semantic_all(cls, elements):
+        """
+        Executes all the semantic rules and semantic hints.
+
+        Parameters:
+            elements (Dict[str, Element]): Dictionary of model elements.
+
+        Returns:
+            List[Response]: List of responses, containing the Error and Warning objects.
+        """
+        semantic_rules_responses = cls.__analyze_semantic_rules(elements)
+        semantic_hints_responses = cls.__analyze_semantic_hints(elements)
+
+        return semantic_rules_responses + semantic_hints_responses
+
+    @classmethod
     def __analyze_evidence_quality_rules(cls, elements, element_id: str) -> List[Response]:
         """
         Executes the evidence quality rules.
@@ -144,19 +160,3 @@ class Analyzer:
         response = rule.evaluate(elements, element_id)
 
         return [response] if response is not None else []
-
-    @classmethod
-    def __analyze_semantic_all(cls, elements):
-        """
-        Executes all the semantic rules and semantic hints.
-
-        Parameters:
-            elements (Dict[str, Element]): Dictionary of model elements.
-
-        Returns:
-            List[Response]: List of responses, containing the Error and Warning objects.
-        """
-        semantic_rules_responses = cls.__analyze_semantic_rules(elements)
-        semantic_hints_responses = cls.__analyze_semantic_hints(elements)
-
-        return semantic_rules_responses + semantic_hints_responses

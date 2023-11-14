@@ -6,7 +6,7 @@ from src.rules.rule import IRule
 from src.response.error import Error
 from src.elements.element import Element
 from src.response.severity import Severity
-from src.elements.pot_evidence_source import PotentialEvidenceSource
+from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
 from src.response.response import Response
 
 
