@@ -1,0 +1,42 @@
+name: Build Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    # build the tags for images
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        # list of Docker images to use as base name for tags
+        images: |
+          ghcr.io/FREAS-tools/freas-analyzer-validity
+        # generate Docker tags based on the following events/attributes
+        tags: |
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          type=ref,event=tag
+    # login to gilderko container registry
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    # build and push the image
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        push: true # Will only build if this is not here
+        file: Dockerfile
+        tags: ${{ steps.meta.outputs.tags }}
