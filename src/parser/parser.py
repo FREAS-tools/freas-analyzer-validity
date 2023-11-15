@@ -196,10 +196,23 @@ def store_element(new_elem: Element, elements: Dict[str, Element]):
         elements[key] = new_elem
 
 
-def parse(filename: str) -> Dict[str, Element]:
-    elements = {}
+def parse_file(filename: str) -> Dict[str, Element]:
+    """
+    Parses the model XML from a file.
+    """
     tree = ET.parse(filename)
     root = tree.getroot()
+    return _parse(root)
+
+def parse_string(model_xml: str) -> Dict[str, Element]:
+    """
+    Parses the model XML from string.
+    """
+    root = ET.fromstring(model_xml)
+    return _parse(root)
+
+def _parse(root):
+    elements = {}
 
     for child in root:
         tag = get_tag(child)

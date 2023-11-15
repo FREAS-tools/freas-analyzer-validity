@@ -3,7 +3,7 @@ import json
 from src.analyzer.analyzer import Analyzer
 from src.input.input import AnalysisType
 from src.input.input import Input
-from src.parser.parser import parse
+from src.parser.parser import parse_file
 from src.result.result import ResultEncoder
 
 
@@ -33,7 +33,7 @@ def main():
 
     try:
         analysis_input = Input(AnalysisType[analysis_type], element_id)
-        bpmn4frss_elements = parse(file_path)
+        bpmn4frss_elements = parse_file(file_path)
     except Exception as e:
         print("Error while parsing the BPMN4FRSS model: " + str(e))
         return
