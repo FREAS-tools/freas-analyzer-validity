@@ -1,4 +1,5 @@
-import xml.etree.ElementTree as ET
+from defusedxml.ElementTree import parse, fromstring
+from xml.etree.ElementTree import Element as XmlElement
 
 from src.elements.artefact.data_object.pot_evidence_type import PotentialEvidenceType
 from src.elements.container.pool import Pool
@@ -27,7 +28,7 @@ Responsible for parsing BPMN4FRSS XML file into a dictionary of elements.
 """
 
 
-def get_tag(elem: ET.Element) -> str:  # without namespace
+def get_tag(elem: XmlElement) -> str:  # without namespace
     tag_list = elem.tag.split('}')
 
     if len(tag_list) > 1:
@@ -35,7 +36,7 @@ def get_tag(elem: ET.Element) -> str:  # without namespace
     return tag_list[0]
 
 
-def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
+def parse_collaboration(elem: XmlElement, elements: Dict[str, Element]):
     for child in elem:
         tag = get_tag(child)
         attr = child.attrib
@@ -51,7 +52,7 @@ def parse_collaboration(elem: ET.Element, elements: Dict[str, Element]):
         store_element(new_elem, elements)
 
 
-def get_source_target_ref(elem: ET.Element):
+def get_source_target_ref(elem: XmlElement):
     source, target = None, None
 
     for child in elem:
@@ -64,7 +65,7 @@ def get_source_target_ref(elem: ET.Element):
     return source, target
 
 
-def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
+def parse_flow_object(elem: XmlElement, obj: FlowObject) -> FlowObject:
     obj.name = elem.attrib.get('name')
 
     for child in elem:
@@ -98,7 +99,7 @@ def parse_flow_object(elem: ET.Element, obj: FlowObject) -> FlowObject:
     return obj
 
 
-def parse_data_object(elem: ET.Element, process_id: str) -> DataObject:
+def parse_data_object(elem: XmlElement, process_id: str) -> DataObject:
     for child in elem:
         tag = get_tag(child)
         if tag == "potentialEvidence":
@@ -111,7 +112,7 @@ def parse_data_object(elem: ET.Element, process_id: str) -> DataObject:
     return DataObject(elem.attrib['id'], process_id)
 
 
-def parse_data_store(elem: ET.Element) -> DataStore:
+def parse_data_store(elem: XmlElement) -> DataStore:
     data_store = DataStore(elem.attrib['id'])
 
     for child in elem:
@@ -140,7 +141,7 @@ def attach_association(association: Association, elements:  Dict[str, Element]):
     pe_source.association = association if pe_source else None
 
 
-def parse_process(elem: ET.Element, elements: Dict[str, Element]):
+def parse_process(elem: XmlElement, elements: Dict[str, Element]):
     process = Process(elem.attrib['id'])
     elements[process.id] = process
 
@@ -200,7 +201,7 @@ def parse_file(filename: str) -> Dict[str, Element]:
     """
     Parses the model XML from a file.
     """
-    tree = ET.parse(filename)
+    tree = parse(filename)
     root = tree.getroot()
     return _parse(root)
 
@@ -208,7 +209,7 @@ def parse_string(model_xml: str) -> Dict[str, Element]:
     """
     Parses the model XML from string.
     """
-    root = ET.fromstring(model_xml)
+    root = fromstring(model_xml)
     return _parse(root)
 
 def _parse(root):
