@@ -1,7 +1,7 @@
 
 from typing import Optional
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class AnalysisType(str, Enum):
     SEMANTIC_RULES = 'SEMANTIC_RULES',
@@ -10,6 +10,6 @@ class AnalysisType(str, Enum):
     EVIDENCE_QUALITY_ANALYSIS = 'EVIDENCE_QUALITY_ANALYSIS'
 
 class AnalysisModel(BaseModel):
-    model: str
-    analysis_type: AnalysisType
-    element_id: Optional[str]
+    model: str = Field(description="Base64-encoded XML model")
+    analysis_type: AnalysisType 
+    element_id: Optional[str] = Field(None, description="Element id_to analyse")

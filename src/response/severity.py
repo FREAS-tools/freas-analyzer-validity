@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class Severity(Enum):
     """
     Represents the levels of severity of the error.

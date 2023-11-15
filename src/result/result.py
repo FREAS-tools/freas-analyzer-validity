@@ -1,5 +1,6 @@
 from json import JSONEncoder
 from typing import List, Optional
+from enum import Enum
 
 from src.response.error import Error
 from src.response.warning import Warning
@@ -30,5 +31,7 @@ class ResultEncoder(JSONEncoder):
     """
     Custom JSON encoder for Result class.
     """
-    def default(self, o):
-        return o.__dict__
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.name
+        return obj.__dict__
