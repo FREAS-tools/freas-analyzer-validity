@@ -1,5 +1,7 @@
 from z3 import *
+
 from zope.interface import implementer
+
 from typing import Dict, Optional, List
 
 from src.rules.rule import IRule
@@ -32,7 +34,7 @@ class MissingPotentialEvidence:
         # Define Z3 tuple representing Potential Evidence Source, containing the following fields:
         # Potential Evidence Source ID,
         # boolean value indicating whether the Potential Evidence Source has an association
-        pe_source_sort, mk_pe_source, (pes_id, has_assoc) = TupleSort("pe_source_sort", [StringSort(), BoolSort()])
+        pe_source_sort, mk_pe_source, (pes_id, has_assoc) = TupleSort("PESource", [StringSort(), BoolSort()])
 
         z3_pe_sources = [mk_pe_source(StringVal(value.id), value.association is not None) for _, value in
                          elements.items()

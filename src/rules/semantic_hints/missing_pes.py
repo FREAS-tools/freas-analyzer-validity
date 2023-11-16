@@ -30,8 +30,8 @@ class MissingPES:
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         # Define Z3 tuple representing Flow Object, containing the following fields:
         # Flow Object ID, boolean value indicating whether the Flow Object has a Potential Evidence Source label
-        flow_object_sort, mk_flow_object_sort, (flow_obj_id, has_pes) = \
-            TupleSort("flow_object_sort", [StringSort(), BoolSort()])
+        flow_object_sort, mk_flow_object, (flow_obj_id, has_pes) = \
+            TupleSort("FlowObject", [StringSort(), BoolSort()])
 
         # Create a list of all Flow Objects that are the source or target element of a Message Flow
         z3_flow_objects = []
@@ -45,8 +45,8 @@ class MissingPES:
                 if isinstance(source_ref, Pool) or isinstance(target_ref, Pool):
                     continue
 
-                z3_flow_objects.append(mk_flow_object_sort(StringVal(source_ref.id), source_ref.pe_source is not None))
-                z3_flow_objects.append(mk_flow_object_sort(StringVal(target_ref.id), target_ref.pe_source is not None))
+                z3_flow_objects.append(mk_flow_object(StringVal(source_ref.id), source_ref.pe_source is not None))
+                z3_flow_objects.append(mk_flow_object(StringVal(target_ref.id), target_ref.pe_source is not None))
 
         # Check if flow object exists in the model
         def exists(flow_obj):

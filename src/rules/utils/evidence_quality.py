@@ -41,9 +41,9 @@ def get_flow_data_objects(elements: Dict[str, Element], flow_obj: Activity) -> T
 def get_sequence_flow_targets(elements: Dict[str, Element], flow_object: FlowObject) -> List[FlowObject]:
     flow_ids = []
     if isinstance(flow_object, Activity) and flow_object.outgoing is not None:
-        flow_ids = [flow_object.outgoing]
+        flow_ids.append(flow_object.outgoing)
     elif isinstance(flow_object, Gateway):
-        flow_ids = flow_object.outgoing
+        flow_ids.extend(flow_object.outgoing)
 
     targets = []
     for flow_id in flow_ids:
@@ -56,12 +56,30 @@ def get_sequence_flow_targets(elements: Dict[str, Element], flow_object: FlowObj
 
 
 def get_message_flow_target(elements: Dict[str, Element], source: str) -> List[Element]:
+    """
+    Given a source element ID, returns a list of all target elements of message flow 
+    originating from the source element.
+    Parameters:
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
+        source (str): The ID of the source element.
+    Returns:
+        List[Element]: A list of all target elements of message flow originating from the source element.
+    """
     return [elements[elem.target_ref] for elem in elements.values()
             if isinstance(elem, MessageFlow) and elem.source_ref == source]
 
 
 def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[FlowObject],
                                data_stores: List[str]):
+    """
+    Get all data stores that potentially contain altered data in case of a compromise of the provided flow object.
+    Parameters:
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
+        flow_obj (Optional[FlowObject]): Flow object.
+        data_stores (List[str]): List of data stores.
+    Returns:
+        List[str]: A list of data stores that are connected to or succeed the provided flow object in the process.
+    """
     if flow_obj is None:
         return data_stores
 
@@ -74,13 +92,15 @@ def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[
             if isinstance(data_obj, EvidenceDataStore):
                 data_stores.append(StringVal(data_obj_id))
 
+    # Take the following flow object/s
     seq_flow_targets = get_sequence_flow_targets(elements, flow_obj)
-    
     for target in seq_flow_targets:
         get_disputable_data_stores(elements, target, data_stores)
 
+
     message_flow_targets = get_message_flow_target(elements, flow_obj.id)
     for message_flow_target in message_flow_targets:
+        # Disregard Pool elements
         if isinstance(message_flow_target, FlowObject):
             get_disputable_data_stores(elements, message_flow_target, data_stores)
 
@@ -92,8 +112,8 @@ def get_potential_evidence(elements: Dict[str, Element], data_store: EvidenceDat
     Get all potential evidence objects stored in the provided evidence data store along with the data objects
     connected to them via evidence relations.
     Parameters:
-        elements (Dict[str, Element]): model elements.
-        data_store (EvidenceDataStore): compromised data store.
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
+        data_store (EvidenceDataStore): Compromised data store.
     Returns:
         Set[StringVal]: A set of Z3 `StringVal` objects representing potential evidence name.
 
@@ -125,10 +145,10 @@ def get_data_object_reference(elements: Dict[str, Element], data_object: str) ->
     """
     Get the data object reference of the provided data object.
     Parameters:
-        elements (Dict[str, Element]): model elements.
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
         data_object (str): data object id.
     Returns:
-        Optional[DataObjectReference]: data object reference object.
+        Optional[DataObjectReference]: Data object reference object.
     """
     for elem in elements.values():
         if isinstance(elem, DataObjectReference) and elem.data == data_object:
@@ -141,8 +161,8 @@ def get_data_object_name(elements: Dict[str, Element], data_object: str) -> str:
     """
     Get the name of the provided data object.
     Parameters:
-        elements (Dict[str, Element]): model elements.
-        data_object (str): data object id.
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
+        data_object (str): Data object id.
     Returns:
         str: data object name.
     """
@@ -157,7 +177,7 @@ def get_all_ev_data_stores(elements: Dict[str, Element], mk_data_store) -> List[
     """
     Return all evidence data stores from the model in Z3 representation.
     Parameters:
-        elements (Dict[str, Element]): model elements.
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
         mk_data_store (Callable): Z3 data store constructor.
     Returns:
         List[EvidenceDataStore]: A list of data stores.
@@ -188,9 +208,9 @@ def get_max_number_of_pe(elements: Dict[str, Element]) -> int:
     """
     Get the maximum number of potential evidence stored in a data store.
     Parameters:
-        elements (Dict[str, Element]): model elements.
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
     Returns:
-        int: maximum number of potential evidence.
+        int: Maximum number of potential evidence.
     """
     evidence_count = 0
 

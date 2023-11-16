@@ -11,8 +11,8 @@ class EvidenceDataRelation(Element):
 
         Parameters:
             elem_id (str): Element id
-            source_ref (str): Data Object Reference of a source Data Object
-            target_ref (str): Data Object Reference of a target Data Object
+            source_ref (str): Data Object Reference of a source Potential Evidence Type
+            target_ref (str): Data Object Reference of a target Potential Evidence Type
         """
         super().__init__(elem_id)
 
