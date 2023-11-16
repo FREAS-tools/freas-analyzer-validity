@@ -2,6 +2,7 @@ from defusedxml.ElementTree import parse, fromstring
 from xml.etree.ElementTree import Element as XmlElement
 
 from typing import Dict
+from types import MappingProxyType
 
 from src.elements.element import Element
 from src.elements.container.pool import Pool
@@ -241,4 +242,4 @@ def _parse(root):
             case "collaboration":
                 parse_collaboration(child, elements)
 
-    return elements
+    return MappingProxyType(elements) # immutable dict
