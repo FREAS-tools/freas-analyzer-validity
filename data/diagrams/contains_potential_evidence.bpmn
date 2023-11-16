@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss"
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_Jute3z"
+    targetNamespace="http://bpmn.io/schema/bpmn">
+    <bpmn:collaboration id="Collaboration_0305stk">
+        <bpmn:participant id="Participant_0pkq1be" name="Device" processRef="Process_rkS_5U" />
+    </bpmn:collaboration>
+    <bpmn:process id="Process_rkS_5U" isExecutable="false">
+        <bpmn:startEvent id="StartEvent_FjvndB">
+            <bpmn:outgoing>SequenceFlow_1l8gfzn</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:task id="Task_17m55jb" name="Check Data Validity">
+            <bpmn:incoming>SequenceFlow_1l8gfzn</bpmn:incoming>
+            <bpmn:outgoing>SequenceFlow_1ger7gw</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:endEvent id="EndEvent_1d4ret1">
+            <bpmn:incoming>SequenceFlow_1ger7gw</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn4frss:evidenceSource id="EvidenceSource_1i95iav" attachedToRef="Task_17m55jb" />
+        <bpmn:sequenceFlow id="SequenceFlow_1l8gfzn" sourceRef="StartEvent_FjvndB"
+            targetRef="Task_17m55jb" />
+        <bpmn:sequenceFlow id="SequenceFlow_1ger7gw" sourceRef="Task_17m55jb"
+            targetRef="EndEvent_1d4ret1" />
+        <bpmn:dataObjectReference id="DataObjectReference_0qz69a7" name="Log"
+            dataObjectRef="DataObject_1al6r9q" />
+        <bpmn:dataObject id="DataObject_1al6r9q">
+            <bpmn4frss:potentialEvidence id="PotentialEvidence_0h9yjkh" />
+        </bpmn:dataObject>
+        <bpmn4frss:produces id="Produces_0jjzg0a" sourceRef="EvidenceSource_1i95iav"
+            targetRef="DataObjectReference_0qz69a7" />
+    </bpmn:process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_DE_hLc">
+        <bpmndi:BPMNPlane id="BPMNPlane_nMhHxS" bpmnElement="Collaboration_0305stk">
+            <bpmndi:BPMNShape id="BPMNShape_0ohc73h" bpmnElement="Participant_0pkq1be"
+                isHorizontal="true">
+                <dc:Bounds x="90" y="275" width="600" height="250" />
+                <bpmndi:BPMNLabel id="BPMNLabel_0mp25y7" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="_BPMNShape_StartEvent_eik7h2" bpmnElement="StartEvent_FjvndB">
+                <dc:Bounds x="232" y="382" width="36" height="36" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_0e2vt2t" bpmnElement="Task_17m55jb">
+                <dc:Bounds x="310" y="360" width="100" height="80" />
+                <bpmndi:BPMNLabel id="BPMNLabel_01fl0ro" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_105ugnu" bpmnElement="EndEvent_1d4ret1">
+                <dc:Bounds x="472" y="382" width="36" height="36" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_1kyk8kv" bpmnElement="EvidenceSource_1i95iav">
+                <dc:Bounds x="396" y="346" width="28" height="28" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_1jgo7kc" bpmnElement="DataObjectReference_0qz69a7">
+                <dc:Bounds x="452" y="295" width="36" height="50" />
+                <bpmndi:BPMNLabel id="BPMNLabel_1bed7ya">
+                    <dc:Bounds x="461" y="352" width="19" height="14" />
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="BPMNEdge_1ust3fw" bpmnElement="Produces_0jjzg0a">
+                <di:waypoint x="424" y="350" />
+                <di:waypoint x="452" y="330" />
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_1g5ymn0" bpmnElement="SequenceFlow_1l8gfzn">
+                <di:waypoint x="268" y="400" />
+                <di:waypoint x="310" y="400" />
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_0x3t6bu" bpmnElement="SequenceFlow_1ger7gw">
+                <di:waypoint x="410" y="400" />
+                <di:waypoint x="472" y="400" />
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</bpmn:definitions>

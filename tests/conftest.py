@@ -23,16 +23,18 @@ def new_av_scenario():
 #     return parser.parse_file(file_path)
 
 
-# @pytest.fixture(scope="session")
-# def semantics_bad_elements():
-#     file_path = os.path.join(data_dir, "missing_potential_evidence.bpmn")
-#     return parser.parse_file(file_path)
+@pytest.fixture(scope="session")
+def semantics_bad_elements():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "missing_potential_evidence.bpmn")
+    return parser.parse_file(file_path)
 
 
-# @pytest.fixture(scope="session")
-# def semantics_good_elements():
-#     file_path = os.path.join(data_dir, "semantics_good.bpmn")
-#     return parser.parse_file(file_path)
+@pytest.fixture(scope="session")
+def semantics_good_elements():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "contains_potential_evidence.bpmn")
+    return parser.parse_file(file_path)
 
 
 # @pytest.fixture(scope="session")
