@@ -1,11 +1,11 @@
 from typing import List, Optional
 
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 
 
-class Warning(Response):
+class Warning(Result):
     """
-    Represents a rule response in case of Semantic Hints analysis.
+    Represents a rule result in case of Semantic Hints analysis.
     """
     def __init__(self, message: str = "", source: Optional[List[str]] = None):
         """

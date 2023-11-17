@@ -6,8 +6,8 @@ from zope.interface import implementer
 from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.element import Element
 from src.elements.flow_object.task.task import Task
-from src.response.response import Response
-from src.response.warning import Warning
+from src.rules.rule_result.result import Result
+from src.rules.rule_result.warning import Warning
 from src.rules.rule import IRule
 from src.rules.utils.semantic import get_participant
 
@@ -21,7 +21,7 @@ class SameEvidenceStore:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str]) -> Response:
+    def __create_result(solutions: List[str]) -> Result:
         warning = Warning()
         warning.source = solutions
         warning.message = "The HashProof must be stored independently of Potential Evidence," \
@@ -29,7 +29,7 @@ class SameEvidenceStore:
 
         return warning
 
-    def evaluate(self, elements: Dict[str, Element]) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
 
         # Define the Z3 tuple sort representing data object, containing the following fields:
         # participant ID, data object id, and data object name
@@ -92,4 +92,4 @@ class SameEvidenceStore:
                     s.add(dec() != model[dec])
                     solutions.append(str(simplify(object_id(model[dec]))).strip('"'))  # only element's ID
 
-        return self.__create_response(solutions) if len(solutions) > 0 else None
+        return self.__create_result(solutions) if len(solutions) > 0 else None

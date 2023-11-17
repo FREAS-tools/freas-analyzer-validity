@@ -7,14 +7,14 @@ Forensic readiness requirements are captured in the form of rules.
 The rules are divided into three categories depending on the type of analysis they perform:
 
 **Semantic Rules Analysis** 
-  * verifies if the provided model is in accordance with BPMN4FRSS semantic rules. If the model violates any of the rules, the tool returns **Errors** that indicate the concrete problem and can help users remedy the issue.
+  * verifies if the provided model is in accordance with BPMN4FRSS semantic rules. If the model violates any of the rules, the tool returns **Errors** that indicate the concrete problem and can help users fix the issue.
 
 **Semantic Hints Analysis** 
   * provides recommendations for improving the model. Violating these rules results in **Warnings** but does not affect the model's validity. Nevertheless, compliance with these rules is highly recommended, as their violation can indicate potential weaknesses.
 
 **Evidence Quality Analysis**
   * checks whether the employed forensic-ready controls are sufficient to yield reliable and relevant potential evidence in case of an incident. 
-  To simulate an incident, the user can mark a concrete **Data Store** or a **Flow Object** from the model as compromised, i.e., provide the **id** of a specific element within the analysis input. \
+  To simulate an incident, the user can mark a concrete **Data Store** or a **Flow Object** (Task or Event) from the model as compromised, i.e., provide the **id** of a specific element within the analysis input. \
   In both cases, analysis output is a list of Data Store elements that contain potential evidence. Stored potential evidence can hold information to help detect the inconsistency between incident related data.
 
 

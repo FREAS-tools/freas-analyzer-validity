@@ -1,6 +1,6 @@
 from typing import Optional
 
-from src.elements.artefact.data_object.pot_evidence_type import PotentialEvidenceType
+from src.elements.frss.evidence_type.potential_evidence_type import PotentialEvidenceType
 
 
 class Proof(PotentialEvidenceType):

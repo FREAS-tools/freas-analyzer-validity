@@ -1,15 +1,15 @@
 import json
 
+from src.parser.parser import Parser
 from src.analyzer.analyzer import Analyzer
-from src.input.input import AnalysisType
-from src.input.input import Input
-from src.parser.parser import parse_file
-from src.result.result import ResultEncoder
+from src.analysis_input.input import AnalysisType
+from src.analysis_input.input import Input
+from src.analysis_output.output import OutputEncoder
 
 
 def main():
     # Define the input file name
-    input_path = 'src/input/input_example.json'
+    input_path = 'src/analysis_input/input_example.json'
 
     # Load the JSON file
     with open(input_path, 'r') as file:
@@ -31,16 +31,13 @@ def main():
     print("Element ID: " + (str(element_id) if element_id is not None else "None"))
     print()
 
-    try:
-        analysis_input = Input(AnalysisType[analysis_type], element_id)
-        bpmn4frss_elements = parse_file(file_path)
-    except Exception as e:
-        print("Error while parsing the BPMN4FRSS model: " + str(e))
-        return
+    analysis_input = Input(AnalysisType[analysis_type], element_id)
+    parser = Parser()
+    bpmn4frss_elements = parser.parse_file(file_path)
 
     # Perform the analysis using the analysis_input and bpmn4frss_elements to get an instance of the Result class
     result = Analyzer.analyze(analysis_input, bpmn4frss_elements)
-    result_json = json.dumps(result, indent=2, cls=ResultEncoder)
+    result_json = json.dumps(result, indent=2, cls=OutputEncoder)
 
     print("Analysis result:")
     print(result_json)

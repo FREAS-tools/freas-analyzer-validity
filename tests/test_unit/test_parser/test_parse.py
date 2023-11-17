@@ -1,6 +1,6 @@
 # import pytest
 
-# from src.elements.artefact.data_object.evidence_data_relation import EvidenceDataRelation
+# from src.elements.frss.evidence_data_relation import EvidenceDataRelation
 # from src.elements.artefact.data_object.pot_evidence_type import PotentialEvidenceType
 # from src.elements.artefact.data_reference import DataObjectReference
 # from src.elements.container.pool import Pool
@@ -10,7 +10,7 @@
 # from src.elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
 # from src.elements.flow_object.event.throw_event import EndEvent
 # from src.elements.flow_object.task.task import Task
-# from src.elements.pot_evidence_source import PotentialEvidenceSource
+# from src.elements.frss.pot_evidence_source import PotentialEvidenceSource
 
 
 # def test_parse(missing_pes_elements):

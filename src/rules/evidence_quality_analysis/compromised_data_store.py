@@ -1,16 +1,14 @@
 from z3 import *
-
-from src.elements.artefact.data_reference import DataStoreReference
-
 from zope.interface import implementer
+
 from typing import Dict, List, Optional
 
-from src.response.response import Response
+from src.rules.rule_result.result import Result
 from src.rules.rule import IRule
-from src.elements.artefact.data_store.data_store import DataStore
+from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.element import Element
-
-from src.rules.utils.evidence_quality import get_potential_evidence, get_all_data_stores, get_max_number_of_pe
+from src.elements.artefact.data_reference import DataStoreReference
+from src.rules.utils.evidence_quality import get_potential_evidence, get_all_ev_data_stores, get_max_number_of_pe
 
 
 @implementer(IRule)
@@ -22,23 +20,26 @@ class CompromisedDataStore:
     """
 
     @staticmethod
-    def __create_response(solutions: List[str], data_store: str) -> Response:
-        response = Response()
-        response.source = solutions
+    def __create_result(solutions: List[str], data_store: str) -> Result:
+        result = Result()
+        result.source = solutions
 
-        response.message = "Returned Data Stores contain potential evidence relevant in " \
+        result.message = "Returned Data Stores contain potential evidence relevant in " \
                            "case that " + data_store + " is compromised."
 
-        return response
+        return result
 
-    def evaluate(self, elements: Dict[str, Element], data_store_ref: str) -> Optional[Response]:
+    def evaluate(self, elements: Dict[str, Element], data_store_ref: str) -> Optional[Result]:
 
         data_store_ref_obj: Optional[DataStoreReference] = elements.get(data_store_ref)
         if data_store_ref_obj is None:
-            return self.__create_response([], data_store_ref)
+            return self.__create_result([], data_store_ref)
 
         data_store_id: str = data_store_ref_obj.data
-        data_store: DataStore = elements[data_store_id]
+        data_store = elements[data_store_id]
+
+        if not isinstance(data_store, EvidenceDataStore):
+            return self.__create_result([], data_store_ref)
 
         # Define the Z3 tuple sort representing data store, containing the following fields:
         # data store ID, array of stored potential evidence and their number
@@ -52,7 +53,7 @@ class CompromisedDataStore:
         max_pe_number = get_max_number_of_pe(elements)
 
         # Create a list of all data stores present in the model
-        z3_data_stores = get_all_data_stores(elements, mk_data_store)
+        z3_data_stores = get_all_ev_data_stores(elements, mk_data_store)
 
         # Check if the data store exists in the model
         def exists(data_str):
@@ -96,4 +97,4 @@ class CompromisedDataStore:
                 # Add the ID of the found data store to the list
                 solution.append(str(simplify(store_id(model[dec]))).strip('"'))
 
-        return self.__create_response(solution, data_store_ref_obj.name) if len(solution) > 0 else None
+        return self.__create_result(solution, data_store_ref_obj.name) if len(solution) > 0 else None

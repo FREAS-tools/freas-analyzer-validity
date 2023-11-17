@@ -1,6 +1,6 @@
 from typing import Optional
 
-from src.input.analysis_types import AnalysisType
+from src.analysis_input.analysis_types import AnalysisType
 
 
 class Input:
