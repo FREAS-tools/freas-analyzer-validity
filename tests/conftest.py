@@ -16,11 +16,11 @@ def new_av_scenario():
     return parser.parse_file(file_path)
 
 
-# @pytest.fixture(scope="session")
-# def missing_pes_elements():
-#     parser = Parser()
-#     file_path = os.path.join(data_dir, "missing_evidence_source.bpmn")
-#     return parser.parse_file(file_path)
+@pytest.fixture(scope="session")
+def missing_pes_elements():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "missing_evidence_source.bpmn")
+    return parser.parse_file(file_path)
 
 
 @pytest.fixture(scope="session")

@@ -1,15 +1,13 @@
 from z3 import *
-
-from src.elements.artefact.data_reference import DataStoreReference
-
 from zope.interface import implementer
+
 from typing import Dict, List, Optional
 
 from src.rules.rule_result.result import Result
 from src.rules.rule import IRule
 from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.element import Element
-
+from src.elements.artefact.data_reference import DataStoreReference
 from src.rules.utils.evidence_quality import get_potential_evidence, get_all_ev_data_stores, get_max_number_of_pe
 
 
