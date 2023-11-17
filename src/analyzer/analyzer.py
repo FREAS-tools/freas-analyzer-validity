@@ -1,26 +1,23 @@
 from typing import Dict, List
 
-from src.elements.artefact.data_reference import DataStoreReference
 from src.elements.element import Element
 from src.elements.flow_object.flow_object import FlowObject
+from src.elements.artefact.data_reference import DataStoreReference
 from src.analysis_input.analysis_types import AnalysisType
 from src.analysis_input.input import Input
-from src.rules.rule_result.result import Result
-from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
-from src.rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
-from src.rules.semantic_hints.missing_pes import MissingPES
-from src.rules.semantic_hints.reused_key import ReusedKey
-from src.rules.semantic_hints.same_evidence_store import SameEvidenceStore
-
-from src.rules.semantic_rules.hash_fun_check import HashFunction
-from src.rules.semantic_rules.hash_fun_pes import HashFunctionPES
-from src.rules.semantic_rules.keyed_hash_check import KeyedHashFunction
-
-
 from src.analysis_output.output import Output
 from src.rules.rule_result.error import Error
 from src.rules.rule_result.warning import Warning
-from src.rules.semantic_rules.missing_pot_evidence import MissingPotentialEvidence
+from src.rules.rule_result.result import Result
+from src.rules.semantic_hints.missing_pes import MissingPES
+from src.rules.semantic_hints.reused_key import ReusedKey
+from src.rules.semantic_rules.hash_fun_check import HashFunction
+from src.rules.semantic_rules.hash_fun_pes import HashFunctionPES
+from src.rules.semantic_rules.keyed_hash_check import KeyedHashFunction
+from src.rules.semantic_hints.same_evidence_store import SameEvidenceStore
+from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
+from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
+from src.rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
 
 
 class Analyzer:

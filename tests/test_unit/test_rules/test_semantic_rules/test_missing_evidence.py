@@ -1,5 +1,5 @@
 from src.rules.rule_result.error import Error
-from src.rules.semantic_rules.missing_pot_evidence import MissingPotentialEvidence
+from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
 
 
 def test_has_potential_evidence(semantics_good_elements):
