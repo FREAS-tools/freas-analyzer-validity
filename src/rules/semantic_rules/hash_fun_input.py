@@ -1,5 +1,6 @@
 from z3 import *
 from zope.interface import implementer
+
 from typing import Dict, List, Optional
 
 from src.elements.artefact.data_object.data_object import DataObject
@@ -10,6 +11,10 @@ from src.rules.rule_result.severity import Severity
 from src.elements.flow_object.task.task import Task
 from src.elements.artefact.data_reference import DataObjectReference
 from src.rules.rule_result.result import Result
+
+from src.rules.utils.semantic import create_mock_data_objects, get_participant
+from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, \
+    object_name
 
 
 @implementer(IRule)
@@ -31,11 +36,6 @@ class HashFunctionInput:
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()
-
-        # The sort, a constructor, and the accessors (task id, data object id, data object type)
-        data_object_sort, mk_data_object, (task_id, object_id, object_type) = \
-            TupleSort("DataObject", [StringSort(), StringSort(), StringSort()])
-
         solutions = []
 
         # Goes through all task and checks their output data objects
@@ -51,8 +51,10 @@ class HashFunctionInput:
 
             assert data_obj is not None
 
-            z3_hash_input = mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__))
-
+            participant = get_participant(elements, data_obj.process_id)
+            z3_hash_input = mk_data_object(StringVal(participant), StringVal(key),
+                                           StringVal(data_obj.id), StringVal(ref_obj.name),
+                                           StringVal(type(data_obj).__name__))
             # Data needed to check that task contains only one input
             inputs = []
 
@@ -63,21 +65,26 @@ class HashFunctionInput:
 
                 assert data_obj is not None
 
-                inputs.append(mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__)))
+                inputs.append(mk_data_object(StringVal(participant), StringVal(key),
+                                             StringVal(data_obj.id), StringVal(ref_obj.name),
+                                             StringVal(type(data_obj).__name__)))
 
             if len(inputs) == 0:
-                inputs = [mk_data_object(StringVal(key), StringVal("None"), StringVal("None"))]
+                inputs = create_mock_data_objects(0, 1, mk_data_object, key)
 
             def single_input(data_object):
-                return And(task_id(z3_hash_input) == task_id(data_object),
+                return And(participant_id(z3_hash_input) == participant_id(data_object),
+                           task_id(z3_hash_input) == task_id(data_object),
                            object_id(z3_hash_input) == object_id(data_object),
+                           object_name(z3_hash_input) == object_name(data_object),
                            object_type(z3_hash_input) == object_type(data_object))
 
             def correct_type(data_object):
                 return simplify(object_type(data_object)) == 'PotentialEvidenceType'
 
             def exists(data_object):
-                return Or([And(task_id(o) == task_id(data_object), object_id(o) == object_id(data_object),
+                return Or([And(participant_id(o) == participant_id(data_object), task_id(o) == task_id(data_object), 
+                               object_name(o) == object_name(data_object), object_id(o) == object_id(data_object),
                                object_type(o) == object_type(data_object))
                            for o in inputs])
 

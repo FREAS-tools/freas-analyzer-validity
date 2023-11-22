@@ -9,6 +9,7 @@ from src.elements.container.pool import Pool
 from src.elements.element import Element
 from src.elements.flow.message_flow import MessageFlow
 
+from src.rules.z3_types import flow_object_sort, mk_flow_object, flow_obj_id, has_pes
 
 @implementer(IRule)
 class MissingPES:
@@ -28,11 +29,6 @@ class MissingPES:
         return warning
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
-        # Define Z3 tuple representing Flow Object, containing the following fields:
-        # Flow Object ID, boolean value indicating whether the Flow Object has a Potential Evidence Source label
-        flow_object_sort, mk_flow_object, (flow_obj_id, has_pes) = \
-            TupleSort("FlowObject", [StringSort(), BoolSort()])
-
         # Create a list of all Flow Objects that are the source or target element of a Message Flow
         z3_flow_objects = []
 
