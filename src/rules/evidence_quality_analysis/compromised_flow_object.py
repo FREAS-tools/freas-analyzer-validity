@@ -8,6 +8,7 @@ from src.rules.rule import IRule
 from src.elements.element import Element
 from src.rules.rule_result.result import Result
 
+from src.rules.z3_types import data_store_sort, mk_data_store, store_id, stored_pe, pe_number
 from src.rules.utils.evidence_quality import get_flow_data_objects, get_disputable_data_stores, get_all_ev_data_stores, \
     get_max_number_of_pe
 
@@ -35,11 +36,6 @@ class CompromisedFlowObject:
         flow_object: Optional[Activity] = elements.get(flow_obj_id)
         if flow_object is None:
             return self.__create_result([], flow_obj_id)
-
-        # Define the Z3 tuple sort representing data stores, containing the following fields:
-        # data store ID, array of stored potential evidence and their number
-        data_store_sort, mk_data_store, (store_id, stored_pe, pe_number) = \
-            TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort()])
 
         # These already contain altered information and do not need to be attacked
         disputable_data_stores = []

@@ -1,5 +1,6 @@
 from z3 import *
 from zope.interface import implementer
+
 from typing import Dict, List, Optional
 
 from src.elements.artefact.data_object.data_object import DataObject
@@ -10,6 +11,9 @@ from src.rules.rule import IRule
 from src.rules.rule_result.error import Error
 from src.elements.element import Element
 from src.rules.rule_result.result import Result
+
+from src.rules.utils.semantic import create_mock_data_objects, get_participant
+from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, object_name
 
 
 @implementer(IRule)
@@ -30,11 +34,6 @@ class HashFunctionOutput:
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()
-
-        # The sort, a constructor, and the accessors (task id, data object id, data object type)
-        data_object_sort, mk_data_object, (task_id, object_id, object_type) = \
-            TupleSort("DataObject", [StringSort(), StringSort(), StringSort()])
-
         solutions = []
 
         # Goes through all tasks and checks their output data objects
@@ -49,11 +48,12 @@ class HashFunctionOutput:
             data_obj: Optional[DataObject] = elements.get(ref_obj.data)
 
             assert data_obj is not None
-
-            hash_output = mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__))
+            
+            participant = get_participant(elements, data_obj.process_id)
+            hash_output = mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id), StringVal(ref_obj.name), StringVal(type(data_obj).__name__))
 
             # Data needed to check that task contains only one output
-            outputs = []
+            z3_outputs = []
 
             for output in elem.data_output:
                 data_ref: str = output.target_ref
@@ -61,32 +61,36 @@ class HashFunctionOutput:
                 data_obj: Optional[DataObject] = elements.get(ref_obj.data)
 
                 assert data_obj is not None
+                
+                participant = get_participant(elements, data_obj.process_id)
+                z3_outputs.append(mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id), StringVal(ref_obj.name), StringVal(type(data_obj).__name__)))
 
-                outputs.append(mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__)))
-
-            if len(outputs) == 0:
-                outputs = [mk_data_object(StringVal(key), StringVal("None"), StringVal("None"))]
+            if len(z3_outputs) == 0:
+                z3_outputs = create_mock_data_objects(0, 1, mk_data_object, key)
 
             # Compare hash function output data object (Hash Proof) id with the provided data object
             # also checks that the output is the same object as output of the hash function
             # then we know that both task output assoc and pes output assoc point to the same object
             def single_output(data_object):
-                return And(task_id(hash_output) == task_id(data_object),
+                return And(participant_id(hash_output) == participant_id(data_object),
+                           task_id(hash_output) == task_id(data_object),
                            object_id(hash_output) == object_id(data_object),
+                           object_name(hash_output) == object_name(data_object),
                            object_type(hash_output) == object_type(data_object))
 
             def correct_type(data_object):
                 return simplify(object_type(data_object)) == 'HashProof'
 
-            # compare output objects with the provided data object
+            # Compare output objects with the provided data object
             def exists(data_object):
-                return Or([And(task_id(o) == task_id(data_object), object_id(o) == object_id(data_object),
+                return Or([And(participant_id(o) == participant_id(data_object), task_id(o) == task_id(data_object), 
+                               object_name(o) == object_name(data_object), object_id(o) == object_id(data_object),
                                object_type(o) == object_type(data_object))
-                           for o in outputs])
+                           for o in z3_outputs])
 
             x = Const('x', data_object_sort)
 
-            # data object different from function output exists => multiple data outputs
+            # Data object different from function output exists => multiple data outputs
             # or data object has different type then Hash Proof
             s.add(Or(Not(single_output(x)), Not(correct_type(x))))
             # s.add(Not(single_output(x)))

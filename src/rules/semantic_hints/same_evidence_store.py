@@ -1,7 +1,7 @@
-from typing import List, Dict, Optional
-
 from z3 import *
 from zope.interface import implementer
+
+from typing import List, Dict, Optional
 
 from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.element import Element
@@ -9,8 +9,10 @@ from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.result import Result
 from src.rules.rule_result.warning import Warning
 from src.rules.rule import IRule
-from src.rules.utils.semantic import get_participant
+from src.elements.artefact.data_reference import DataObjectReference
 
+from src.rules.utils.semantic import get_participant
+from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, object_name
 
 @implementer(IRule)
 class SameEvidenceStore:
@@ -30,31 +32,29 @@ class SameEvidenceStore:
         return warning
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
-
-        # Define the Z3 tuple sort representing data object, containing the following fields:
-        # participant ID, data object id, and data object name
-        data_object_sort, mk_data_object, (participant_id, object_id, object_name) = \
-            TupleSort("DataObject", [StringSort(), StringSort(), StringSort()])
-
         solutions = []
-        for key, elem in elements.items():
+
+        for elem in elements.values():
             # Find all tasks that execute a hash function
             if not isinstance(elem, Task) or elem.hash_fun is None:
                 continue
 
             # Find the input and output data objects of the hash function
             # and create a Z3 DataObject representing them
-            input_ref = elements[elem.hash_fun.input]
-            fun_input = elements[input_ref.data]
+            input_ref: DataObjectReference = elements[elem.hash_fun.input]
+            fun_input: DataObject = elements[input_ref.data]
             participant = get_participant(elements, fun_input.process_id)
-
-            z3_fun_input = mk_data_object(StringVal(participant), StringVal(fun_input.id), StringVal(input_ref.name))
+            
+            # Task id is not relevant, thus the "None" value
+            z3_fun_input = mk_data_object(StringVal(participant), StringVal("None"), StringVal(fun_input.id), 
+                                          StringVal(input_ref.name), StringVal(type(fun_input).__name__))
 
             output_ref = elements[elem.hash_fun.output]
             fun_output = elements[output_ref.data]
             participant = get_participant(elements, fun_output.process_id)
 
-            z3_fun_output = mk_data_object(StringVal(participant), StringVal(fun_output.id), StringVal(output_ref.name))
+            z3_fun_output = mk_data_object(StringVal(participant), StringVal("None"), StringVal(fun_output.id), 
+                                           StringVal(output_ref.name), StringVal(type(fun_output).__name__))
 
             # Get all data objects in the model and create Z3 DataObject representing them
             z3_data_objects = []
@@ -63,25 +63,26 @@ class SameEvidenceStore:
                     continue
 
                 participant = get_participant(elements, value.process_id)
-                z3_data_objects.append(mk_data_object(StringVal(participant), StringVal(value.id), StringVal(value.name)))
+                z3_data_objects.append(mk_data_object(StringVal(participant), StringVal("None"), StringVal(value.id), StringVal(value.name), StringVal(type(value).__name__)))
 
             def exists(data_object):
                 return Or([data_object == obj for obj in z3_data_objects])
 
+            def stored(data_object):
+                return And(
+                    [Or(participant_id(data_object) == participant_id(obj), object_name(data_object) != object_name(obj))
+                     for obj in z3_data_objects]
+                )
+            
             s = Solver()
             proof = Const('proof', data_object_sort)
             pot_evidence = Const('pot_evidence', data_object_sort)
 
             s.add(And(exists(proof), exists(pot_evidence)))
 
-            def stored(obj):
-                return And(
-                    [Or(participant_id(obj) == participant_id(k), object_name(obj) != object_name(k))
-                     for k in z3_data_objects]
-                )
-
-            s.add(proof == z3_fun_output)
             s.add(pot_evidence == z3_fun_input)
+            s.add(proof == z3_fun_output)
+            
             s.add(stored(proof))
             s.add(stored(pot_evidence))
 

@@ -8,6 +8,8 @@ from src.rules.rule import IRule
 from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.element import Element
 from src.elements.artefact.data_reference import DataStoreReference
+
+from src.rules.z3_types import data_store_sort, mk_data_store, store_id, stored_pe, pe_number
 from src.rules.utils.evidence_quality import get_potential_evidence, get_all_ev_data_stores, get_max_number_of_pe
 
 
@@ -40,12 +42,7 @@ class CompromisedDataStore:
 
         if not isinstance(data_store, EvidenceDataStore):
             return self.__create_result([], data_store_ref)
-
-        # Define the Z3 tuple sort representing data store, containing the following fields:
-        # data store ID, array of stored potential evidence and their number
-        data_store_sort, mk_data_store, (store_id, stored_pe, pe_number) = \
-            TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort()])
-
+        
         # Get a list of potential evidence that could indicate data store compromise
         z3_data_objects = get_potential_evidence(elements, data_store)
         

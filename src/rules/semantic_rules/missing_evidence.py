@@ -11,6 +11,8 @@ from src.rules.rule_result.severity import Severity
 from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
 from src.rules.rule_result.result import Result
 
+from src.rules.z3_types import pe_source_sort, mk_pe_source, pes_id, has_assoc
+
 
 @implementer(IRule)
 class MissingPotentialEvidence:
@@ -31,14 +33,9 @@ class MissingPotentialEvidence:
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()
 
-        # Define Z3 tuple representing Potential Evidence Source, containing the following fields:
-        # Potential Evidence Source ID,
-        # boolean value indicating whether the Potential Evidence Source has an association
-        pe_source_sort, mk_pe_source, (pes_id, has_assoc) = TupleSort("PESource", [StringSort(), BoolSort()])
-
-        z3_pe_sources = [mk_pe_source(StringVal(value.id), value.association is not None) for _, value in
-                         elements.items()
-                         if isinstance(value, PotentialEvidenceSource)]
+        z3_pe_sources = [mk_pe_source(StringVal(elem.id), elem.association is not None) for elem in
+                         elements.values()
+                         if isinstance(elem, PotentialEvidenceSource)]
 
         # Check if potential evidence source has an association
         def has_association(source):

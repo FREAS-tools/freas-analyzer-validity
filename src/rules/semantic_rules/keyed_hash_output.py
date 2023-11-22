@@ -11,6 +11,9 @@ from src.elements.flow_object.task.task import Task
 from src.elements.artefact.data_reference import DataObjectReference
 from src.rules.rule_result.result import Result
 
+from src.rules.utils.semantic import create_mock_data_objects, get_participant
+from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, object_name
+
 
 @implementer(IRule)
 class KeyedHashFunOutput:
@@ -31,14 +34,9 @@ class KeyedHashFunOutput:
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()
-
-        # The sort, a constructor, and the accessors (task id, data object id, data object type)
-        data_object_sort, mk_data_object, (task_id, object_id, object_type) = \
-            TupleSort("DataObject", [StringSort(), StringSort(), StringSort()])
-
         solutions = []
 
-        for key, elem in elements.items():
+        for elem_id, elem in elements.items():
             if not isinstance(elem, Task) or elem.hash_fun is None or \
                     elem.hash_fun.key is None or elem.pe_source is None:
                 continue
@@ -51,7 +49,9 @@ class KeyedHashFunOutput:
 
             assert data_obj is not None
 
-            hash_output = mk_data_object(StringVal(key), StringVal(data_obj.id), StringVal(type(data_obj).__name__))
+            participant = get_participant(elements, data_obj.process_id)
+            hash_output = mk_data_object(StringVal(participant), StringVal(elem_id), StringVal(data_obj.id),
+                                         StringVal(ref_obj.name), StringVal(type(data_obj).__name__))
 
             # data needed to check that task contains only one output
             outputs = []  # contains all output data objects from the current task
@@ -62,19 +62,23 @@ class KeyedHashFunOutput:
                 data_obj: Optional[DataObject] = elements.get(ref_obj.data)
 
                 assert data_obj is not None
-
-                outputs.append(mk_data_object(StringVal(key),
-                                              StringVal(data_obj.id), StringVal(type(data_obj).__name__)))
+                
+                participant = get_participant(elements, data_obj.process_id)
+                outputs.append(mk_data_object(StringVal(participant), StringVal(elem_id),
+                                              StringVal(data_obj.id), StringVal(ref_obj.name),
+                                              StringVal(type(data_obj).__name__)))
 
             if len(outputs) == 0:
-                outputs = [mk_data_object(StringVal(key), StringVal("None"), StringVal("None"))]
+                outputs = create_mock_data_objects(0, 1, mk_data_object, elem_id)
 
-            # compare hash function output data object (Hash Proof) id with the provided data object
+            # Compare hash function output data object (Hash Proof) id with the provided data object
             # also checks that the output is the same object as output of the hash function
             # then we know that both task output assoc and pes output assoc point to the same object
             def single_output(data_object):
-                return And(task_id(hash_output) == task_id(data_object),
+                return And(participant_id(hash_output) == participant_id(data_object),
+                           task_id(hash_output) == task_id(data_object),
                            object_id(hash_output) == object_id(data_object),
+                           object_name(hash_output) == object_name(data_object),
                            object_type(hash_output) == object_type(data_object))
 
             def correct_type(data_object):
@@ -82,7 +86,8 @@ class KeyedHashFunOutput:
 
             # Compare output object with the provided data object
             def exists(data_object):
-                return Or([And(task_id(o) == task_id(data_object), object_id(o) == object_id(data_object),
+                return Or([And(participant_id(o) == participant_id(data_object), task_id(o) == task_id(data_object), 
+                               object_name(o) == object_name(data_object), object_id(o) == object_id(data_object),
                                object_type(o) == object_type(data_object))
                            for o in outputs])
 
