@@ -49,10 +49,7 @@ class CompromisedFlowObject:
 
         # CONSTRAINTS
         def exists(data_str):
-            return Or(
-                [And(store_id(data_str) == store_id(store), stored_pe(data_str) == stored_pe(store),
-                     pe_number(data_str) == pe_number(store)) for store in z3_data_stores]
-            )
+            return Or([data_str == store for store in z3_data_stores])
 
         def valid_data_store(data_str):
             return And([store_id(data_str) != store for store in disputable_data_stores])

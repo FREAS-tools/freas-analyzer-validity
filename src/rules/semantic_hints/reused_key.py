@@ -58,8 +58,8 @@ class ReusedKey:
         s.add(exists(reused_key))
         s.add(key != reused_key)
 
-        # The key is reused if it has the same key ID and key name, but different participant ID
-        s.add(Not(Distinct(object_name(key), object_name(reused_key))))    # same key
+        # The key is considered reused if it has the same name as another data object, but different participant ID
+        s.add(Not(Distinct(object_name(key), object_name(reused_key))))    # same name
         s.add(Distinct(participant_id(key), participant_id(reused_key)))   # different pool
 
         # MODEL

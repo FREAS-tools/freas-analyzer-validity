@@ -54,10 +54,7 @@ class CompromisedDataStore:
 
         # Check if the data store exists in the model
         def exists(data_str):
-            return Or(
-                [And(store_id(data_str) == store_id(store), stored_pe(data_str) == stored_pe(store),
-                     pe_number(data_str) == pe_number(store)) for store in z3_data_stores]
-            )
+            return Or([data_str == store for store in z3_data_stores])
 
         # Check if at least one potential evidence is stored in the data store
         def contains_relevant_evidence(data_str):

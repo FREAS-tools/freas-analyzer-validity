@@ -54,7 +54,7 @@ class KeyedHashFunOutput:
                                          StringVal(ref_obj.name), StringVal(type(data_obj).__name__))
 
             # data needed to check that task contains only one output
-            outputs = []  # contains all output data objects from the current task
+            z3_outputs = []  # contains all output data objects from the current task
 
             for output in elem.data_output:
                 data_ref: str = output.target_ref
@@ -64,32 +64,25 @@ class KeyedHashFunOutput:
                 assert data_obj is not None
                 
                 participant = get_participant(elements, data_obj.process_id)
-                outputs.append(mk_data_object(StringVal(participant), StringVal(elem_id),
+                z3_outputs.append(mk_data_object(StringVal(participant), StringVal(elem_id),
                                               StringVal(data_obj.id), StringVal(ref_obj.name),
                                               StringVal(type(data_obj).__name__)))
 
-            if len(outputs) == 0:
-                outputs = create_mock_data_objects(0, 1, mk_data_object, elem_id)
+            if len(z3_outputs) == 0:
+                z3_outputs = create_mock_data_objects(0, 1, mk_data_object, elem_id)
 
             # Compare hash function output data object (Hash Proof) id with the provided data object
             # also checks that the output is the same object as output of the hash function
             # then we know that both task output assoc and pes output assoc point to the same object
             def single_output(data_object):
-                return And(participant_id(hash_output) == participant_id(data_object),
-                           task_id(hash_output) == task_id(data_object),
-                           object_id(hash_output) == object_id(data_object),
-                           object_name(hash_output) == object_name(data_object),
-                           object_type(hash_output) == object_type(data_object))
+                return data_object == hash_output
 
             def correct_type(data_object):
                 return simplify(object_type(data_object)) == 'KeyedHashProof'
 
             # Compare output object with the provided data object
             def exists(data_object):
-                return Or([And(participant_id(o) == participant_id(data_object), task_id(o) == task_id(data_object), 
-                               object_name(o) == object_name(data_object), object_id(o) == object_id(data_object),
-                               object_type(o) == object_type(data_object))
-                           for o in outputs])
+                return Or([data_object == obj for obj in z3_outputs])
 
             z3_data_object = Const('z3_data_object', data_object_sort)
 

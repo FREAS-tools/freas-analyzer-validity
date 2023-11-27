@@ -68,16 +68,10 @@ class KeyedHashFunInput:
                 return simplify(object_name(data_object)) == 'key'
 
             def equal(data_object, key_object):
-                return And(participant_id(key_object) == participant_id(data_object),
-                           task_id(key_object) == task_id(data_object),
-                           object_id(key_object) == object_id(data_object),
-                           object_type(key_object) == object_type(data_object))
+                return data_object == key_object
 
             def exists(data_object):
-                return Or([And(participant_id(i) == participant_id(data_object), task_id(i) == task_id(data_object),
-                               object_id(i) == object_id(data_object), object_name(i) == object_name(data_object),
-                               object_type(i) == object_type(data_object))
-                           for i in z3_inputs])
+                return Or([data_object == obj for obj in z3_inputs])
 
             input_one = Const('input_one', data_object_sort)
             input_two = Const('input_two', data_object_sort)

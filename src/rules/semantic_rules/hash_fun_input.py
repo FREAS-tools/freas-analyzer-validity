@@ -55,6 +55,7 @@ class HashFunctionInput:
             z3_hash_input = mk_data_object(StringVal(participant), StringVal(key),
                                            StringVal(data_obj.id), StringVal(ref_obj.name),
                                            StringVal(type(data_obj).__name__))
+            
             # Data needed to check that task contains only one input
             inputs = []
 
@@ -73,33 +74,26 @@ class HashFunctionInput:
                 inputs = create_mock_data_objects(0, 1, mk_data_object, key)
 
             def single_input(data_object):
-                return And(participant_id(z3_hash_input) == participant_id(data_object),
-                           task_id(z3_hash_input) == task_id(data_object),
-                           object_id(z3_hash_input) == object_id(data_object),
-                           object_name(z3_hash_input) == object_name(data_object),
-                           object_type(z3_hash_input) == object_type(data_object))
+                return data_object == z3_hash_input
 
             def correct_type(data_object):
                 return simplify(object_type(data_object)) == 'PotentialEvidenceType'
 
             def exists(data_object):
-                return Or([And(participant_id(o) == participant_id(data_object), task_id(o) == task_id(data_object), 
-                               object_name(o) == object_name(data_object), object_id(o) == object_id(data_object),
-                               object_type(o) == object_type(data_object))
-                           for o in inputs])
+                return Or([data_object == obj for obj in inputs])
 
-            x = Const('x', data_object_sort)
+            z3_data_object = Const('data_object', data_object_sort)
 
             # Data object different from function output exists => multiple data inputs
             # or data object has different type then PotentialEvidenceType
-            s.add(Or(Not(single_input(x)), Not(correct_type(x))))
+            s.add(Or(Not(single_input(z3_data_object)), Not(correct_type(z3_data_object))))
 
             # Data object is contained in task output objects
-            s.add(exists(x))
+            s.add(exists(z3_data_object))
 
             if s.check() == sat:
                 model = s.model()
-                solutions.append(str(simplify(task_id(model[x]))).strip('"'))  # only element's ID
+                solutions.append(str(simplify(task_id(model[z3_data_object]))).strip('"'))  # only element's ID
 
             s.pop()
 
