@@ -10,7 +10,7 @@ from src.elements.element import Element
 from src.elements.artefact.data_reference import DataStoreReference
 
 from src.rules.z3_types import data_store_sort, mk_data_store, store_id, stored_pe, pe_number
-from src.rules.utils.evidence_quality import get_potential_evidence, get_all_ev_data_stores, get_max_number_of_pe
+from src.rules.utils.evidence_quality import get_potential_evidence, get_all_ev_data_stores
 
 
 @implementer(IRule)
@@ -27,7 +27,7 @@ class CompromisedDataStore:
         result.source = solutions
 
         result.message = "Returned Data Stores contain potential evidence relevant in " \
-                           "case that " + data_store + " is compromised."
+                         "case that " + data_store + " is compromised."
 
         return result
 
@@ -42,12 +42,9 @@ class CompromisedDataStore:
 
         if not isinstance(data_store, EvidenceDataStore):
             return self.__create_result([], data_store_ref)
-        
-        # Get a list of potential evidence that could indicate data store compromise
-        z3_data_objects = get_potential_evidence(elements, data_store)
-        
-        # Return the maximum number of potential evidence that is stored in a data store
-        max_pe_number = get_max_number_of_pe(elements)
+
+        # Get a list of potential evidence names that could indicate data store compromise
+        z3_evidence = get_potential_evidence(elements, data_store)
 
         # Create a list of all data stores present in the model
         z3_data_stores = get_all_ev_data_stores(elements, mk_data_store)
@@ -56,23 +53,29 @@ class CompromisedDataStore:
         def exists(data_str):
             return Or([data_str == store for store in z3_data_stores])
 
-        # Check if at least one potential evidence is stored in the data store
-        def contains_relevant_evidence(data_str):
-            constraint = []
-            for data_obj in z3_data_objects:
-                constraint.append(Or([And(Select(stored_pe(data_str), i) == data_obj, i < pe_number(data_str))
-                                      for i in range(max_pe_number)]))
-
-            return Or(constraint)
+        # Checks if there exists an index such that the array at that index contains the potential evidence
+        def contains_evidence(index, data_str):
+            return Exists(index,
+                          Or([  # at least one of the potential evidence is stored in the data store
+                              And(
+                                  Select(stored_pe(data_str), index) == data_obj,
+                                  # the array at the index contains the potential evidence
+                                  0 <= index,  # index is not negative
+                                  index < pe_number(data_str)
+                                  # index is not larger than the number of stored potential evidence
+                              )
+                              for data_obj in z3_evidence
+                          ])
+                          )
 
         # Set up the Z3 solver and add the constraints
         s = Solver()
         data_store = Const('data_store', data_store_sort)
+        index = Int('index')
 
-        s.add(exists(data_store))                                # limit to data stores from the model
-        s.add(contains_relevant_evidence(data_store))            # check if data store contains relevant evidence
+        s.add(exists(data_store))  # limit to data stores from the model
+        s.add(contains_evidence(index, data_store))  # at least one potential evidence needs to be stored
         s.add(store_id(data_store) != StringVal(data_store_id))  # exclude marked data store
-        s.add(pe_number(data_store) != 0)                        # exclude empty data stores
 
         # Model generation
         solution = []
@@ -82,9 +85,6 @@ class CompromisedDataStore:
             for dec in model.decls():
                 if dec.name() != 'data_store':  # This is the const with solution
                     continue
-
-                # print(model.decls())
-                # print("%s = %s" % (dec.name(), model[dec]))
 
                 # Add a constraint that excludes the current solution from the next iteration
                 s.add(store_id(dec()) != store_id(model[dec]))
