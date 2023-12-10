@@ -91,4 +91,5 @@ class CompromisedDataStore:
                 # Add the ID of the found data store to the list
                 solution.append(str(simplify(store_id(model[dec]))).strip('"'))
 
-        return self.__create_result(solution, data_store_ref_obj.name) if len(solution) > 0 else None
+        return self.__create_result(solution, data_store_ref_obj.id if data_store_ref_obj.name is None else
+            data_store_ref_obj.name) if len(solution) > 0 else None

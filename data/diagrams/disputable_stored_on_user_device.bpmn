@@ -37,7 +37,7 @@
         <bpmn:endEvent id="EndEvent_14wpah1">
             <bpmn:incoming>SequenceFlow_0feh9l2</bpmn:incoming>
         </bpmn:endEvent>
-        <bpmn:dataObjectReference id="DataObjectReference_0x5bqsh" name="Parking&#10;permit"
+        <bpmn:dataObjectReference id="DataObjectReference_0x5bqsh" name="Parking permit"
             dataObjectRef="DataObject_059gapb" />
         <bpmn:dataObject id="DataObject_059gapb">
             <bpmn4frss:potentialEvidence id="PotentialEvidence_0016n4v" />
@@ -54,8 +54,12 @@
                 <bpmn:targetRef>DataStoreReference_119fei9</bpmn:targetRef>
             </bpmn:dataOutputAssociation>
         </bpmn:task>
-        <bpmn:dataStoreReference id="DataStoreReference_119fei9" name="Permit storage" dataStoreRef="DataStore_119fei9" />
-        <bpmn:dataStore id="DataStore_119fei9"/>
+        <bpmn:dataStoreReference id="DataStoreReference_119fei9" name="Permit storage" dataStoreRef="DataStore_119fei9"/>
+        <bpmn:dataStore id="DataStore_119fei9">
+            <bpmn4frss:evidenceStore>
+                <bpmn4frss:stores>DataObject_059gapb</bpmn4frss:stores>
+            </bpmn4frss:evidenceStore>
+        </bpmn:dataStore>
         <bpmn:task id="Task_1was29v" name="Make payment">
             <bpmn:incoming>SequenceFlow_1dhzrv4</bpmn:incoming>
             <bpmn:outgoing>SequenceFlow_1xu8rsj</bpmn:outgoing>
@@ -77,11 +81,11 @@
     <bpmn:process id="Process_0n5maul">
         <bpmn:startEvent id="StartEvent_1v6nqn7" name="Payment confirmation received">
             <bpmn:outgoing>SequenceFlow_0sdammn</bpmn:outgoing>
-            <bpmn:dataOutputAssociation id="DataOutputAssociation_1u9woj2">
-                <bpmn:targetRef>DataStoreReference_0zf3t9g</bpmn:targetRef>
-            </bpmn:dataOutputAssociation>
             <bpmn:dataOutputAssociation id="DataOutputAssociation_0s8kr3y">
                 <bpmn:targetRef>DataObjectReference_0vrg131</bpmn:targetRef>
+            </bpmn:dataOutputAssociation>
+            <bpmn:dataOutputAssociation id="DataOutputAssociation_0kukd7t">
+                <bpmn:targetRef>DataStoreReference_1t4979h</bpmn:targetRef>
             </bpmn:dataOutputAssociation>
             <bpmn:messageEventDefinition id="MessageEventDefinition_15vgo4p" />
         </bpmn:startEvent>
@@ -93,11 +97,11 @@
                 <bpmn:sourceRef>DataObjectReference_0vrg131</bpmn:sourceRef>
                 <bpmn:targetRef>Property_0ogr6dv</bpmn:targetRef>
             </bpmn:dataInputAssociation>
-            <bpmn:dataOutputAssociation id="DataOutputAssociation_0cig29u">
-                <bpmn:targetRef>DataStoreReference_0zf3t9g</bpmn:targetRef>
-            </bpmn:dataOutputAssociation>
             <bpmn:dataOutputAssociation id="DataOutputAssociation_14gsb8w">
                 <bpmn:targetRef>DataObjectReference_0on5lcu</bpmn:targetRef>
+            </bpmn:dataOutputAssociation>
+            <bpmn:dataOutputAssociation id="DataOutputAssociation_0dirdd4">
+                <bpmn:targetRef>DataStoreReference_0i2rn37</bpmn:targetRef>
             </bpmn:dataOutputAssociation>
         </bpmn:task>
         <bpmn:task id="Task_1o3t9qk" name="Send parking permit">
@@ -109,13 +113,6 @@
                 <bpmn:targetRef>Property_0vnvu89</bpmn:targetRef>
             </bpmn:dataInputAssociation>
         </bpmn:task>
-        <bpmn:dataStoreReference id="DataStoreReference_0zf3t9g" name="PLT parking permit storage" dataStoreRef="DataStore_0zf3t9g"/>
-        <bpmn:dataStore id="DataStore_0zf3t9g">
-            <bpmn4frss:evidenceStore>
-                <bpmn4frss:stores>DataObject_1eiynzk</bpmn4frss:stores>
-                <bpmn4frss:stores>DataObject_0fxl70a</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </bpmn:dataStore>
         <bpmn:sequenceFlow id="SequenceFlow_0sdammn" sourceRef="StartEvent_1v6nqn7"
             targetRef="Task_0pcmu9v" />
         <bpmn:sequenceFlow id="SequenceFlow_1of3tu0" sourceRef="Task_0pcmu9v"
@@ -137,6 +134,18 @@
         <bpmn:endEvent id="EndEvent_0mndqrd">
             <bpmn:incoming>SequenceFlow_0l2mvgs</bpmn:incoming>
         </bpmn:endEvent>
+        <bpmn:dataStoreReference id="DataStoreReference_0i2rn37" name="PLT parking permit storage" dataStoreRef="DataStore_0i2rn37"/>
+        <bpmn:dataStore id="DataStore_0i2rn37">
+            <bpmn4frss:evidenceStore>
+                <bpmn4frss:stores>DataObject_0fxl70a</bpmn4frss:stores>
+            </bpmn4frss:evidenceStore>
+        </bpmn:dataStore>
+        <bpmn:dataStoreReference id="DataStoreReference_1t4979h" name="Payment store" dataStoreRef="DataStore_1t4979h"/>
+        <bpmn:dataStore id="DataStore_1t4979h">
+            <bpmn4frss:evidenceStore>
+                <bpmn4frss:stores>DataObject_1eiynzk</bpmn4frss:stores>
+            </bpmn4frss:evidenceStore>
+        </bpmn:dataStore>
         <bpmn4frss:produces id="Produces_0t571x0" sourceRef="EvidenceSource_1npydv8"
             targetRef="DataObjectReference_0vrg131" />
         <bpmn4frss:evidenceAssociation id="EvidenceAssociation_1hvgasz"
@@ -165,12 +174,6 @@
                 <dc:Bounds x="550" y="560" width="100" height="80" />
                 <bpmndi:BPMNLabel id="BPMNLabel_006du0x" />
             </bpmndi:BPMNShape>
-            <bpmndi:BPMNShape id="BPMNShape_1oa7joo" bpmnElement="DataStoreReference_0zf3t9g">
-                <dc:Bounds x="465" y="485" width="50" height="50" />
-                <bpmndi:BPMNLabel id="BPMNLabel_0izaxzc">
-                    <dc:Bounds x="455" y="542" width="71" height="27" />
-                </bpmndi:BPMNLabel>
-            </bpmndi:BPMNShape>
             <bpmndi:BPMNShape id="BPMNShape_0xfk2df" bpmnElement="DataObjectReference_0vrg131">
                 <dc:Bounds x="282" y="645" width="36" height="50" />
                 <bpmndi:BPMNLabel id="BPMNLabel_04j6cim">
@@ -191,6 +194,18 @@
             </bpmndi:BPMNShape>
             <bpmndi:BPMNShape id="BPMNShape_1lwq0dg" bpmnElement="EndEvent_0mndqrd">
                 <dc:Bounds x="692" y="582" width="36" height="36" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_1kdk8dx" bpmnElement="DataStoreReference_0i2rn37">
+                <dc:Bounds x="465" y="485" width="50" height="50" />
+                <bpmndi:BPMNLabel id="BPMNLabel_1rmaipm">
+                    <dc:Bounds x="455" y="542" width="71" height="27" />
+                </bpmndi:BPMNLabel>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_0rnflmu" bpmnElement="DataStoreReference_1t4979h">
+                <dc:Bounds x="295" y="485" width="50" height="50" />
+                <bpmndi:BPMNLabel id="BPMNLabel_1u1frse">
+                    <dc:Bounds x="284" y="543" width="72" height="14" />
+                </bpmndi:BPMNLabel>
             </bpmndi:BPMNShape>
             <bpmndi:BPMNEdge id="BPMNEdge_0iln2gr" bpmnElement="Produces_0t571x0">
                 <di:waypoint x="268" y="632" />
@@ -285,15 +300,6 @@
                 <di:waypoint x="250" y="450" />
                 <di:waypoint x="250" y="582" />
             </bpmndi:BPMNEdge>
-            <bpmndi:BPMNEdge id="BPMNEdge_1agwsx8" bpmnElement="DataOutputAssociation_0cig29u">
-                <di:waypoint x="434" y="561" />
-                <di:waypoint x="465" y="533" />
-            </bpmndi:BPMNEdge>
-            <bpmndi:BPMNEdge id="BPMNEdge_03sikj4" bpmnElement="DataOutputAssociation_1u9woj2">
-                <di:waypoint x="257" y="584" />
-                <di:waypoint x="290" y="505" />
-                <di:waypoint x="465" y="505" />
-            </bpmndi:BPMNEdge>
             <bpmndi:BPMNEdge id="BPMNEdge_0m81em6" bpmnElement="DataOutputAssociation_0s8kr3y">
                 <di:waypoint x="240" y="620" />
                 <di:waypoint x="240" y="675" />
@@ -338,6 +344,16 @@
                 <di:waypoint x="620" y="310" />
                 <di:waypoint x="620" y="265" />
                 <di:waypoint x="665" y="265" />
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_1gp9new" bpmnElement="DataOutputAssociation_0dirdd4">
+                <di:waypoint x="420" y="560" />
+                <di:waypoint x="420" y="510" />
+                <di:waypoint x="465" y="510" />
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_1do4vz2" bpmnElement="DataOutputAssociation_0kukd7t">
+                <di:waypoint x="254" y="583" />
+                <di:waypoint x="270" y="515" />
+                <di:waypoint x="295" y="515" />
             </bpmndi:BPMNEdge>
         </bpmndi:BPMNPlane>
     </bpmndi:BPMNDiagram>

@@ -75,11 +75,14 @@ class CompromisedFlowObject:
         s = Solver()
         data_store = Const('data_store', data_store_sort)
 
-        unaltered = And(valid_data_store(data_store), has_copy_of_altered_data_object(data_store))
-        altered = has_unaltered_data_object(data_store)
+        # Check if a data store that contains the copy (same object name) of potentially altered data object exists.
+        # Disregard data stores that contain altered data objects, i.e., data stores subsequent to the flow object.
+        copies = And(valid_data_store(data_store), has_copy_of_altered_data_object(data_store))
+        # Check if any data store contains data object/s related to the altered data object/s
+        unaltered = has_unaltered_data_object(data_store)
 
         s.add(exists(data_store))
-        s.add(Or(unaltered, altered))
+        s.add(Or(copies, unaltered))
         s.add(pe_number(data_store) != 0)   # exclude empty data stores
 
         # MODEL
@@ -94,4 +97,5 @@ class CompromisedFlowObject:
                 s.add(store_id(dec()) != store_id(model[dec]))                    # no duplicates
                 solutions.append(str(simplify(store_id(model[dec]))).strip('"'))  # only element's ID
 
-        return self.__create_result(solutions, flow_object.name) if len(solutions) > 0 else None
+        return self.__create_result(solutions, flow_object.name if flow_object.name is not None else flow_object.id) \
+            if len(solutions) > 0 else None

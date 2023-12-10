@@ -195,7 +195,7 @@ class Parser:
     def __parse_data_store(self, elem: XmlElement) -> DataStore:
         for child in elem:
             tag = self.__get_tag(child)
-            if tag == "evidenceDataStore":
+            if tag == "evidenceStore":
                 ev_data_store = EvidenceDataStore(elem.attrib['id'])
                 for sub_child in child:
                     subtag = self.__get_tag(sub_child)

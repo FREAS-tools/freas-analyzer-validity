@@ -1,11 +1,12 @@
 from z3 import *
 
-from src.elements.artefact.data_reference import DataObjectReference
+from typing import Dict, List, Optional, Set, Tuple
+
+from src.elements.artefact.data_reference import DataObjectReference, DataStoreReference
 from src.elements.frss.evidence_data_relation import EvidenceDataRelation
 from src.elements.flow.message_flow import MessageFlow
 from src.elements.flow.sequence_flow import SequenceFlow
-from typing import Dict, List, Optional, Set, Tuple
-
+from src.elements.flow_object.event.catch_event import CatchEvent
 from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.flow_object.activity import Activity
 from src.elements.flow_object.flow_object import FlowObject
@@ -13,14 +14,25 @@ from src.elements.element import Element
 from src.elements.flow_object.gateway.gateway import Gateway
 
 """
-This file contains common functionality used by multiple rules when performing evidence quality analysis.
+This file contains common functionality used by multiple rules for performing evidence quality analysis.
 """
 
 
 def get_flow_data_objects(elements: Dict[str, Element], flow_obj: Activity) -> Tuple[Set[StringVal], Set[StringVal]]:
-    altered_data_objects = set()
-    unaltered_data_objects = set()
+    """
+    Get altered and unaltered data objects connected to the disputable flow object.
+    Parameters:
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
+        flow_obj (Activity): Disputable flow object.
+    Returns:
+        Tuple[Set[StringVal], Set[StringVal]]: A tuple containing two sets of Z3 `StringVal` objects representing data object names.
+        The first set contains altered data objects.
+        The second set contains potentially unaltered data objects.
+    """
+    altered_data_objects = set()    # objects being direct output of the flow object
+    unaltered_data_objects = set()  # input objects and object connected to the output objects via evidence relation
 
+    has_output_data = False
     for output_assoc in flow_obj.data_output:
         data_object_ref = elements[output_assoc.target_ref]
         if not isinstance(data_object_ref, DataObjectReference):
@@ -28,14 +40,64 @@ def get_flow_data_objects(elements: Dict[str, Element], flow_obj: Activity) -> T
 
         ref_name = data_object_ref.name
         altered_data_objects.add(StringVal(ref_name))
+        # Get source data objects connected to the output data object via evidence relation
+        unaltered_data_objects |= get_related_evidence(elements, data_object_ref, True)
+        has_output_data = True
 
-        for elem in elements.values():
-            if isinstance(elem, EvidenceDataRelation) and elem.target_ref == data_object_ref.id:
-                source_ref = elem.source_ref
-                ref_name = elements[source_ref].name
-                unaltered_data_objects.add(StringVal(ref_name))
+    for input_assoc in flow_obj.data_input:
+        data_object_ref = elements[input_assoc.source_ref]
+        if not isinstance(data_object_ref, DataObjectReference):
+            continue
 
-    return altered_data_objects, unaltered_data_objects
+        ref_name = data_object_ref.name
+        
+        # In this case, input data objects are considered altered after the compromised activity is completed 
+        if not has_output_data:
+            altered_data_objects.add(StringVal(ref_name))
+            # Get source data objects connected to the input data object via evidence relation
+            unaltered_data_objects |= get_related_evidence(elements, data_object_ref, True)
+        else:
+            unaltered_data_objects.add(StringVal(ref_name))
+            # Get connected data objects with the input data object via evidence relation
+            unaltered_data_objects |= get_related_evidence(elements, data_object_ref)
+
+    return altered_data_objects, unaltered_data_objects.difference(altered_data_objects)
+
+
+def get_related_evidence(elements: Dict[str, Element], data_object_ref: DataObjectReference, 
+                         target: bool = False, names: bool = True) -> Set[StringVal]:
+    """
+    Get all data objects connected to the provided data object or object with the same name via evidence relation.
+    Provided data object can be only the relation target (target is true) or both source and target.
+    Parameters:
+        elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
+        data_object_ref (DataObjectReference): Data object reference.
+        target (bool): If true, the provided data object is the relation target, otherwise it can be also source. 
+        In case of altered data objects, the provided data object is the relation target.
+        names (bool): If true, look also for evidence relations including objects with the same name, 
+        otherwise only relations containing provided data object's ID are included.
+    Returns:
+        Set[StringVal]: A set of Z3 `StringVal` objects representing data object names.
+    """
+    data_objects = set()  # object connected to the altered objects via evidence relation
+
+    for elem in elements.values():
+        if not isinstance(elem, EvidenceDataRelation):
+            continue
+
+        if (elem.target_ref == data_object_ref.id or 
+            (names and elements[elem.target_ref].name == data_object_ref.name)):
+            source_ref = elem.source_ref
+            ref_name = elements[source_ref].name
+            data_objects.add(StringVal(ref_name))
+        
+        if not target and (elem.source_ref == data_object_ref.id or 
+                           (names and elements[elem.source_ref].name == data_object_ref.name)):
+            target_ref = elem.target_ref
+            ref_name = elements[target_ref].name
+            data_objects.add(StringVal(ref_name))
+
+    return data_objects
 
 
 def get_sequence_flow_targets(elements: Dict[str, Element], flow_object: FlowObject) -> List[FlowObject]:
@@ -73,6 +135,7 @@ def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[
                                data_stores: List[str]):
     """
     Get all data stores that potentially contain altered data in case of a compromise of the provided flow object.
+    (Get all subsequent data stores starting from the provided flow object)
     Parameters:
         elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
         flow_obj (Optional[FlowObject]): Flow object.
@@ -85,18 +148,16 @@ def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[
 
     if isinstance(flow_obj, Activity):
         for assoc in flow_obj.data_output:
-            data_ref = assoc.target_ref
-            data_obj_id = elements[data_ref].data
-            data_obj = elements[data_obj_id]
+            data_ref = elements[assoc.target_ref]
 
-            if isinstance(data_obj, EvidenceDataStore):
-                data_stores.append(StringVal(data_obj_id))
+            if isinstance(data_ref, DataStoreReference):
+                store_id = data_ref.data
+                data_stores.append(StringVal(store_id))
 
     # Take the following flow object/s
     seq_flow_targets = get_sequence_flow_targets(elements, flow_obj)
     for target in seq_flow_targets:
         get_disputable_data_stores(elements, target, data_stores)
-
 
     message_flow_targets = get_message_flow_target(elements, flow_obj.id)
     for message_flow_target in message_flow_targets:
@@ -126,16 +187,16 @@ def get_potential_evidence(elements: Dict[str, Element], data_store: EvidenceDat
         # Get the data object reference of the evidence
         evidence_name: str = get_data_object_name(elements, evidence_id)
         data_objects.add(StringVal(evidence_name))
-            
+
         # Add all data objects names connected with evidence relation to the potential evidence
         for elem in elements.values():
             if isinstance(elem, EvidenceDataRelation):
                 source: DataObjectReference = elements[elem.source_ref]
                 target: DataObjectReference = elements[elem.target_ref]
-                
-                if source.data == evidence_id:
+
+                if source.data == evidence_id or source.name == evidence_name:
                     data_objects.add(StringVal(target.name))
-                elif target.data == evidence_id:
+                elif target.data == evidence_id  or target.name == evidence_name:
                     data_objects.add(StringVal(source.name))
 
     return data_objects

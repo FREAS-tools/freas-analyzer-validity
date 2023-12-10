@@ -132,15 +132,15 @@
         </bpmn:endEvent>
         <bpmn:dataStoreReference id="DataStoreReference_0i2rn37" name="PLT parking permit storage" dataStoreRef="DataStore_0i2rn37"/>
         <bpmn:dataStore id="DataStore_0i2rn37">
-            <bpmn4frss:evidenceDataStore>
+            <bpmn4frss:evidenceStore>
                 <bpmn4frss:stores>DataObject_0fxl70a</bpmn4frss:stores>
-            </bpmn4frss:evidenceDataStore>
+            </bpmn4frss:evidenceStore>
         </bpmn:dataStore>
         <bpmn:dataStoreReference id="DataStoreReference_1t4979h" name="Payment store" dataStoreRef="DataStore_1t4979h"/>
         <bpmn:dataStore id="DataStore_1t4979h">
-            <bpmn4frss:evidenceDataStore>
+            <bpmn4frss:evidenceStore>
                 <bpmn4frss:stores>DataObject_1eiynzk</bpmn4frss:stores>
-            </bpmn4frss:evidenceDataStore>
+            </bpmn4frss:evidenceStore>
         </bpmn:dataStore>
         <bpmn4frss:produces id="Produces_0t571x0" sourceRef="EvidenceSource_1npydv8"
             targetRef="DataObjectReference_0vrg131" />
