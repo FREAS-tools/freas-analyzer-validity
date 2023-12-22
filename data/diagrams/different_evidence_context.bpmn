@@ -7,6 +7,16 @@
     xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss" xmlns:duckflow="https://duckflow.app"
     id="blank-diagram" targetNamespace="https://duckflow.app/schema/bpmn"
     exporter="duckflow (https://duckflow.app)" exporterVersion="0.13.0" duckflow:template="blank">
+    <dataStore id="DataStore_0gfsmzy">
+        <bpmn4frss:evidenceStore id="EvidenceStore_0gnszzn">
+            <bpmn4frss:stores>DataObject_1bs03lk</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
+    <dataStore id="DataStore_0csaguc">
+        <bpmn4frss:evidenceStore id="EvidenceStore_00mfq2y">
+            <bpmn4frss:stores>DataObject_1085v9r</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
     <collaboration id="Collaboration_08yspid">
         <participant id="Participant_04cmj4g" name="Context A" processRef="Process_1" />
         <participant id="Participant_150mijc" name="Context B" processRef="Process_0lrrxen" />
@@ -42,11 +52,6 @@
         <dataObject id="DataObject_1bs03lk">
             <bpmn4frss:potentialEvidence id="PotentialEvidence_0h1k7pr" />
         </dataObject>
-        <dataStore id="DataStore_0gfsmzy">
-            <bpmn4frss:evidenceStore id="EvidenceStore_0gnszzn">
-                <bpmn4frss:stores>DataObject_1bs03lk</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
         <dataStoreReference id="DataStoreReference_0fwvl82" name="DS A"
             dataStoreRef="DataStore_0gfsmzy" />
     </process>
@@ -80,11 +85,6 @@
         <endEvent id="Event_1qj3bg4">
             <incoming>Flow_1diprrx</incoming>
         </endEvent>
-        <dataStore id="DataStore_0csaguc">
-            <bpmn4frss:evidenceStore id="EvidenceStore_00mfq2y">
-                <bpmn4frss:stores>DataObject_1085v9r</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
         <dataStoreReference id="DataStoreReference_0me5nk0" name="DS B"
             dataStoreRef="DataStore_0csaguc" />
     </process>

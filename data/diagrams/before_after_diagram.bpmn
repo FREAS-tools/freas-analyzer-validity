@@ -7,6 +7,26 @@
     xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss" xmlns:duckflow="https://duckflow.app"
     id="blank-diagram" targetNamespace="https://duckflow.app/schema/bpmn"
     exporter="duckflow (https://duckflow.app)" exporterVersion="0.13.0" duckflow:template="blank">
+    <dataStore id="DataStore_0qduasf">
+        <bpmn4frss:evidenceStore id="EvidenceStore_1teoac9">
+            <bpmn4frss:stores>DataObject_0v8xfyd</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
+    <dataStore id="DataStore_121kzwk">
+        <bpmn4frss:evidenceStore id="EvidenceStore_0fgw8mo">
+            <bpmn4frss:stores>DataObject_1iktc2p</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
+    <dataStore id="DataStore_0xcdooy">
+        <bpmn4frss:evidenceStore id="EvidenceStore_1xhk93c">
+            <bpmn4frss:stores>DataObject_1fqzgel</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
+    <dataStore id="DataStore_0h4htme">
+        <bpmn4frss:evidenceStore id="EvidenceStore_1dv57i6">
+            <bpmn4frss:stores>DataObject_0ws7na4</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
     <collaboration id="Collaboration_0spvpap">
         <participant id="Participant_00lbrqg" name="AV" processRef="Process_1" />
         <participant id="Participant_0p9taca" name="PSP" processRef="Process_0u7eumf" />
@@ -25,16 +45,6 @@
                 <flowNodeRef>Task_0bxeyse</flowNodeRef>
             </lane>
         </laneSet>
-        <dataStore id="DataStore_0qduasf">
-            <bpmn4frss:evidenceStore id="EvidenceStore_1teoac9">
-                <bpmn4frss:stores>DataObject_0v8xfyd</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
-        <dataStore id="DataStore_121kzwk">
-            <bpmn4frss:evidenceStore id="EvidenceStore_0fgw8mo">
-                <bpmn4frss:stores>DataObject_1iktc2p</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
         <task id="Activity_0vqb0h1" name="1. Send request for registration">
             <incoming>SequenceFlow_1reuro1</incoming>
             <outgoing>SequenceFlow_1t0cthz</outgoing>
@@ -122,11 +132,6 @@
         <sequenceFlow id="Flow_0tg8p0q" sourceRef="Event_0e8vxiy" targetRef="Activity_15t262y" />
         <sequenceFlow id="Flow_0hv8ule" sourceRef="Activity_15t262y" targetRef="Event_05bmn12" />
         <sequenceFlow id="SequenceFlow_0wje0ap" sourceRef="StartEvent_1" targetRef="Task_0bxeyse" />
-        <dataStore id="DataStore_0xcdooy">
-            <bpmn4frss:evidenceStore id="EvidenceStore_1xhk93c">
-                <bpmn4frss:stores>DataObject_1fqzgel</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
         <dataStoreReference id="DataStoreReference_03bwbzp"
             name="AV Parking service credential storage" dataStoreRef="DataStore_0xcdooy" />
         <dataStoreReference id="DataStoreReference_01owqh9" name="After DS"
@@ -184,11 +189,6 @@
         <sequenceFlow id="Flow_1lhawxl" sourceRef="Event_1kwr4k9" targetRef="Activity_161mmal" />
         <sequenceFlow id="Flow_1a0rm61" sourceRef="Activity_161mmal" targetRef="Activity_04iyke1" />
         <sequenceFlow id="Flow_1n10rku" sourceRef="Activity_04iyke1" targetRef="Event_1jdd735" />
-        <dataStore id="DataStore_0h4htme">
-            <bpmn4frss:evidenceStore id="EvidenceStore_1dv57i6">
-                <bpmn4frss:stores>DataObject_0ws7na4</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
         <dataStoreReference id="DataStoreReference_1y3d2rj"
             name="PSP Parking service credential storage" dataStoreRef="DataStore_0h4htme" />
         <bpmn4frss:evidenceAssociation id="EvidenceAssociation_0lx0osd"

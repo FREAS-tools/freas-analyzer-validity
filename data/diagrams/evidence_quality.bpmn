@@ -6,25 +6,25 @@
     xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss"
     xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_MDiiEE"
     targetNamespace="http://bpmn.io/schema/bpmn">
+    <bpmn:dataStore id="DataStore_0qiobg1">
+        <bpmn4frss:evidenceStore id="EvidenceStore_0csllsr">
+            <bpmn4frss:stores>DataObject_09817o1</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </bpmn:dataStore>
+    <bpmn:dataStore id="DataStore_1b4kf8o">
+        <bpmn4frss:evidenceStore id="EvidenceStore_0u9o9kc">
+            <bpmn4frss:stores>DataObject_05pljb3</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </bpmn:dataStore>
+    <bpmn:dataStore id="DataStore_1bfgusl">
+        <bpmn4frss:evidenceStore id="EvidenceStore_06os3mp">
+            <bpmn4frss:stores>DataObject_1s3kwdx</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </bpmn:dataStore>
     <bpmn:collaboration id="Collaboration_1kef8zl">
         <bpmn:participant id="Participant_05hd2ui" processRef="Process_EMZhZ3" />
     </bpmn:collaboration>
     <bpmn:process id="Process_EMZhZ3" isExecutable="false">
-        <bpmn:dataStore id="DataStore_0qiobg1">
-            <bpmn4frss:evidenceStore id="EvidenceStore_0csllsr">
-                <bpmn4frss:stores>DataObject_09817o1</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </bpmn:dataStore>
-        <bpmn:dataStore id="DataStore_1b4kf8o">
-            <bpmn4frss:evidenceStore id="EvidenceStore_0u9o9kc">
-                <bpmn4frss:stores>DataObject_05pljb3</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </bpmn:dataStore>
-        <bpmn:dataStore id="DataStore_1bfgusl">
-            <bpmn4frss:evidenceStore id="EvidenceStore_06os3mp">
-                <bpmn4frss:stores>DataObject_1s3kwdx</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </bpmn:dataStore>
         <bpmn:task id="Task_1t8os0h" name="Task 2">
             <bpmn:incoming>SequenceFlow_0lqsvkd</bpmn:incoming>
             <bpmn:outgoing>SequenceFlow_1mad5ek</bpmn:outgoing>

@@ -60,18 +60,23 @@ class Parser:
 
     def __parse(self, root):
         for child in root:
+            new_elem = None
             tag = self.__get_tag(child)
+
             match tag:
                 case 'process':
-                    self.__parse_process(child)
+                    new_elem = self.__parse_process(child)
                 case "collaboration":
                     self.__parse_collaboration(child)
-
+                case "dataStore":
+                    new_elem = self.__parse_data_store(child)
+        
+            self.__store_element(new_elem)
+        
         return MappingProxyType(self.elements)  # immutable dict
 
-    def __parse_process(self, elem: XmlElement):
+    def __parse_process(self, elem: XmlElement) -> Process:
         process = Process(elem.attrib['id'])
-        self.elements[process.id] = process
 
         for child in elem:
             tag = self.__get_tag(child)
@@ -92,8 +97,6 @@ class Parser:
                                                   attr.get('dataStoreRef'), attr.get('name'))
                 case "dataObject":
                     new_elem = self.__parse_data_object(child, process.id)
-                case "dataStore":
-                    new_elem = self.__parse_data_store(child)
                 case "evidenceSource":
                     new_elem = PotentialEvidenceSource(attr['id'], attr['attachedToRef'])
                     self.__add_pe_source(new_elem)
@@ -104,6 +107,8 @@ class Parser:
                     new_elem = EvidenceDataRelation(attr['id'], attr['sourceRef'], attr['targetRef'])
 
             self.__store_element(new_elem)
+
+        return process
 
     def __parse_collaboration(self, elem: XmlElement):
         for child in elem:

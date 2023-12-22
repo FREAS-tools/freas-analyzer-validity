@@ -6,6 +6,17 @@
     xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss"
     xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_kVNDaA"
     targetNamespace="http://bpmn.io/schema/bpmn">
+    <bpmn:dataStore id="DataStore_119fei9"/>
+    <bpmn:dataStore id="DataStore_0i2rn37">
+        <bpmn4frss:evidenceStore>
+            <bpmn4frss:stores>DataObject_0fxl70a</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </bpmn:dataStore>
+    <bpmn:dataStore id="DataStore_1t4979h">
+        <bpmn4frss:evidenceStore>
+            <bpmn4frss:stores>DataObject_1eiynzk</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </bpmn:dataStore>
     <bpmn:collaboration id="Collaboration_1xijh4a">
         <bpmn:participant id="Participant_0xq129k" name="User device" processRef="Process_gEa35Y" />
         <bpmn:participant id="Participant_1qkqn8m" name="Parking Lot Terminal"
@@ -55,7 +66,6 @@
             </bpmn:dataOutputAssociation>
         </bpmn:task>
         <bpmn:dataStoreReference id="DataStoreReference_119fei9" name="Permit storage" dataStoreRef="DataStore_119fei9"/>
-        <bpmn:dataStore id="DataStore_119fei9"/>
         <bpmn:task id="Task_1was29v" name="Make payment">
             <bpmn:incoming>SequenceFlow_1dhzrv4</bpmn:incoming>
             <bpmn:outgoing>SequenceFlow_1xu8rsj</bpmn:outgoing>
@@ -131,17 +141,7 @@
             <bpmn:incoming>SequenceFlow_0l2mvgs</bpmn:incoming>
         </bpmn:endEvent>
         <bpmn:dataStoreReference id="DataStoreReference_0i2rn37" name="PLT parking permit storage" dataStoreRef="DataStore_0i2rn37"/>
-        <bpmn:dataStore id="DataStore_0i2rn37">
-            <bpmn4frss:evidenceStore>
-                <bpmn4frss:stores>DataObject_0fxl70a</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </bpmn:dataStore>
         <bpmn:dataStoreReference id="DataStoreReference_1t4979h" name="Payment store" dataStoreRef="DataStore_1t4979h"/>
-        <bpmn:dataStore id="DataStore_1t4979h">
-            <bpmn4frss:evidenceStore>
-                <bpmn4frss:stores>DataObject_1eiynzk</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </bpmn:dataStore>
         <bpmn4frss:produces id="Produces_0t571x0" sourceRef="EvidenceSource_1npydv8"
             targetRef="DataObjectReference_0vrg131" />
         <bpmn4frss:evidenceAssociation id="EvidenceAssociation_1hvgasz"

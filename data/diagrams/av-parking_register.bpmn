@@ -7,6 +7,16 @@
     xmlns:bpmn4frss="http://fi.muni.cz/schema/bpmn/bpmn4frss" xmlns:duckflow="https://duckflow.app"
     id="blank-diagram" targetNamespace="https://duckflow.app/schema/bpmn"
     exporter="duckflow (https://duckflow.app)" exporterVersion="0.13.0" duckflow:template="blank">
+    <dataStore id="DataStore_0f64bhv">
+        <bpmn4frss:evidenceStore id="EvidenceStore_17o9dd4">
+            <bpmn4frss:stores>DataObject_0ws7na4</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
+    <dataStore id="DataStore_0h5q69s">
+        <bpmn4frss:evidenceStore id="EvidenceStore_0i1cy7c">
+            <bpmn4frss:stores>DataObject_1fqzgel</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </dataStore>
     <collaboration id="Collaboration_0spvpap">
         <participant id="Participant_00lbrqg" name="AV" processRef="Process_1" />
         <participant id="Participant_0p9taca" name="PSP" processRef="Process_0u7eumf" />
@@ -70,11 +80,6 @@
         <endEvent id="Event_05bmn12">
             <incoming>Flow_0hv8ule</incoming>
         </endEvent>
-        <dataStore id="DataStore_0f64bhv">
-            <bpmn4frss:evidenceStore id="EvidenceStore_17o9dd4">
-                <bpmn4frss:stores>DataObject_0ws7na4</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
         <dataStoreReference id="DataStoreReference_0b04ko3"
             name="AV Parking service credential storage" dataStoreRef="DataStore_0f64bhv" />
     </process>
@@ -126,11 +131,6 @@
         <dataObject id="DataObject_1fqzgel">
             <bpmn4frss:potentialEvidence id="PotentialEvidence_0grbfeq" />
         </dataObject>
-        <dataStore id="DataStore_0h5q69s">
-            <bpmn4frss:evidenceStore id="EvidenceStore_0i1cy7c">
-                <bpmn4frss:stores>DataObject_1fqzgel</bpmn4frss:stores>
-            </bpmn4frss:evidenceStore>
-        </dataStore>
         <dataStoreReference id="DataStoreReference_1xrs3gb"
             name="PSP Parking service credential storage" dataStoreRef="DataStore_0h5q69s" />
         <bpmn4frss:evidenceAssociation id="EvidenceAssociation_0m5iasy"
