@@ -17,14 +17,15 @@ from src.elements.artefact.data_store.data_store import DataStore
 from src.elements.frss.evidence_data_store import EvidenceDataStore
 from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.frss.evidence_data_relation import EvidenceDataRelation
-from src.elements.frss.evidence_type.proof import HashProof, KeyedHashProof
-from src.elements.frss.forensic_ready_task.hash_function import HashFunction
 from src.elements.flow_object.gateway.gateway import ExclusiveGateway, Gateway
 from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
+from src.elements.frss.evidence_type.proof import HashProof, KeyedHashProof, Proof
 from src.elements.artefact.data_reference import DataObjectReference, DataStoreReference
 from src.elements.flow_object.event.catch_event import StartEvent, IntermediateCatchEvent
 from src.elements.frss.evidence_type.potential_evidence_type import PotentialEvidenceType
 from src.elements.flow.association import Association, DataInputAssociation, DataOutputAssociation
+from src.elements.frss.forensic_ready_task.computations import AuthenticityComputation, DataTransformation, \
+    HashFunction, IntegrityComputation
 
 
 class Parser:
@@ -35,7 +36,7 @@ class Parser:
         elements: A dictionary containing all parsed elements.
 
     """
-    
+
     def __init__(self):
         self.elements = {}
 
@@ -70,9 +71,9 @@ class Parser:
                     self.__parse_collaboration(child)
                 case "dataStore":
                     new_elem = self.__parse_data_store(child)
-        
+
             self.__store_element(new_elem)
-        
+
         return MappingProxyType(self.elements)  # immutable dict
 
     def __parse_process(self, elem: XmlElement) -> Process:
@@ -167,11 +168,19 @@ class Parser:
                     source, _ = self.__get_source_target_ref(child)
                     association = DataInputAssociation(child.attrib['id'], source, activity.id)
                     activity.data_input.append(association)
+                # Task specific functions
+                case "authenticityComputation":
+                    activity.computation = AuthenticityComputation(child.attrib.get('input'),
+                                                                   child.attrib.get('output'))
+                case "integrityComputation":
+                    activity.computation = IntegrityComputation(child.attrib.get('input'), child.attrib.get('output'))
+                case "dataTransformation":
+                    activity.computation = DataTransformation(child.attrib.get('input'), child.attrib.get('output'))
                 case "hashFunction":
-                    activity.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'))
+                    activity.computation = HashFunction(child.attrib.get('input'), child.attrib.get('output'))
                 case "keyedHashFunction":
-                    activity.hash_fun = HashFunction(child.attrib.get('input'), child.attrib.get('output'),
-                                                     child.attrib.get('key'))
+                    activity.computation = HashFunction(child.attrib.get('input'), child.attrib.get('output'),
+                                                        child.attrib.get('key'))
         return
 
     def __parse_gateway(self, gateway: Gateway, elem: XmlElement):
@@ -189,13 +198,21 @@ class Parser:
         for child in elem:
             tag = self.__get_tag(child)
             if tag == "potentialEvidence":
-                return PotentialEvidenceType(elem.attrib['id'], process_id)
-            if tag == "hash":
-                return HashProof(elem.attrib['id'], process_id)
-            if tag == "keyedHash":
-                return KeyedHashProof(elem.attrib['id'], process_id)
+                return self.__parse_evidence_type(child, elem.attrib['id'], process_id)
 
         return DataObject(elem.attrib['id'], process_id)
+
+    def __parse_evidence_type(self, elem: XmlElement, elem_id: str, process_id: str) -> PotentialEvidenceType:
+        for child in elem:
+            tag = self.__get_tag(child)
+            if tag == "hashProof":
+                return HashProof(elem_id, process_id)
+            # if tag == "proof":
+            #     return Proof(elem_id, process_id)
+            # if tag == "keyedHashProof":
+            #     return KeyedHashProof(elem.attrib['id'], process_id)
+
+        return PotentialEvidenceType(elem_id, process_id)
 
     def __parse_data_store(self, elem: XmlElement) -> DataStore:
         for child in elem:

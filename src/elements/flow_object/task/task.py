@@ -1,7 +1,7 @@
 from typing import Optional
 
 from src.elements.flow_object.activity import Activity
-from src.elements.frss.forensic_ready_task.hash_function import HashFunction
+from src.elements.frss.forensic_ready_task.computations import Computation
 
 
 class Task(Activity):
@@ -18,7 +18,8 @@ class Task(Activity):
             incoming (str): incoming Flow object id
             outgoing (str): outgoing Flow object id
             pe_source (PotentialEvidenceSource): attached PotentialEvidenceSource instance
+            computation (Computation): Computation instance being performed by the task
         """
         super().__init__(elem_id, name, incoming, outgoing, pe_source)
 
-        self.hash_fun: Optional[HashFunction] = None
+        self.computation: Optional[Computation] = None
