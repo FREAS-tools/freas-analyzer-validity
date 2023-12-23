@@ -15,6 +15,7 @@ from src.rules.semantic_rules.hash_fun_check import HashFunction
 from src.rules.semantic_rules.hash_fun_pes import HashFunctionPES
 from src.rules.semantic_rules.keyed_hash_check import KeyedHashFunction
 from src.rules.semantic_hints.same_evidence_store import SameEvidenceStore
+from rules.semantic_rules.computation_input import ComputationInput
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
 from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
 from src.rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
@@ -73,8 +74,9 @@ class Analyzer:
         Returns:
             List[Result]: List of results, containing the Error objects.
         """
-        semantic_base_rules = [MissingPotentialEvidence(), HashFunctionPES()]
-        passed_base = False
+
+        semantic_base_rules = [MissingPotentialEvidence(), ComputationInput(), HashFunctionPES()]
+        passed_base = True
         results = []
 
         for rule in semantic_base_rules:
@@ -85,14 +87,14 @@ class Analyzer:
                 results.append(result)
 
         # if base rules are not passed, stop the analysis
-        if not passed_base:
-            return results
+        # if not passed_base:
+        #     return results
 
         # INTEGRITY RULES
-        rule_groups = [HashFunction(), KeyedHashFunction()]
+        # rule_groups = [HashFunction(), KeyedHashFunction()]
 
-        for rule in rule_groups:
-            results += rule.evaluate(elements)
+        # for rule in rule_groups:
+        #     results += rule.evaluate(elements)
 
         return results
 
