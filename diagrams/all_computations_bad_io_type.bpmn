@@ -40,9 +40,7 @@
         </bpmn:task>
         <bpmn:dataObjectReference id="DataObjectReference_01rniyr" name="Int&#10;Output"
             dataObjectRef="DataObject_1m85nx4" />
-        <bpmn:dataObject id="DataObject_1m85nx4">
-            <bpmn4frss:potentialEvidence id="PotentialEvidence_01b6puh" />
-        </bpmn:dataObject>
+        <bpmn:dataObject id="DataObject_1m85nx4" />
         <bpmn:dataObjectReference id="DataObjectReference_1xhvaps" name="Auth&#10;input"
             dataObjectRef="DataObject_0aq21bb" />
         <bpmn:dataObject id="DataObject_0aq21bb" />
@@ -62,9 +60,7 @@
         </bpmn:task>
         <bpmn:dataObjectReference id="DataObjectReference_0w5h1ol" name="Auth&#10;output"
             dataObjectRef="DataObject_1kvoczl" />
-        <bpmn:dataObject id="DataObject_1kvoczl">
-            <bpmn4frss:potentialEvidence id="PotentialEvidence_1ef5il4" />
-        </bpmn:dataObject>
+        <bpmn:dataObject id="DataObject_1kvoczl" />
         <bpmn:task id="Task_1mgfm3r" name="Data Transformation">
             <bpmn:incoming>SequenceFlow_1xbtsr0</bpmn:incoming>
             <bpmn:outgoing>SequenceFlow_1r48yz2</bpmn:outgoing>
@@ -84,9 +80,7 @@
         <bpmn:dataObject id="DataObject_00xn1m9" />
         <bpmn:dataObjectReference id="DataObjectReference_0gj5k8p" name="Data&#10;output"
             dataObjectRef="DataObject_1h3uw4i" />
-        <bpmn:dataObject id="DataObject_1h3uw4i">
-            <bpmn4frss:potentialEvidence id="PotentialEvidence_0lvhroz" />
-        </bpmn:dataObject>
+        <bpmn:dataObject id="DataObject_1h3uw4i" />
         <bpmn:endEvent id="EndEvent_06sxzmv">
             <bpmn:incoming>SequenceFlow_1r48yz2</bpmn:incoming>
         </bpmn:endEvent>
