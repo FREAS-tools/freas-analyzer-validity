@@ -86,6 +86,40 @@ def before_after():
     return parser.parse_file(file_path)
 
 
+@pytest.fixture(scope="session")
+def integrity_computation_one_input():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "integrity_computation_one_input.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def integrity_computation_two_inputs():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "integrity_computation_two_inputs.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def integrity_computation_three_inputs():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "integrity_computation_three_inputs.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def all_computations_one_input_output():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "all_computations.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def all_computations_bad_input_type():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "all_computations_bad_input_type.bpmn")
+    return parser.parse_file(file_path)
+
 
 # @pytest.fixture(scope="session")
 # def hash_correct_elements():
