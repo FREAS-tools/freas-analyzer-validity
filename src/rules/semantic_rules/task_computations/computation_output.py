@@ -3,24 +3,25 @@ from zope.interface import implementer
 
 from typing import Dict, List, Optional
 
-from src.elements.artefact.data_object.data_object import DataObject
-from src.elements.artefact.data_reference import DataObjectReference
+from src.rules.rule import IRule
+from src.elements.element import Element
+from src.rules.rule_result.error import Error
+from src.rules.rule_result.result import Result
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.severity import Severity
-from src.rules.rule import IRule
-from src.rules.rule_result.error import Error
-from src.elements.element import Element
-from src.rules.rule_result.result import Result
+from src.elements.artefact.data_object.data_object import DataObject
+from src.elements.artefact.data_reference import DataObjectReference
+from src.elements.frss.forensic_ready_task.computations import IntegrityComputation
 
-from src.rules.utils.semantic import create_mock_data_objects, get_participant
+from src.rules.utils.semantic import create_mock_data_objects, get_participant, get_task_output_object
 from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, object_name
 
 
 @implementer(IRule)
-class HashFunctionOutput:
+class ComputationOutput:
     """
-    Rule: Hash Function Output
-    Description: This rule checks if Hash Function has exactly one output, being a Hash Proof.
+    Rule: Computation Output
+    Description: This rule checks if the task computation has exactly one output, being a Potential Evidence.
     """
 
     @staticmethod
@@ -28,33 +29,28 @@ class HashFunctionOutput:
         error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
-        error.message = "Task that executes the Hash Function must have exactly one output, " \
-                        "Potential Evidence, being a Hash Proof."
+        error.message = "Task performing a computation must have exactly one output, " \
+                        "being a Potential Evidence."
         return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()
         solutions = []
 
-        # Goes through all tasks and checks their output data objects
         for key, elem in elements.items():
-            if not isinstance(elem, Task) or elem.hash_fun is None or elem.pe_source is None:
+            if not isinstance(elem, Task) or elem.computation is None or isinstance(elem.computation, IntegrityComputation):
                 continue
 
             s.push()
 
-            data_ref: str = elem.hash_fun.output
-            ref_obj: Optional[DataObjectReference] = elements.get(data_ref)
-            data_obj: Optional[DataObject] = elements.get(ref_obj.data)
 
-            assert data_obj is not None
-            
+            data_obj = get_task_output_object(elem, elem.computation.output, elements)
             participant = get_participant(elements, data_obj.process_id)
-            hash_output = mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id),
-                                         StringVal(ref_obj.name), StringVal(type(data_obj).__name__))
 
-            # Data needed to check that task contains only one output
-            z3_outputs = []
+            z3_comp_output = mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id),
+                                         StringVal(data_obj.name), StringVal(type(data_obj).__name__))
+
+            z3_task_outputs = []
 
             for output in elem.data_output:
                 data_ref: str = output.target_ref
@@ -64,24 +60,21 @@ class HashFunctionOutput:
                 assert data_obj is not None
                 
                 participant = get_participant(elements, data_obj.process_id)
-                z3_outputs.append(mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id),
-                                                 StringVal(ref_obj.name), StringVal(type(data_obj).__name__)))
+                z3_task_outputs.append(mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id),
+                                                      StringVal(ref_obj.name), StringVal(type(data_obj).__name__)))
 
-            if len(z3_outputs) == 0:
-                z3_outputs = create_mock_data_objects(0, 1, mk_data_object, key)
+            if len(z3_task_outputs) == 0:
+                z3_task_outputs = create_mock_data_objects(0, 1, mk_data_object, key)
 
-            # Compare hash function output data object (Hash Proof) id with the provided data object
-            # also checks that the output is the same object as output of the hash function
-            # then we know that both task output assoc and pes output assoc point to the same object
             def single_output(data_object):
-                return data_object == hash_output
+                return data_object == z3_comp_output
 
             def correct_type(data_object):
-                return simplify(object_type(data_object)) == 'HashProof'
+                return Or(simplify(object_type(data_object)) == 'PotentialEvidenceType')
 
             # Compare output objects with the provided data object
             def exists(data_object):
-                return Or([data_object == obj for obj in z3_outputs])
+                return Or([data_object == obj for obj in z3_task_outputs])
 
             z3_data_object = Const('data_object', data_object_sort)
 

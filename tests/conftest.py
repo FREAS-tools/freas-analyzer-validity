@@ -108,6 +108,13 @@ def integrity_computation_three_inputs():
 
 
 @pytest.fixture(scope="session")
+def integrity_computation_output_good():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "integrity_computation_output_good.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
 def all_computations_one_input_output():
     parser = Parser()
     file_path = os.path.join(data_dir, "all_computations.bpmn")
@@ -115,9 +122,16 @@ def all_computations_one_input_output():
 
 
 @pytest.fixture(scope="session")
-def all_computations_bad_input_type():
+def all_computations_bad_io_type():
     parser = Parser()
-    file_path = os.path.join(data_dir, "all_computations_bad_input_type.bpmn")
+    file_path = os.path.join(data_dir, "all_computations_bad_io_type.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def all_computations_with_pes():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "all_computations_with_pes.bpmn")
     return parser.parse_file(file_path)
 
 

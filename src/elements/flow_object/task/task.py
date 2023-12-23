@@ -18,7 +18,6 @@ class Task(Activity):
             incoming (str): incoming Flow object id
             outgoing (str): outgoing Flow object id
             pe_source (PotentialEvidenceSource): attached PotentialEvidenceSource instance
-            computation (Computation): Computation instance being performed by the task
         """
         super().__init__(elem_id, name, incoming, outgoing, pe_source)
 

@@ -11,14 +11,16 @@ from src.rules.rule_result.warning import Warning
 from src.rules.rule_result.result import Result
 from src.rules.semantic_hints.missing_pes import MissingPES
 from src.rules.semantic_hints.reused_key import ReusedKey
-from src.rules.semantic_rules.hash_fun_check import HashFunction
-from src.rules.semantic_rules.hash_fun_pes import HashFunctionPES
-from src.rules.semantic_rules.keyed_hash_check import KeyedHashFunction
 from src.rules.semantic_hints.same_evidence_store import SameEvidenceStore
-from rules.semantic_rules.computation_input import ComputationInput
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
+from rules.semantic_rules.task_computations.computation_output import ComputationOutput
+from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
+from src.rules.semantic_rules.task_computations.computation_pes import ComputationPES
+from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHashFunInput
+from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
 from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
 from src.rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
+from src.rules.semantic_rules.task_computations.integrity_computation_output import IntegrityComputationOutput
 
 
 class Analyzer:
@@ -75,26 +77,16 @@ class Analyzer:
             List[Result]: List of results, containing the Error objects.
         """
 
-        semantic_base_rules = [MissingPotentialEvidence(), ComputationInput(), HashFunctionPES()]
-        passed_base = True
+        semantic_rules = [MissingPotentialEvidence(),
+                          ComputationPES(), ComputationInput(), ComputationOutput(), 
+                          IntegrityComputationOutput(), KeyedHashFunInput(), KeyedHashFunOutput()]
         results = []
 
-        for rule in semantic_base_rules:
+        for rule in semantic_rules:
             result = rule.evaluate(elements)
 
             if result is not None:
-                passed_base = False
                 results.append(result)
-
-        # if base rules are not passed, stop the analysis
-        # if not passed_base:
-        #     return results
-
-        # INTEGRITY RULES
-        # rule_groups = [HashFunction(), KeyedHashFunction()]
-
-        # for rule in rule_groups:
-        #     results += rule.evaluate(elements)
 
         return results
 

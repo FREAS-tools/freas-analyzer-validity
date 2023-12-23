@@ -1,5 +1,6 @@
 from z3 import *
 from zope.interface import implementer
+
 from typing import Dict, List, Optional
 
 from src.elements.flow_object.task.task import Task
@@ -13,10 +14,10 @@ from src.rules.z3_types import flow_object_sort, mk_flow_object, flow_obj_id, ha
 
 
 @implementer(IRule)
-class HashFunctionPES:
+class ComputationPES:
     """
-    Rule: Hash Function and Potential Evidence Source
-    Description: This rule checks if every Task that executes (Keyed) Hash function has Potential Evidence Source label.
+    Rule: Computation Potential Evidence Source
+    Description: This rule checks if every computation task has Potential Evidence Source label.
     """
 
     @staticmethod
@@ -24,16 +25,15 @@ class HashFunctionPES:
         error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
-        error.message = "Tasks that execute (Keyed) Hash function must have Potential Evidence Source label"
+        error.message = "Computation tasks must have Potential Evidence Source label."
 
         return error
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         z3_tasks = []
 
-        # Collect all tasks that have hash_fun
         for key, value in elements.items():
-            if isinstance(value, Task) and value.hash_fun is not None:
+            if isinstance(value, Task) and value.computation is not None:
                 z3_tasks.append(mk_flow_object(StringVal(key), value.pe_source is not None))
 
         def has_pe_source(task):
@@ -54,7 +54,7 @@ class HashFunctionPES:
             model = s.model()
 
             for dec in model.decls():
-                s.add(dec() != model[dec])                                      # no duplicates
+                s.add(dec() != model[dec])                                            # no duplicates
                 solutions.append(str(simplify(flow_obj_id(model[dec]))).strip('"'))   # only element's ID
 
         return self.__create_result(solutions) if len(solutions) > 0 else None

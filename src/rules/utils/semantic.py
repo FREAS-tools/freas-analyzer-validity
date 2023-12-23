@@ -36,7 +36,7 @@ def get_participant(elements: Dict[str, Element], process_id) -> str:
     Get the participant ID associated with the given process ID.
 
     Parameters:
-        elements (Dict[str, Element]): A dictionary of elements.
+        elements (Dict[str, Element]): A dictionary of model elements.
         process_id: The process ID to search for.
 
     Returns:
@@ -56,8 +56,8 @@ def get_task_input_object(task: Task, input_association: str, elements: Dict[str
     Parameters:
         task (Task): The task being checked.
         input_association (str): The input association from the data object to the task.
-        elements (Dict[str, Element]): A dictionary of elements.
-        
+        elements (Dict[str, Element]): A dictionary of model elements.
+
     Returns:
         DataObject: The data object if found, otherwise None.
     """
@@ -65,6 +65,29 @@ def get_task_input_object(task: Task, input_association: str, elements: Dict[str
     for input_ in task.data_input:
         if input_.id == input_association:
             ref_obj: Optional[DataObjectReference] = elements.get(input_.source_ref)
+            data_object = elements.get(ref_obj.data)
+            data_object.name = ref_obj.name
+
+            return data_object
+
+    return None
+
+
+def get_task_output_object(task: Task, output_association: str, elements: Dict[str, Element]) -> Optional[DataObject]:
+    """
+    Get the data object associated with the given task and output association.
+
+    Parameters:
+        task (Task): The task being checked.
+        output_association (str): The output association from the task to the data object.
+        elements (Dict[str, Element]): A dictionary of model elements.
+
+    Returns:
+        DataObject: The data object if found, otherwise None.
+    """
+    for output in task.data_output:
+        if output.id == output_association:
+            ref_obj: Optional[DataObjectReference] = elements.get(output.target_ref)
             data_object = elements.get(ref_obj.data)
             data_object.name = ref_obj.name
 

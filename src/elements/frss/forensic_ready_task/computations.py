@@ -63,7 +63,7 @@ class DataTransformation(Computation):
         super().__init__(input_, output)
 
 
-class HashFunction(Computation):
+class HashFunction(IntegrityComputation):
     """
     Represents a task hashing function.
     """

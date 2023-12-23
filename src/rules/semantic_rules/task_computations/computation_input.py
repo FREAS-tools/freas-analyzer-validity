@@ -3,25 +3,27 @@ from zope.interface import implementer
 
 from typing import Dict, List, Optional
 
-from src.elements.artefact.data_object.data_object import DataObject
 from src.rules.rule import IRule
-from src.rules.rule_result.error import Error
 from src.elements.element import Element
-from src.rules.rule_result.severity import Severity
-from src.elements.flow_object.task.task import Task
-from src.elements.artefact.data_reference import DataObjectReference
+from src.rules.rule_result.error import Error
 from src.rules.rule_result.result import Result
+from src.elements.flow_object.task.task import Task
+from src.rules.rule_result.severity import Severity
+from src.elements.artefact.data_reference import DataObjectReference
+from src.elements.artefact.data_object.data_object import DataObject
+from src.elements.frss.forensic_ready_task.computations import HashFunction
 
-from src.rules.utils.semantic import create_mock_data_objects, get_participant
+from src.rules.utils.semantic import create_mock_data_objects, get_participant, get_task_input_object
 from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, \
     object_name
 
 
 @implementer(IRule)
-class HashFunctionInput:
+class ComputationInput:
     """
-    Rule: Hash Function Input
-    Description: This rule checks if Hash Function receives a Potential Evidence Type as an input.
+    Rule: Computation Input
+    Description: This rule checks if a task performing any type of computation, 
+    except Keyed hash function, receives a Potential Evidence Type as the only input.
     """
 
     @staticmethod
@@ -29,7 +31,7 @@ class HashFunctionInput:
         error = Error()
         error.source = solutions
         error.severity = Severity.MEDIUM
-        error.message = "Task that executes the Hash Function must have exactly one input, " \
+        error.message = "Task performing a computation must have exactly one input, " \
                         "being a Potential Evidence Type."
 
         return error
@@ -38,26 +40,24 @@ class HashFunctionInput:
         s = Solver()
         solutions = []
 
-        # Goes through all task and checks their output data objects
+        # Goes through all task and checks their if they are a computation task, disregarding keyed hash functions
+        # as it has multiple inputs (key and data)
         for key, elem in elements.items():
-            if not isinstance(elem, Task) or elem.hash_fun is None or elem.hash_fun.key is not None:
+            if not isinstance(elem, Task) or elem.computation is None or \
+                (isinstance(elem.computation, HashFunction) and elem.computation.key is not None):
                 continue
-
+            
             s.push()
 
-            data_ref: str = elem.hash_fun.input
-            ref_obj: Optional[DataObjectReference] = elements.get(data_ref)
-            data_obj: Optional[DataObject] = elements.get(ref_obj.data)
-
-            assert data_obj is not None
-
+            # Get the data object associated with the task input
+            data_obj = get_task_input_object(elem, elem.computation.input, elements)
             participant = get_participant(elements, data_obj.process_id)
-            z3_hash_input = mk_data_object(StringVal(participant), StringVal(key),
-                                           StringVal(data_obj.id), StringVal(ref_obj.name),
-                                           StringVal(type(data_obj).__name__))
             
-            # Data needed to check that task contains only one input
-            inputs = []
+            z3_input = mk_data_object(StringVal(participant), StringVal(key),
+                                      StringVal(data_obj.id), StringVal(data_obj.name),
+                                      StringVal(type(data_obj).__name__))
+            
+            z3_task_inputs = []
 
             for input_ in elem.data_input:
                 data_ref: str = input_.source_ref
@@ -66,21 +66,21 @@ class HashFunctionInput:
 
                 assert data_obj is not None
 
-                inputs.append(mk_data_object(StringVal(participant), StringVal(key),
+                z3_task_inputs.append(mk_data_object(StringVal(participant), StringVal(key),
                                              StringVal(data_obj.id), StringVal(ref_obj.name),
                                              StringVal(type(data_obj).__name__)))
 
-            if len(inputs) == 0:
-                inputs = create_mock_data_objects(0, 1, mk_data_object, key)
+            if len(z3_task_inputs) == 0:
+                z3_task_inputs = create_mock_data_objects(0, 1, mk_data_object, key)
 
             def single_input(data_object):
-                return data_object == z3_hash_input
+                return data_object == z3_input
 
             def correct_type(data_object):
                 return simplify(object_type(data_object)) == 'PotentialEvidenceType'
 
             def exists(data_object):
-                return Or([data_object == obj for obj in inputs])
+                return Or([data_object == obj for obj in z3_task_inputs])
 
             z3_data_object = Const('data_object', data_object_sort)
 

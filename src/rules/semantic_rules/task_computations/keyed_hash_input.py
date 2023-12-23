@@ -2,14 +2,15 @@ from z3 import *
 from zope.interface import implementer
 from typing import Dict, List, Optional
 
-from src.elements.artefact.data_object.data_object import DataObject
-from src.elements.artefact.data_reference import DataObjectReference
+from src.rules.rule import IRule
+from src.elements.element import Element
+from src.rules.rule_result.error import Error
+from src.rules.rule_result.result import Result
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.severity import Severity
-from src.rules.rule import IRule
-from src.rules.rule_result.error import Error
-from src.elements.element import Element
-from src.rules.rule_result.result import Result
+from src.elements.artefact.data_object.data_object import DataObject
+from src.elements.artefact.data_reference import DataObjectReference
+from src.elements.frss.forensic_ready_task.computations import HashFunction
 
 from src.rules.utils.semantic import create_mock_data_objects, get_participant
 from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, \
@@ -37,13 +38,14 @@ class KeyedHashFunInput:
         solutions = []
 
         for elem_id, elem in elements.items():
-            # Check if element is a task, and if it has a hash function
-            if not isinstance(elem, Task) or elem.hash_fun is None or elem.hash_fun.key is None:
+            # Check if element is a task performing keyed hash function
+            if not isinstance(elem, Task) or elem.computation is None or \
+               not isinstance(elem.computation, HashFunction) or elem.computation.key is None:
                 continue
 
             s.push()
 
-            z3_inputs = []  # contains all input data objects going to the current task
+            z3_task_inputs = []
             for input_ in elem.data_input:
                 data_ref_id = input_.source_ref
                 data_ref: DataObjectReference = elements[data_ref_id]
@@ -52,14 +54,14 @@ class KeyedHashFunInput:
                 assert data_obj is not None
 
                 participant = get_participant(elements, data_obj.process_id)
-                z3_inputs.append(mk_data_object(StringVal(participant), StringVal(elem_id), StringVal(data_obj.id),
-                                                StringVal(data_ref.name), StringVal(type(data_obj).__name__)))
+                z3_task_inputs.append(mk_data_object(StringVal(participant), StringVal(elem_id), StringVal(data_obj.id),
+                                                     StringVal(data_ref.name), StringVal(type(data_obj).__name__)))
 
-            if len(z3_inputs) < 2:
-                z3_inputs += create_mock_data_objects(len(z3_inputs), 2, mk_data_object, elem_id)
+            if len(z3_task_inputs) < 2:
+                z3_task_inputs += create_mock_data_objects(len(z3_task_inputs), 2, mk_data_object, elem_id)
 
             def two_inputs():
-                return len(z3_inputs) == 2
+                return len(z3_task_inputs) == 2
 
             def correct_data_type(data_object):
                 return simplify(object_type(data_object)) == 'PotentialEvidenceType'
@@ -71,7 +73,7 @@ class KeyedHashFunInput:
                 return data_object == key_object
 
             def exists(data_object):
-                return Or([data_object == obj for obj in z3_inputs])
+                return Or([data_object == obj for obj in z3_task_inputs])
 
             input_one = Const('input_one', data_object_sort)
             input_two = Const('input_two', data_object_sort)
