@@ -34,7 +34,7 @@
             </bpmn:dataOutputAssociation>
             <bpmn:messageEventDefinition id="MessageEventDefinition_1kq097x" />
         </bpmn:startEvent>
-        <bpmn:dataObjectReference id="DataObjectReference_1gmrtze" name="Payment request"
+        <bpmn:dataObjectReference id="DataObjectReference_1gmrtze" name="Payment&#10;request"
             dataObjectRef="DataObject_09wqsl1" />
         <bpmn:dataObject id="DataObject_09wqsl1" />
         <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1twbc5b">
@@ -109,6 +109,8 @@
             <bpmn:dataOutputAssociation id="DataOutputAssociation_0dirdd4">
                 <bpmn:targetRef>DataStoreReference_0i2rn37</bpmn:targetRef>
             </bpmn:dataOutputAssociation>
+            <bpmn4frss:dataTransformation id="DataTransformation_09zw0gg"
+                input="DataInputAssociation_1h1qw4v" output="DataOutputAssociation_14gsb8w" />
         </bpmn:task>
         <bpmn:task id="Task_1o3t9qk" name="Send parking permit">
             <bpmn:incoming>SequenceFlow_1of3tu0</bpmn:incoming>
