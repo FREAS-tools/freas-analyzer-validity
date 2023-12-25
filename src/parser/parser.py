@@ -205,12 +205,12 @@ class Parser:
     def __parse_evidence_type(self, elem: XmlElement, elem_id: str, process_id: str) -> PotentialEvidenceType:
         for child in elem:
             tag = self.__get_tag(child)
+            if tag == "proof":
+                return Proof(elem_id, process_id)
             if tag == "hashProof":
                 return HashProof(elem_id, process_id)
-            # if tag == "proof":
-            #     return Proof(elem_id, process_id)
-            # if tag == "keyedHashProof":
-            #     return KeyedHashProof(elem.attrib['id'], process_id)
+            if tag == "keyedHashProof":
+                return KeyedHashProof(elem.attrib['id'], process_id)
 
         return PotentialEvidenceType(elem_id, process_id)
 

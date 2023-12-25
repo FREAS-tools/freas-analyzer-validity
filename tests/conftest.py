@@ -135,38 +135,8 @@ def all_computations_with_pes():
     return parser.parse_file(file_path)
 
 
-# @pytest.fixture(scope="session")
-# def hash_correct_elements():
-#     file_path = os.path.join(data_dir, "hash_correct.bpmn")
-#     return parser.parse_file(file_path)
-
-
-# @pytest.fixture(scope="session")
-# def keyed_hash_correct_elements():
-#     file_path = os.path.join(data_dir, "keyed_hash_correct.bpmn")
-#     return parser.parse_file(file_path)
-
-
-# @pytest.fixture(scope="session")
-# def keyed_hash_reused_elements():
-#     file_path = os.path.join(data_dir, "keyed_hash_reused.bpmn")
-#     return parser.parse_file(file_path)
-
-
-# @pytest.fixture(scope="session")
-# def keyed_hash_unique_elements():
-#     file_path = os.path.join(data_dir, "keyed_hash_unique.bpmn")
-#     return parser.parse_file(file_path)
-
-
-# @pytest.fixture(scope="session")
-# def hash_missing_pes_elements():
-#     parser = Parser()
-#     file_path = os.path.join(data_dir, "hash_missing_pes.bpmn")
-#     return parser.parse_file(file_path)
-
-
-# @pytest.fixture(scope="session")
-# def hash_correct_pes_elements():
-#     file_path = os.path.join(data_dir, "keyed_hash_unique.bpmn")
-#     return parser.parse_file(file_path)
+@pytest.fixture(scope="session")
+def keyed_hash_reused_key():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "keyed_hash_reused_key.bpmn")
+    return parser.parse_file(file_path)
