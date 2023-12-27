@@ -13,7 +13,7 @@ from src.rules.semantic_hints.missing_pes import MissingPES
 from src.rules.semantic_hints.reused_key import ReusedKey
 from src.rules.semantic_hints.same_evidence_store import SameEvidenceStore
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
-from rules.semantic_rules.task_computations.computation_output import ComputationOutput
+from src.rules.semantic_rules.task_computations.computation_output import ComputationOutput
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
 from src.rules.semantic_rules.task_computations.computation_pes import ComputationPES
 from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHashFunInput
