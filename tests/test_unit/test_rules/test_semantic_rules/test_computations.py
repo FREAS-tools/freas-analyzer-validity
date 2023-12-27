@@ -1,5 +1,7 @@
 
 from src.rules.rule_result.error import Error
+from rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
+from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHashFunInput
 from src.rules.semantic_rules.task_computations.computation_pes import ComputationPES
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
 from src.rules.semantic_rules.task_computations.computation_output import ComputationOutput
@@ -108,3 +110,24 @@ def test_all_computations_with_pes(all_computations_with_pes):
     result = rule.evaluate(all_computations_with_pes)
 
     assert result is None
+    
+
+def test_keyed_hash_fun_output(keyed_hash_fun_input_output):
+    rule = KeyedHashFunOutput()
+    result = rule.evaluate(keyed_hash_fun_input_output)
+
+    assert result is None
+
+
+def test_keyed_hash_fun_bad_output(keyed_hash_fun_bad_input_output):
+    rule = KeyedHashFunOutput()
+    result = rule.evaluate(keyed_hash_fun_bad_input_output)
+
+    expected_result = Error()
+    expected_result.source = ["Activity_0aek6ep", "Activity_06q1s2x"]
+    expected_result.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
+                              "Potential Evidence, being a Keyed Hash Proof."
+
+    assert isinstance(result, Error)
+    assert sorted(result.source) == sorted(expected_result.source) \
+       and result.message == expected_result.message

@@ -45,10 +45,8 @@ class KeyedHashFunOutput:
             s.push()
 
             data_obj = get_task_output_object(elem, elem.computation.output, elements)
-
-            assert data_obj is not None
-
             participant = get_participant(elements, data_obj.process_id)
+            
             hash_output = mk_data_object(StringVal(participant), StringVal(elem_id), StringVal(data_obj.id),
                                          StringVal(data_obj.name), StringVal(type(data_obj).__name__))
 

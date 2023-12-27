@@ -140,3 +140,17 @@ def keyed_hash_reused_key():
     parser = Parser()
     file_path = os.path.join(data_dir, "keyed_hash_reused_key.bpmn")
     return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def keyed_hash_fun_input_output():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "keyed_hash_fun.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def keyed_hash_fun_bad_input_output():
+    parser = Parser()
+    file_path = os.path.join(data_dir, "keyed_hash_fun_bad_io.bpmn")
+    return parser.parse_file(file_path)

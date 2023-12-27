@@ -14,8 +14,8 @@ def test_reused_key(keyed_hash_reused_key):
            and result.message == expected_result.message
 
 
-# def test_unique_key_in_hash_fun(keyed_hash_unique_elements):
-#     rule = ReusedKey()
-#     result = rule.evaluate(keyed_hash_unique_elements)
+def test_unique_key_in_hash_fun(keyed_hash_fun_input_output):
+    rule = ReusedKey()
+    result = rule.evaluate(keyed_hash_fun_input_output)
 
-#     assert result is None
+    assert result is None

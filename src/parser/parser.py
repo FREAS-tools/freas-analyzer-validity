@@ -210,7 +210,7 @@ class Parser:
             if tag == "hashProof":
                 return HashProof(elem_id, process_id)
             if tag == "keyedHashProof":
-                return KeyedHashProof(elem.attrib['id'], process_id)
+                return KeyedHashProof(elem_id, process_id)
 
         return PotentialEvidenceType(elem_id, process_id)
 
