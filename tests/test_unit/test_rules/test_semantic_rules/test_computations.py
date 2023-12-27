@@ -1,6 +1,6 @@
 
 from src.rules.rule_result.error import Error
-from rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
+from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
 from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHashFunInput
 from src.rules.semantic_rules.task_computations.computation_pes import ComputationPES
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
@@ -110,7 +110,7 @@ def test_all_computations_with_pes(all_computations_with_pes):
     result = rule.evaluate(all_computations_with_pes)
 
     assert result is None
-    
+
 
 def test_keyed_hash_fun_output(keyed_hash_fun_input_output):
     rule = KeyedHashFunOutput()
