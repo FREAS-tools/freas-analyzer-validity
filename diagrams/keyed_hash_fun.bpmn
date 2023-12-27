@@ -51,12 +51,12 @@
     <sequenceFlow id="Flow_0ho5atp" sourceRef="Activity_1kop5s6" targetRef="Activity_0aek6ep" />
     <dataObjectReference id="DataObjectReference_0jvrfq1" name="evidence" dataObjectRef="DataObject_1bs03lk" />
     <dataObject id="DataObject_1bs03lk">
-      <bpmn4frss:potentialEvidence id="PotentialEvidence_pko2epl"/>
+      <bpmn4frss:potentialEvidence id="PotentialEvidence_0kq2epl" />
     </dataObject>
     <dataObjectReference id="DataObjectReference_0n7upko" name="hashOfEvidence" dataObjectRef="DataObject_0hs56sf" />
     <dataObject id="DataObject_0hs56sf">
-      <bpmn4frss:potentialEvidence id="PotentialEvidence_1kltthq">
-          <bpmn4frss:keyedHashProof id="HashProof_1kltth1" />
+      <bpmn4frss:potentialEvidence id="PotentialEvidence_0rzbggq">
+          <bpmn4frss:keyedHashProof id="HashProof_1mcarz6" />
       </bpmn4frss:potentialEvidence>
     </dataObject>
     <endEvent id="Event_0b33170">
@@ -99,18 +99,18 @@
     </bpmn4frss:evidenceSource>
     <dataObjectReference id="DataObjectReference_1r43k5e" name="evidence2" dataObjectRef="DataObject_1085v9r" />
     <dataObject id="DataObject_1085v9r">
-      <bpmn4frss:potentialEvidence id="PotentialEvidence_0kq2epl" />
+      <bpmn4frss:potentialEvidence id="PotentialEvidence_5sk2epl"/>
     </dataObject>
     <dataObjectReference id="DataObjectReference_0a9oojl" name="hashOfEvidence2" dataObjectRef="DataObject_0xo3l6z" />
     <dataObject id="DataObject_0xo3l6z">
-      <bpmn4frss:potentialEvidence id="PotentialEvidence_0rzbggq">
-        <bpmn4frss:keyedHashProof id="HashProof_1mcarz6" />
+      <bpmn4frss:potentialEvidence id="PotentialEvidence_1kltthq">
+          <bpmn4frss:keyedHashProof id="HashProof_1kltth1" />
       </bpmn4frss:potentialEvidence>
     </dataObject>
     <endEvent id="Event_1qj3bg4">
       <incoming>Flow_1ywwvq2</incoming>
     </endEvent>
-    <dataObjectReference id="DataObjectReference_0xr6zx5" name="key" dataObjectRef="DataObject_01577su" />
+    <dataObjectReference id="DataObjectReference_0xr6zx5" name="key 2" dataObjectRef="DataObject_01577su" />
     <dataObject id="DataObject_01577su" />
     <sequenceFlow id="Flow_01yrnru" sourceRef="Event_07viqfw" targetRef="Activity_1w16j14" />
     <sequenceFlow id="Flow_1odzts8" sourceRef="Activity_1w16j14" targetRef="Activity_06q1s2x" />
