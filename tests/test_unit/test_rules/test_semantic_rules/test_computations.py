@@ -1,8 +1,8 @@
 
 from src.rules.rule_result.error import Error
+from src.rules.rule_result.warning import Warning
 from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
-from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHashFunInput
-from src.rules.semantic_rules.task_computations.computation_pes import ComputationPES
+from src.rules.semantic_hints.computation_pes import ComputationPES
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
 from src.rules.semantic_rules.task_computations.computation_output import ComputationOutput
 from src.rules.semantic_rules.task_computations.integrity_computation_output import IntegrityComputationOutput
@@ -96,11 +96,11 @@ def test_all_computations_missing_pes(all_computations_one_input_output):
     rule = ComputationPES()
     result = rule.evaluate(all_computations_one_input_output)
 
-    expected_result = Error()
+    expected_result = Warning()
     expected_result.source = ["Task_14bpt81", "Task_1mgfm3r", "Task_1qg7d8p"]
-    expected_result.message = "Computation tasks must have Potential Evidence Source label."
+    expected_result.message = "Task performing computation should have a Potential Evidence Source label."
 
-    assert isinstance(result, Error)
+    assert isinstance(result, Warning)
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message
 

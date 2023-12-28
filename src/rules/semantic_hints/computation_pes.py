@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.severity import Severity
 from src.rules.rule import IRule
-from src.rules.rule_result.error import Error
+from src.rules.rule_result.warning import Warning
 from src.elements.element import Element
 from src.rules.rule_result.result import Result
 
@@ -22,19 +22,18 @@ class ComputationPES:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        error = Error()
-        error.source = solutions
-        error.severity = Severity.MEDIUM
-        error.message = "Computation tasks must have Potential Evidence Source label."
+        warning = Warning()
+        warning.source = solutions
+        warning.message = "Task performing computation should have a Potential Evidence Source label."
 
-        return error
+        return warning
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         z3_tasks = []
 
-        for key, value in elements.items():
-            if isinstance(value, Task) and value.computation is not None:
-                z3_tasks.append(mk_flow_object(StringVal(key), value.pe_source is not None))
+        for key, elem in elements.items():
+            if isinstance(elem, Task) and elem.computation is not None:
+                z3_tasks.append(mk_flow_object(StringVal(key), elem.pe_source is not None))
 
         def has_pe_source(task):
             return simplify(has_pes(task))

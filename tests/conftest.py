@@ -7,16 +7,16 @@ from src.parser.parser import Parser
 The following fixtures are used to test the implemented rules.
 """
 
-# Scenario diagrams
+# Path to Scenario diagrams directory
 scenario_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../diagrams/scenarios/'))
 
-# Computation diagrams
+# Path to Computation diagrams directory
 computations_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../diagrams/computation/'))
 
-# Evidence quality diagrams
+# Path to Evidence quality diagrams directory
 evidence_quality_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../diagrams/evidence_quality/'))
 
-# Evidence oriented diagrams
+# Path to Evidence oriented diagrams directory
 evidence_oriented_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../diagrams/evidence_oriented/'))
 
 
@@ -32,6 +32,13 @@ def av_scenario():
 def av_parking_register():
     parser = Parser()
     file_path = os.path.join(scenario_dir, "av-parking_register.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def av_issuing_permit():
+    parser = Parser()
+    file_path = os.path.join(scenario_dir, "av_issuing_permit.bpmn")
     return parser.parse_file(file_path)
 
 

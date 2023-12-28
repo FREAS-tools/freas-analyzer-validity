@@ -10,7 +10,7 @@
         <bpmn:participant id="Participant_07clqr3" processRef="Process_nG46Ya" />
     </bpmn:collaboration>
     <bpmn:process id="Process_nG46Ya" isExecutable="false">
-        <bpmn:task id="Task_1e2yjs2" name="Integrity&#10;Computation">
+        <bpmn:task id="Task_1e2yjs2" name="Integrity Computation">
             <bpmn:incoming>SequenceFlow_18egb9w</bpmn:incoming>
             <bpmn:outgoing>SequenceFlow_1vjovh7</bpmn:outgoing>
             <bpmn:property id="Property_1hl9p5n" name="__targetRef_placeholder" />

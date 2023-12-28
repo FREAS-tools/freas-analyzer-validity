@@ -16,7 +16,7 @@ class MissingPES:
     """
     Rule: Missing Potential Evidence Source
     Description: This rule checks that all Flow Objects that are source or target of Message Flow
-     have Potential Evidence Source label.
+    have Potential Evidence Source label.
     """
 
     @staticmethod
@@ -24,7 +24,7 @@ class MissingPES:
         warning = Warning()
         warning.source = solutions
         warning.message = "Flow Objects that are the source or target element of a Message Flow" \
-                          " should have a Potential Evidence Source label"
+                          " should have a Potential Evidence Source label."
 
         return warning
 
@@ -66,7 +66,7 @@ class MissingPES:
             model = s.model()
 
             for dec in model.decls():
-                s.add(dec() != model[dec])  # no duplicates
+                s.add(dec() != model[dec])                                           # no duplicates
                 solutions.append(str(simplify(flow_obj_id(model[dec]))).strip('"'))  # only element's ID
 
         return self.__create_result(solutions) if len(solutions) > 0 else None

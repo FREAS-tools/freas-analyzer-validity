@@ -85,7 +85,7 @@ class Parser:
             new_elem = None
 
             match tag:
-                case "task" | "startEvent" | "endEvent" | "intermediateCatchEvent" | "exclusiveGateway":
+                case "task" | "startEvent" | "endEvent" | "intermediateCatchEvent" | "exclusiveGateway" | "subProcess":
                     new_elem = self.__parse_flow_object(tag, child)
                 case "sequenceFlow":
                     new_elem = SequenceFlow(attr['id'], attr['sourceRef'],
@@ -131,20 +131,20 @@ class Parser:
         flow_object = None
 
         match tag:
-            case "task":
-                flow_object = Task(attr['id'])
+            case "task" | "subProcess":
+                flow_object = Task(attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
             case "startEvent":
-                flow_object = StartEvent(attr['id'])
+                flow_object = StartEvent(attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
             case "endEvent":
-                flow_object = EndEvent(attr['id'])
+                flow_object = EndEvent(attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
             case "intermediateCatchEvent":
-                flow_object = IntermediateCatchEvent(attr['id'])
+                flow_object = IntermediateCatchEvent(attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
             case "exclusiveGateway":
-                flow_object = ExclusiveGateway(attr['id'])
+                flow_object = ExclusiveGateway(attr['id'], attr.get('name'))
                 self.__parse_gateway(flow_object, elem)
 
         flow_object.name = attr.get('name') if flow_object else None

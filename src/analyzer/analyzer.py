@@ -10,12 +10,10 @@ from src.rules.rule_result.error import Error
 from src.rules.rule_result.warning import Warning
 from src.rules.rule_result.result import Result
 from src.rules.semantic_hints.missing_pes import MissingPES
-from src.rules.semantic_hints.reused_key import ReusedKey
-from src.rules.semantic_hints.same_evidence_store import SameEvidenceStore
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
 from src.rules.semantic_rules.task_computations.computation_output import ComputationOutput
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
-from src.rules.semantic_rules.task_computations.computation_pes import ComputationPES
+from src.rules.semantic_hints.computation_pes import ComputationPES
 from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHashFunInput
 from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
 from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
@@ -50,10 +48,10 @@ class Analyzer:
                 results = Analyzer.__analyze_semantic_rules(elements)
             case AnalysisType.SEMANTIC_HINTS:
                 results = Analyzer.__analyze_semantic_hints(elements)
+            case AnalysisType.SEMANTIC_ALL:
+                results = Analyzer.__analyze_semantic_all(elements)
             case AnalysisType.EVIDENCE_QUALITY_ANALYSIS:
                 results = Analyzer.__analyze_evidence_quality_rules(elements, params.element_id)
-            case _:
-                results = Analyzer.__analyze_semantic_all(elements)
 
         for result in results:
             if isinstance(result, Error):
@@ -78,7 +76,7 @@ class Analyzer:
         """
 
         semantic_rules = [MissingPotentialEvidence(),
-                          ComputationPES(), ComputationInput(), ComputationOutput(), 
+                          ComputationInput(), ComputationOutput(), 
                           IntegrityComputationOutput(), KeyedHashFunInput(), KeyedHashFunOutput()]
         results = []
 
@@ -101,7 +99,9 @@ class Analyzer:
         Returns:
             List[Result]: List of results, containing the Warning objects.
         """
-        semantic_hints_rules = [MissingPES(), ReusedKey(), SameEvidenceStore()]
+        #semantic_hints_rules = [MissingPES(), ReusedKey(), SameEvidenceStore()]
+        semantic_hints_rules = [MissingPES(), ComputationPES()]
+
         results = []
 
         for rule in semantic_hints_rules:
@@ -125,7 +125,7 @@ class Analyzer:
         """
         semantic_rules_results = cls.__analyze_semantic_rules(elements)
         semantic_hints_results = cls.__analyze_semantic_hints(elements)
-
+        
         return semantic_rules_results + semantic_hints_results
 
     @classmethod
