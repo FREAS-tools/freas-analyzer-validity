@@ -1,4 +1,4 @@
-from analysis_output.output import Output
+from src.analysis_output.output import Output
 from src.rules.rule_result.result import Result
 from src.analysis_input.input import Input
 from src.analysis_input.analysis_types import AnalysisType
