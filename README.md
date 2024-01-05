@@ -19,14 +19,13 @@ The rules are divided into three categories depending on the type of analysis th
 
 
 ## Running the Analysis
-Analysis input requires **file path** to the BPMN4FRSS model, **analysis type** and in case of Evidence Quality Analysis, the **compromised element id**.
-
-To manually set the analysis input, the user can change the details of the `src/input/input_example.json` file or 
-use one of the examples from the `src/input/examples.json`. 
+Analysis input requires **model path** to the BPMN4FRSS model, **command** representing the analysis type and in case of Evidence Quality Analysis, the **compromised element id** as an argument.
 
 To run the analysis, run one of the following commands in the root directory of the project:
-  - `python main.py`
-  - `poetry run main.py `
+  - `python main.py [OPTIONS] MODEL_PATH COMMAND [ARGS]`
+  - `poetry run main.py [OPTIONS] MODEL_PATH COMMAND [ARGS]`
+
+Use `--help` for more details.
 
 ## Running the Tests
 To run all tests, run one of the following commands in the root directory of the project:
