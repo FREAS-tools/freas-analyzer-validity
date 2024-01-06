@@ -6,8 +6,6 @@ from src.elements.artefact.data_reference import DataStoreReference
 from src.analysis_input.analysis_types import AnalysisType
 from src.analysis_input.input import Input
 from src.analysis_output.output import Output
-from src.rules.rule_result.error import Error
-from src.rules.rule_result.warning import Warning
 from src.rules.rule_result.result import Result
 from src.rules.semantic_hints.missing_pes import MissingPES
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
@@ -45,21 +43,14 @@ class Analyzer:
 
         match params.analysis_type:
             case AnalysisType.SEMANTIC_RULES:
-                results = Analyzer.__analyze_semantic_rules(elements)
+                output.errors = Analyzer.__analyze_semantic_rules(elements)
             case AnalysisType.SEMANTIC_HINTS:
-                results = Analyzer.__analyze_semantic_hints(elements)
+                output.warnings = Analyzer.__analyze_semantic_hints(elements)
             case AnalysisType.SEMANTIC_ALL:
-                results = Analyzer.__analyze_semantic_all(elements)
+                output.errors = Analyzer.__analyze_semantic_all(elements)
             case AnalysisType.EVIDENCE_QUALITY_ANALYSIS:
-                results = Analyzer.__analyze_evidence_quality_rules(elements, params.element_id)
-
-        for result in results:
-            if isinstance(result, Error):
-                output.errors.append(result)
-            elif isinstance(result, Warning):
-                output.warnings.append(result)
-            elif isinstance(result, Result):
-                output.evidence_sources = result
+                sources = Analyzer.__analyze_evidence_quality_rules(elements, params.element_id)
+                output.evidence_sources = sources[0] if len(sources) > 0 else None
 
         return output
 

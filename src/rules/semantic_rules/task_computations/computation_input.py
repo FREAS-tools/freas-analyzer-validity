@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 
 from src.rules.rule import IRule
 from src.elements.element import Element
-from src.rules.rule_result.error import Error
 from src.rules.rule_result.result import Result
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.severity import Severity
@@ -28,13 +27,13 @@ class ComputationInput:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        error = Error()
-        error.source = solutions
-        error.severity = Severity.MEDIUM
-        error.message = "Task performing a computation must have exactly one input, " \
-                        "being a Potential Evidence Type."
+        result = Result()
+        result.source = solutions
+        result.severity = Severity.MEDIUM
+        result.message = "Task performing a computation must have exactly one input, " \
+                          "being a Potential Evidence Type."
 
-        return error
+        return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()

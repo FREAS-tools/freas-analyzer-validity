@@ -4,9 +4,7 @@ from zope.interface import implementer
 from typing import Dict, List, Optional
 
 from src.elements.flow_object.task.task import Task
-from src.rules.rule_result.severity import Severity
 from src.rules.rule import IRule
-from src.rules.rule_result.warning import Warning
 from src.elements.element import Element
 from src.rules.rule_result.result import Result
 
@@ -22,11 +20,11 @@ class ComputationPES:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        warning = Warning()
-        warning.source = solutions
-        warning.message = "Task performing computation should have a Potential Evidence Source label."
+        result = Result()
+        result.source = solutions
+        result.message = "Task performing computation should have a Potential Evidence Source label."
 
-        return warning
+        return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         z3_tasks = []
