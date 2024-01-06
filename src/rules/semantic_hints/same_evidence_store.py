@@ -7,7 +7,6 @@ from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.element import Element
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.result import Result
-from src.rules.rule_result.warning import Warning
 from src.rules.rule import IRule
 from src.elements.artefact.data_reference import DataObjectReference
 
@@ -24,12 +23,12 @@ class SameEvidenceStore:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        warning = Warning()
-        warning.source = solutions
-        warning.message = "The HashProof must be stored independently of Potential Evidence," \
+        result = Result()
+        result.source = solutions
+        result.message = "The HashProof must be stored independently of Potential Evidence," \
                           " i.e., in a different Evidence Context."
 
-        return warning
+        return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         solutions = []

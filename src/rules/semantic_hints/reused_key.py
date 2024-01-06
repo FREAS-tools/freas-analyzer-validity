@@ -8,7 +8,6 @@ from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.element import Element
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.result import Result
-from src.rules.rule_result.warning import Warning
 from src.rules.rule import IRule
 from src.elements.frss.forensic_ready_task.computations import HashFunction
 
@@ -26,11 +25,11 @@ class ReusedKey:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        warning = Warning()
-        warning.source = solutions
-        warning.message = "The key used in Keyed Hash Function must not be used in different Pool."
+        result = Result()
+        result.source = solutions
+        result.message = "The key used in Keyed Hash Function must not be used in different Pool."
 
-        return warning
+        return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         z3_keys = []

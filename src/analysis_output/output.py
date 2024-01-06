@@ -2,8 +2,6 @@ from json import JSONEncoder
 from typing import List, Optional
 from enum import Enum
 
-from src.rules.rule_result.error import Error
-from src.rules.rule_result.warning import Warning
 from src.rules.rule_result.result import Result
 
 
@@ -17,13 +15,13 @@ class Output:
         """
         Constructor for Output class.
 
-        errors (List[Error]): List of errors returned by the Semantic Rules analysis
-        warnings (List[Warning]): List of warnings returned by the Semantic Hints analysis
+        errors (List[Result]): List of errors returned by the Semantic Rules analysis
+        warnings (List[Result]): List of warnings returned by the Semantic Hints analysis
         evidence_sources (Optional[Result]): Evidence sources returned by the Evidence Quality analysis
 
         """
-        self.errors: List[Error] = []
-        self.warnings: List[Warning] = []
+        self.errors: List[Result] = []
+        self.warnings: List[Result] = []
         self.evidence_sources: Optional[Result] = None
 
 

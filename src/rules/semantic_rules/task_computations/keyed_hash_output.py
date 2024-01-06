@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 
 from src.elements.artefact.data_object.data_object import DataObject
 from src.rules.rule import IRule
-from src.rules.rule_result.error import Error
 from src.elements.element import Element
 from src.rules.rule_result.severity import Severity
 from src.elements.flow_object.task.task import Task
@@ -25,13 +24,13 @@ class KeyedHashFunOutput:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        error = Error()
-        error.source = solutions
-        error.severity = Severity.MEDIUM
-        error.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
+        result = Result()
+        result.source = solutions
+        result.severity = Severity.MEDIUM
+        result.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
                         "Potential Evidence, being a Keyed Hash Proof."
 
-        return error
+        return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()

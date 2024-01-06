@@ -5,11 +5,10 @@ from zope.interface import implementer
 from typing import Dict, Optional, List
 
 from src.rules.rule import IRule
-from src.rules.rule_result.error import Error
 from src.elements.element import Element
+from src.rules.rule_result.result import Result
 from src.rules.rule_result.severity import Severity
 from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
-from src.rules.rule_result.result import Result
 
 from src.rules.z3_types import pe_source_sort, mk_pe_source, pes_id, has_assoc
 
@@ -23,12 +22,12 @@ class MissingPotentialEvidence:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        error = Error()
-        error.source = solutions
-        error.severity = Severity.HIGH
-        error.message = "Data Object with Potential Evidence Type is not created from Potential Evidence Source"
+        result = Result()
+        result.source = solutions
+        result.severity = Severity.HIGH
+        result.message = "Data Object with Potential Evidence Type is not created from Potential Evidence Source"
 
-        return error
+        return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         s = Solver()

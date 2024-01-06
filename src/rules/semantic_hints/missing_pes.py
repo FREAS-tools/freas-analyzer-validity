@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 
 from src.rules.rule import IRule
 from src.rules.rule_result.result import Result
-from src.rules.rule_result.warning import Warning
 from src.elements.container.pool import Pool
 from src.elements.element import Element
 from src.elements.flow.message_flow import MessageFlow
@@ -21,12 +20,12 @@ class MissingPES:
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
-        warning = Warning()
-        warning.source = solutions
-        warning.message = "Flow Objects that are the source or target element of a Message Flow" \
+        result = Result()
+        result.source = solutions
+        result.message = "Flow Objects that are the source or target element of a Message Flow" \
                           " should have a Potential Evidence Source label."
 
-        return warning
+        return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         # Create a list of all Flow Objects that are the source or target element of a Message Flow

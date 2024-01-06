@@ -1,6 +1,5 @@
 
-from src.rules.rule_result.error import Error
-from src.rules.rule_result.warning import Warning
+from src.rules.rule_result.result import Result
 from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
 from src.rules.semantic_hints.computation_pes import ComputationPES
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
@@ -19,12 +18,11 @@ def test_integrity_computation_two_inputs(integrity_computation_two_inputs):
     rule = ComputationInput()
     result = rule.evaluate(integrity_computation_two_inputs)
 
-    expected_result = Error()
+    expected_result = Result()
     expected_result.source = ["Task_1e2yjs2"]
     expected_result.message = "Task performing a computation must have exactly one input, " \
                               "being a Potential Evidence Type."
 
-    assert isinstance(result, Error)
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message
 
@@ -33,12 +31,11 @@ def test_integrity_computation_three_inputs(integrity_computation_three_inputs):
     rule = ComputationInput()
     result = rule.evaluate(integrity_computation_three_inputs)
 
-    expected_result = Error()
+    expected_result = Result()
     expected_result.source = ["Task_1e2yjs2"]
     expected_result.message = "Task performing a computation must have exactly one input, " \
                               "being a Potential Evidence Type."
 
-    assert isinstance(result, Error)
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message
 
@@ -61,12 +58,11 @@ def test_all_computations_bad_input_type(all_computations_bad_io_type):
     rule = ComputationInput()
     result = rule.evaluate(all_computations_bad_io_type)
 
-    expected_result = Error()
+    expected_result = Result()
     expected_result.source = ["Task_14bpt81", "Task_1mgfm3r", "Task_1qg7d8p"]
     expected_result.message = "Task performing a computation must have exactly one input, " \
                               "being a Potential Evidence Type."
 
-    assert isinstance(result, Error)
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message
 
@@ -82,12 +78,11 @@ def test_all_computations_bad_output_type(all_computations_bad_io_type):
     rule = ComputationOutput()
     result = rule.evaluate(all_computations_bad_io_type)
 
-    expected_result = Error()
+    expected_result = Result()
     expected_result.source = ["Task_1mgfm3r", "Task_1qg7d8p"]
     expected_result.message = "Task performing a computation must have exactly one output, " \
                               "being a Potential Evidence."
 
-    assert isinstance(result, Error)
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message
     
@@ -96,11 +91,10 @@ def test_all_computations_missing_pes(all_computations_one_input_output):
     rule = ComputationPES()
     result = rule.evaluate(all_computations_one_input_output)
 
-    expected_result = Warning()
+    expected_result = Result()
     expected_result.source = ["Task_14bpt81", "Task_1mgfm3r", "Task_1qg7d8p"]
     expected_result.message = "Task performing computation should have a Potential Evidence Source label."
 
-    assert isinstance(result, Warning)
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message
 
@@ -123,11 +117,10 @@ def test_keyed_hash_fun_bad_output(keyed_hash_fun_bad_input_output):
     rule = KeyedHashFunOutput()
     result = rule.evaluate(keyed_hash_fun_bad_input_output)
 
-    expected_result = Error()
+    expected_result = Result()
     expected_result.source = ["Activity_0aek6ep", "Activity_06q1s2x"]
     expected_result.message = "Task that executes the Keyed Hash Function must have exactly one output, " \
                               "Potential Evidence, being a Keyed Hash Proof."
 
-    assert isinstance(result, Error)
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message
