@@ -20,7 +20,29 @@ evidence_quality_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '
 evidence_oriented_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../diagrams/evidence_oriented/'))
 
 
-# Fixtures for the testing scenarios 
+# Fixtures for the testing scenarios
+
+@pytest.fixture(scope="session")
+def rics_issuing_permit():
+    parser = Parser()
+    file_path = os.path.join(scenario_dir, "rics_issuing_permit.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def rics_issuing_permit_reservation_storage():
+    parser = Parser()
+    file_path = os.path.join(scenario_dir, "rics_issuing_permit_reservation_storage.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def rics_issuing_permit_log_storage():
+    parser = Parser()
+    file_path = os.path.join(scenario_dir, "rics_issuing_permit_log_storage.bpmn")
+    return parser.parse_file(file_path)
+
+
 @pytest.fixture(scope="session")
 def av_scenario():
     parser = Parser()
