@@ -227,17 +227,19 @@ class Parser:
 
         return DataStore(elem.attrib['id'])
 
-    def __add_pe_source(self, pe_source):
+    def __add_pe_source(self, pe_source: PotentialEvidenceSource):
         key = pe_source.attached_to_ref  # object id
+        elem = self.elements.get(key)
 
-        if self.elements.get(key) is not None:
-            obj = self.elements[key]
-            obj.pe_source = pe_source
+        if elem is not None:
+            elem.pe_source = pe_source
 
     def __attach_association(self, association: Association):
         pe_source_id = association.source_ref
         pe_source = self.elements.get(pe_source_id)
-        pe_source.association = association if pe_source else None
+        
+        if pe_source is not None:
+            pe_source.association = association
 
     def __get_source_target_ref(self, elem: XmlElement):
         source, target = None, None

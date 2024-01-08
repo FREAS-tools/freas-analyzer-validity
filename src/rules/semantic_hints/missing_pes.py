@@ -4,68 +4,82 @@ from typing import Dict, List, Optional
 
 from src.rules.rule import IRule
 from src.rules.rule_result.result import Result
-from src.elements.container.pool import Pool
 from src.elements.element import Element
-from src.elements.flow.message_flow import MessageFlow
+from src.elements.artefact.data_reference import DataObjectReference
+from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
+from src.elements.frss.evidence_type.potential_evidence_type import PotentialEvidenceType
 
-from src.rules.z3_types import flow_object_sort, mk_flow_object, flow_obj_id, has_pes
+from rules.utils.semantic import get_participant
+from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_name, object_type
 
 @implementer(IRule)
 class MissingPES:
     """
     Rule: Missing Potential Evidence Source
-    Description: This rule checks that all Flow Objects that are source or target of Message Flow
-    have Potential Evidence Source label.
+    Description: This rule checks that every Potential Evidence has a Potential Evidence Source.
     """
 
     @staticmethod
     def __create_result(solutions: List[str]) -> Result:
         result = Result()
         result.source = solutions
-        result.message = "Flow Objects that are the source or target element of a Message Flow" \
-                          " should have a Potential Evidence Source label."
+        result.message = "Potential Evidence should have a Potential Evidence Source."
 
         return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
-        # Create a list of all Flow Objects that are the source or target element of a Message Flow
-        z3_flow_objects = []
+        # List of all Potential Evidence Types
+        z3_pot_evidence = []
 
-        for key, value in elements.items():
-            if isinstance(value, MessageFlow):
-                source_ref = elements[value.source_ref]
-                target_ref = elements[value.target_ref]
+        for _, value in elements.items():
+            if isinstance(value, DataObjectReference):
+                data_object = elements[value.data]
 
-                # Ignore message flows between pools
-                if isinstance(source_ref, Pool) or isinstance(target_ref, Pool):
+                if not isinstance(data_object, PotentialEvidenceType):
                     continue
+                
+                participant = get_participant(elements, data_object.process_id)
+                
+                z3_evidence = mk_data_object(StringVal(participant), StringVal("None"), StringVal(data_object.id), 
+                                StringVal(value.name), StringVal(type(data_object).__name__))
 
-                z3_flow_objects.append(mk_flow_object(StringVal(source_ref.id), source_ref.pe_source is not None))
-                z3_flow_objects.append(mk_flow_object(StringVal(target_ref.id), target_ref.pe_source is not None))
+                z3_pot_evidence.append(z3_evidence)
+        
 
-        # Check if flow object exists in the model
-        def exists(flow_obj):
-            return Or([flow_obj == obj for obj in z3_flow_objects])
+        # List of all Potential Evidence Types that have a Potential Evidence Source
+        z3_pot_evidence_with_pes = []
 
-        # Check if flow object has a Potential Evidence Source label
-        def has_pe_source(source):
-            return simplify(has_pes(source))
+        for _, value in elements.items():
+            if isinstance(value, PotentialEvidenceSource):
+                pot_evidence_ref = elements[value.association.target_ref]
+                pot_evidence = elements[pot_evidence_ref.data]
 
-        # Set up the Z3 solver and add the constraints
+                participant = get_participant(elements, pot_evidence.process_id)
+                
+                z3_evidence = mk_data_object(StringVal(participant), StringVal("None"), StringVal(pot_evidence.id), 
+                                StringVal(pot_evidence_ref.name), StringVal(type(pot_evidence).__name__))
+
+                z3_pot_evidence_with_pes.append(z3_evidence)
+        
+        # CONSTRAINTS
+        def exists(evidence):
+            return Or([evidence == pe for pe in z3_pot_evidence])
+
+        def has_pes(evidence):
+            return Or([evidence == pe for pe in z3_pot_evidence_with_pes])
+        
         s = Solver()
-        flow_object = Const('flow_object', flow_object_sort)
+        evidence = Const('evidence', data_object_sort)
 
-        # Tell solver to search for a flow object that does not have a Potential Evidence Source label
-        s.add(Not(has_pe_source(flow_object)))
-        s.add(exists(flow_object))
+        s.add(exists(evidence))
+        s.add(Not(has_pes(evidence)))
 
-        # Model generation
-        solutions = []
+        # MODEL
+        solutions = set()
         while s.check() == sat:
             model = s.model()
 
-            for dec in model.decls():
-                s.add(dec() != model[dec])                                           # no duplicates
-                solutions.append(str(simplify(flow_obj_id(model[dec]))).strip('"'))  # only element's ID
+            solutions.add(str(simplify(object_id(model[evidence]))).strip('"'))
+            s.add(And(object_id(evidence) != object_id(model[evidence]), object_name(evidence) != object_name(model[evidence])))
 
         return self.__create_result(solutions) if len(solutions) > 0 else None

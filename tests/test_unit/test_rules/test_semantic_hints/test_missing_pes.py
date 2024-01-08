@@ -1,16 +1,22 @@
-from src.rules.rule_result.result import Result 
 from src.rules.semantic_hints.missing_pes import MissingPES
 
 
-def test_missing_pes(missing_pes_elements):
+def test_av_parking_register_missing_pes(av_parking_register):
     rule = MissingPES()
-    result = rule.evaluate(missing_pes_elements)
+    result = rule.evaluate(av_parking_register)
 
-    expected_result = Result()
-    expected_result.source = ["Task_02p51vl", "IntermediateThrowEvent_0647pg8"]
-    expected_result.message = "Flow Objects that are the source or target element of a Message Flow" \
-                              " should have a Potential Evidence Source label."
+    data_objects_1 = ["DataObject_0ws7na4", "DataObject_1fqzgel"]
+    data_objects_2 = ["DataObject_0hrcqay"]
 
-    assert isinstance(result, Result)
-    assert sorted(result.source) == sorted(expected_result.source) \
-           and result.message == expected_result.message
+    for elem in result.source:
+        assert elem in data_objects_1 or elem in data_objects_2
+
+
+def test_rics_issuing_permit_missing_pes(rics_issuing_permit_missing_pes):
+    rule = MissingPES()
+    result = rule.evaluate(rics_issuing_permit_missing_pes)
+
+    data_objects = ["DataObject_0bpfd4d", "DataObject_1bufg17", "DataObject_16i36cz"]
+
+    for elem in result.source:
+        assert elem in data_objects

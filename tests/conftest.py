@@ -30,6 +30,13 @@ def rics_issuing_permit():
 
 
 @pytest.fixture(scope="session")
+def rics_issuing_permit_missing_pes():
+    parser = Parser()
+    file_path = os.path.join(scenario_dir, "rics_issuing_permit_missing_pes.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
 def rics_issuing_permit_reservation_storage():
     parser = Parser()
     file_path = os.path.join(scenario_dir, "rics_issuing_permit_reservation_storage.bpmn")
@@ -65,13 +72,6 @@ def av_issuing_permit():
 
 
 # Fixtures for the testing evidence and evidence source
-@pytest.fixture(scope="session")
-def missing_pes_elements():
-    parser = Parser()
-    file_path = os.path.join(evidence_oriented_dir, "missing_evidence_source.bpmn")
-    return parser.parse_file(file_path)
-
-
 @pytest.fixture(scope="session")
 def semantics_bad_elements():
     parser = Parser()
