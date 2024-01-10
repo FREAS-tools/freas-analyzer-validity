@@ -21,6 +21,12 @@ evidence_oriented_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 
 
 
 # Fixtures for the testing scenarios
+@pytest.fixture(scope="session")
+def demo():
+    parser = Parser()
+    file_path = os.path.join(scenario_dir, "demo.bpmn")
+    return parser.parse_file(file_path)
+
 
 @pytest.fixture(scope="session")
 def rics_issuing_permit():
