@@ -8,7 +8,7 @@ def test_missing_evidence(demo):
     result = rule.evaluate(demo)
 
     expected_result = Result()
-    expected_result.source = ["EvidenceSource_1qltvz3"]
+    expected_result.source = ["EvidenceSource_0naeosx"]
     expected_result.message = "Data Object with Potential Evidence Type is not created from Potential Evidence Source"
 
     assert sorted(result.source) == sorted(expected_result.source) \
