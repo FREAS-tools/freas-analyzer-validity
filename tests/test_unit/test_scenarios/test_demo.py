@@ -1,4 +1,4 @@
-from rules.semantic_hints.missing_pes import MissingPES
+from src.rules.semantic_hints.missing_pes import MissingPES
 from src.rules.rule_result.result import Result
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
 
