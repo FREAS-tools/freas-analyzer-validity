@@ -92,10 +92,10 @@ class Parser:
                                             attr['targetRef'], attr.get('name'))
                 case "dataObjectReference":
                     new_elem = DataObjectReference(attr['id'],
-                                                   attr['dataObjectRef'], attr.get('name'))
+                                                   attr['dataObjectRef'], self.__get_name(child))
                 case "dataStoreReference":
                     new_elem = DataStoreReference(attr['id'],
-                                                  attr.get('dataStoreRef'), attr.get('name'))
+                                                  attr.get('dataStoreRef'), self.__get_name(child))
                 case "dataObject":
                     new_elem = self.__parse_data_object(child, process.id)
                 case "evidenceSource":
@@ -265,3 +265,9 @@ class Parser:
         if len(tag_list) > 1:
             return tag_list[1]
         return tag_list[0]
+
+
+    @staticmethod
+    def __get_name(elem: XmlElement) -> str:
+        name = elem.attrib.get('name')
+        return name.replace("\n", " ")
