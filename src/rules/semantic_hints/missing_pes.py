@@ -50,7 +50,7 @@ class MissingPES:
         z3_pot_evidence_with_pes = []
 
         for _, value in elements.items():
-            if isinstance(value, PotentialEvidenceSource):
+            if isinstance(value, PotentialEvidenceSource) and value.association is not None:
                 pot_evidence_ref = elements[value.association.target_ref]
                 pot_evidence = elements[pot_evidence_ref.data]
 
@@ -60,13 +60,13 @@ class MissingPES:
                                 StringVal(pot_evidence_ref.name), StringVal(type(pot_evidence).__name__))
 
                 z3_pot_evidence_with_pes.append(z3_evidence)
-        
+
         # CONSTRAINTS
         def exists(evidence):
             return Or([evidence == pe for pe in z3_pot_evidence])
 
         def has_pes(evidence):
-            return Or([evidence == pe for pe in z3_pot_evidence_with_pes])
+            return Or([object_name(evidence) == object_name(pe) for pe in z3_pot_evidence_with_pes])
         
         s = Solver()
         evidence = Const('evidence', data_object_sort)
@@ -75,11 +75,11 @@ class MissingPES:
         s.add(Not(has_pes(evidence)))
 
         # MODEL
-        solutions = set()
+        solutions = []
         while s.check() == sat:
             model = s.model()
-
-            solutions.add(str(simplify(object_id(model[evidence]))).strip('"'))
+            
+            solutions.append(str(simplify(object_id(model[evidence]))).strip('"'))
             s.add(And(object_id(evidence) != object_id(model[evidence]), object_name(evidence) != object_name(model[evidence])))
 
         return self.__create_result(solutions) if len(solutions) > 0 else None

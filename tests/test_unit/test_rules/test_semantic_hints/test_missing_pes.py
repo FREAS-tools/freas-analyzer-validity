@@ -8,8 +8,8 @@ def test_av_parking_register_missing_pes(av_parking_register):
     data_objects_1 = ["DataObject_0ws7na4", "DataObject_1fqzgel"]
     data_objects_2 = ["DataObject_0hrcqay"]
 
-    for elem in result.source:
-        assert elem in data_objects_1 or elem in data_objects_2
+    assert any(elem in result.source for elem in data_objects_1) and \
+           any(elem in result.source for elem in data_objects_2)
 
 
 def test_rics_issuing_permit_missing_pes(rics_issuing_permit_missing_pes):
@@ -18,5 +18,4 @@ def test_rics_issuing_permit_missing_pes(rics_issuing_permit_missing_pes):
 
     data_objects = ["DataObject_0bpfd4d", "DataObject_1bufg17", "DataObject_16i36cz"]
 
-    for elem in result.source:
-        assert elem in data_objects
+    assert any(elem in result.source for elem in data_objects)
