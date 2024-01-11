@@ -270,4 +270,5 @@ class Parser:
     @staticmethod
     def __get_name(elem: XmlElement) -> str:
         name = elem.attrib.get('name')
-        return name.replace("\n", " ")
+        
+        return name.replace("\n", " ") if name else None
