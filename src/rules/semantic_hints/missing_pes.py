@@ -9,7 +9,7 @@ from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.frss.potential_evidence_source import PotentialEvidenceSource
 from src.elements.frss.evidence_type.potential_evidence_type import PotentialEvidenceType
 
-from rules.utils.semantic import get_participant
+from src.rules.utils.semantic import get_participant
 from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_name, object_type
 
 @implementer(IRule)
