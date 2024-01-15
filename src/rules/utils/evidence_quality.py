@@ -13,6 +13,8 @@ from src.elements.flow_object.flow_object import FlowObject
 from src.elements.element import Element
 from src.elements.flow_object.gateway.gateway import Gateway
 
+from src.rules.utils.semantic import get_participant
+
 """
 This file contains common functionality used by multiple rules for performing evidence quality analysis.
 """
@@ -245,25 +247,27 @@ def get_all_ev_data_stores(elements: Dict[str, Element], mk_data_store) -> List[
     """
     z3_data_stores = []
 
-    for elem_id, elem in elements.items():
-        if not isinstance(elem, EvidenceDataStore):
+    for elem in elements.values():
+        if not isinstance(elem, DataStoreReference) or \
+           not isinstance(elements[elem.data], EvidenceDataStore):
             continue
 
+        ev_store: EvidenceDataStore = elements[elem.data]
         # Declare a Z3 array for stored potential evidence from the data store
-        z3_stored_pe = Array(f"Array_{elem_id}", IntSort(), StringSort())
+        z3_stored_pe = Array(f"Array_{ev_store.id}", IntSort(), StringSort())
 
-        for i in range(len(elem.stored_pe)):
-            evidence_id = elem.stored_pe[i]
+        for i in range(len(ev_store.stored_pe)):
+            evidence_id = ev_store.stored_pe[i]
             evidence_name = get_data_object_name(elements, evidence_id)
             # Store potential evidence name to the array
             z3_stored_pe = Store(z3_stored_pe, i, StringVal(evidence_name))
 
         # Create a Z3 tuple representing the data store
-        z3_data_store = mk_data_store(StringVal(elem_id), z3_stored_pe, IntVal(len(elem.stored_pe)))
+        z3_data_store = mk_data_store(StringVal(ev_store.id), z3_stored_pe, IntVal(len(ev_store.stored_pe)), 
+                                      StringVal(get_participant(elements, elem.process_id)))
         z3_data_stores.append(z3_data_store)
 
     return z3_data_stores
-
 
 def get_max_number_of_pe(elements: Dict[str, Element]) -> int:
     """

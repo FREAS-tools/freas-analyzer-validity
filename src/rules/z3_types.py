@@ -4,8 +4,8 @@ from z3 import *
 
 # Define the Z3 tuple sort representing data store, containing the following fields:
 # data store ID, array of stored potential evidence and their number
-data_store_sort, mk_data_store, (store_id, stored_pe, pe_number) = \
-            TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort()])
+data_store_sort, mk_data_store, (store_id, stored_pe, pe_number, store_participant) = \
+            TupleSort('DataStore', [StringSort(), ArraySort(IntSort(), StringSort()), IntSort(), StringSort()])
 
 # Define the Z3 tuple sort representing data object, containing the following fields:
 # participant ID, connected task ID, data object ID, data object name and data object type
