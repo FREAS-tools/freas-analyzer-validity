@@ -4,7 +4,7 @@ WORKDIR /app
 
 FROM base as build
 
-ENV POETRY_VERSION=1.7.0
+ARG POETRY_VERSION=1.7.0
 
 RUN pip install "poetry==$POETRY_VERSION"
 
@@ -16,9 +16,11 @@ RUN poetry config virtualenvs.in-project true && \
 
 FROM base as final
 
+ENV UVICORN_PORT=5000
+ENV UVICORN_HOST=0.0.0.0
+
 COPY --from=build /app/dist .
 COPY --from=build /app/src ./src
 RUN pip install *.whl
 
-EXPOSE 5000
-CMD ["uvicorn", "src.api.api:app", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["uvicorn", "src.api.api:app"]
