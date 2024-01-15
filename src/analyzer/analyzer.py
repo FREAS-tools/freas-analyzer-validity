@@ -13,6 +13,7 @@ from src.rules.semantic_rules.task_computations.computation_output import Comput
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
 from src.rules.semantic_hints.computation_pes import ComputationPES
 from src.rules.semantic_hints.message_flow_pes import MessageFlowPES
+from src.rules.semantic_hints.different_evidence_context import DiffEvidenceContext
 from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHashFunInput
 from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
 from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
@@ -91,8 +92,7 @@ class Analyzer:
         Returns:
             List[Result]: List of results, containing the Warning objects.
         """
-        #semantic_hints_rules = [MissingPES(), ReusedKey(), SameEvidenceStore()]
-        semantic_hints_rules = [MissingPES(), MessageFlowPES(), ComputationPES()]
+        semantic_hints_rules = [MissingPES(), MessageFlowPES(), ComputationPES(), DiffEvidenceContext()]
 
         results = []
 

@@ -8,6 +8,8 @@ from src.elements.flow_object.task.task import Task
 from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.artefact.data_object.data_object import DataObject
 
+from src.rules.z3_types import mk_data_object
+
 
 def create_mock_data_objects(current, expected, constructor, task_id):
     """
@@ -92,5 +94,33 @@ def get_task_output_object(task: Task, output_association: str, elements: Dict[s
             data_object.name = ref_obj.name
 
             return data_object
+
+    return None
+
+
+def create_z3_data_object(task: Task, data_object_id: str, elements: Dict[str, Element], input=True):
+    """
+    Create a Z3 data object based on the given parameters.
+
+    Parameters:
+        task (Task): The task containing the data object.
+        data_object_id (str): The data object ID.
+        elements (Dict[str, Element]): A dictionary of model elements.
+        input (bool): Whether the data object is an input or output.
+
+    Returns:
+        Z3 DataObject: Z3 data object if found, otherwise None.
+    """
+    data_objects = task.data_input if input else task.data_output
+
+    for obj in data_objects:
+        if obj.id == data_object_id:
+            ref_id: str = obj.source_ref if input else obj.target_ref
+            ref_obj: DataObjectReference = elements[ref_id]
+            data_object: DataObject = elements[ref_obj.data]
+            participant = get_participant(elements, data_object.process_id)
+    
+            return mk_data_object(StringVal(participant), StringVal(task.id), StringVal(data_object.id), 
+                                  StringVal(ref_obj.name), StringVal(type(data_object).__name__))
 
     return None

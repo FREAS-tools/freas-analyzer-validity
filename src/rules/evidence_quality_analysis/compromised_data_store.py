@@ -66,7 +66,7 @@ class CompromisedDataStore:
                               )
                               for data_obj in z3_evidence
                           ])
-                          )
+                        )
 
         # Set up the Z3 solver and add the constraints
         s = Solver()
