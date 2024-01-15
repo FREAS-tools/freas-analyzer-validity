@@ -91,6 +91,12 @@ def semantics_good_elements():
     file_path = os.path.join(evidence_oriented_dir, "contains_potential_evidence.bpmn")
     return parser.parse_file(file_path)
 
+@pytest.fixture(scope="session")
+def missing_message_flow_pes_elements():
+    parser = Parser()
+    file_path = os.path.join(evidence_oriented_dir, "missing_message_flow_evidence_source.bpmn")
+    return parser.parse_file(file_path)
+
 
 # Fixtures for the testing evidence quality
 @pytest.fixture(scope="session")
