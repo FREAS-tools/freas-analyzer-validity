@@ -121,6 +121,11 @@
                 <bpmn:sourceRef>DataObjectReference_01mk93y</bpmn:sourceRef>
                 <bpmn:targetRef>Property_07okusi</bpmn:targetRef>
             </bpmn:dataInputAssociation>
+            <bpmn:dataOutputAssociation id="DataOutputAssociation_1xikdp4">
+                <bpmn:targetRef>DataObjectReference_0t1gwg7</bpmn:targetRef>
+            </bpmn:dataOutputAssociation>
+            <bpmn4frss:integrityComputation id="IntegrityComputation_0qvwkh5"
+                input="DataInputAssociation_1htkemy" output="DataOutputAssociation_1xikdp4" />
         </bpmn:task>
         <bpmn:exclusiveGateway id="ExclusiveGateway_01vgum1" name="Parking space available">
             <bpmn:incoming>SequenceFlow_139d33s</bpmn:incoming>
@@ -152,7 +157,9 @@
             targetRef="Task_0jqecxv" />
         <bpmn:dataObjectReference id="DataObjectReference_01mk93y" name="Parking request"
             dataObjectRef="DataObject_062151r" />
-        <bpmn:dataObject id="DataObject_062151r" />
+        <bpmn:dataObject id="DataObject_062151r">
+            <bpmn4frss:potentialEvidence id="PotentialEvidence_1i7u1qu" />
+        </bpmn:dataObject>
         <bpmn:dataObjectReference id="DataObjectReference_0m9etzs" name="Parking reservation"
             dataObjectRef="DataObject_0a5y8m3" />
         <bpmn:dataObject id="DataObject_0a5y8m3" />
@@ -163,9 +170,12 @@
             <bpmn:messageEventDefinition id="MessageEventDefinition_0rk1qtu" />
         </bpmn:intermediateCatchEvent>
         <bpmn:dataObjectReference id="DataObjectReference_0t1gwg7"
-            name="PSP parking availability request log" dataObjectRef="DataObject_125o9yx" />
+            name="PSP parking availability request log" dataObjectRef="DataObject_125o9yx"
+            isHashProof="[object Object]" />
         <bpmn:dataObject id="DataObject_125o9yx">
-            <bpmn4frss:potentialEvidence id="PotentialEvidence_1lhnm1t" />
+            <bpmn4frss:potentialEvidence id="PotentialEvidence_1lhnm1t">
+                <bpmn4frss:hashProof id="HashProof_1pl6c7w" />
+            </bpmn4frss:potentialEvidence>
         </bpmn:dataObject>
         <bpmn:sequenceFlow id="SequenceFlow_0k7uiw1" sourceRef="IntermediateThrowEvent_01pkumu"
             targetRef="Task_0r4gibm" />
@@ -373,7 +383,7 @@
             dataObjectRef="DataObject_09wtg7p" isHashProof="[object Object]" />
         <bpmn:dataObject id="DataObject_09wtg7p">
             <bpmn4frss:potentialEvidence id="PotentialEvidence_1c2ky9o">
-                <bpmn4frss:hashProof id="HashProof_0j9wbnp" />
+                <bpmn4frss:hashProof id="HashProof_0n4b7xl" />
             </bpmn4frss:potentialEvidence>
         </bpmn:dataObject>
         <bpmn4frss:evidenceSource id="EvidenceSource_1vfzmqo" attachedToRef="Task_1lh0f2l" />
@@ -846,6 +856,11 @@
             <bpmndi:BPMNEdge id="BPMNEdge_1o7b87h" bpmnElement="DataInputAssociation_1htkemy">
                 <di:waypoint x="320" y="545" />
                 <di:waypoint x="320" y="520" />
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_1ogu2d6" bpmnElement="DataOutputAssociation_1xikdp4">
+                <di:waypoint x="355" y="440" />
+                <di:waypoint x="360" y="400" />
+                <di:waypoint x="422" y="400" />
             </bpmndi:BPMNEdge>
             <bpmndi:BPMNEdge id="BPMNEdge_1v0h1ox" bpmnElement="DataOutputAssociation_08rk2jm">
                 <di:waypoint x="248" y="482" />

@@ -1,6 +1,7 @@
 from src.rules.semantic_hints.missing_pes import MissingPES
 from src.rules.rule_result.result import Result
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
+from src.rules.semantic_hints.different_evidence_context import DiffEvidenceContext
 
 
 def test_missing_evidence(demo):
@@ -25,3 +26,14 @@ def test_missing_pes(demo):
 
     assert result.source == expected_warning.source \
          and result.message == expected_warning.message
+
+
+def test_diff_ev_context(demo):
+    rule = DiffEvidenceContext()
+    result = rule.evaluate(demo)
+
+    expected_result = Result()
+    expected_result.source = ["DataObject_0bpfd4d", "DataObject_0mow4l3"]
+
+    assert isinstance(result, Result)
+    assert sorted(result.source) == sorted(expected_result.source)

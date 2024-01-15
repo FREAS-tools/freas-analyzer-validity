@@ -98,6 +98,41 @@ def missing_message_flow_pes_elements():
     return parser.parse_file(file_path)
 
 
+@pytest.fixture(scope="session")
+def diff_evidence_context():
+    parser = Parser()
+    file_path = os.path.join(evidence_oriented_dir, "diff_evidence_context.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def same_evidence_context():
+    parser = Parser()
+    file_path = os.path.join(evidence_oriented_dir, "same_evidence_context.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def same_evidence_store():
+    parser = Parser()
+    file_path = os.path.join(evidence_oriented_dir, "same_evidence_store.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def one_evidence_stored():
+    parser = Parser()
+    file_path = os.path.join(evidence_oriented_dir, "one_evidence_stored.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def evidence_context():
+    parser = Parser()
+    file_path = os.path.join(evidence_oriented_dir, "evidence_context.bpmn")
+    return parser.parse_file(file_path)
+
+
 # Fixtures for the testing evidence quality
 @pytest.fixture(scope="session")
 def disputable_same_store_elements():
@@ -165,6 +200,13 @@ def all_computations_with_pes():
 
 ## Fixtures for the testing integrity computations
 @pytest.fixture(scope="session")
+def integrity_computation():
+    parser = Parser()
+    file_path = os.path.join(computations_dir, "integrity_computation.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
 def integrity_computation_one_input():
     parser = Parser()
     file_path = os.path.join(computations_dir, "integrity_computation_one_input.bpmn")
@@ -189,6 +231,13 @@ def integrity_computation_three_inputs():
 def integrity_computation_output_good():
     parser = Parser()
     file_path = os.path.join(computations_dir, "integrity_computation_output_good.bpmn")
+    return parser.parse_file(file_path)
+
+
+@pytest.fixture(scope="session")
+def data_transformation():
+    parser = Parser()
+    file_path = os.path.join(computations_dir, "data_transformation.bpmn")
     return parser.parse_file(file_path)
 
 

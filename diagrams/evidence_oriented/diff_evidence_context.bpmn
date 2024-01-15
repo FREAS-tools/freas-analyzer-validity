@@ -173,6 +173,9 @@
                 <bpmn:sourceRef>DataObjectReference_1vdeh4j</bpmn:sourceRef>
                 <bpmn:targetRef>Property_1f3r933</bpmn:targetRef>
             </bpmn:dataInputAssociation>
+            <bpmn:dataOutputAssociation id="DataOutputAssociation_0lha5kz">
+                <bpmn:targetRef>DataStoreReference_07up32b</bpmn:targetRef>
+            </bpmn:dataOutputAssociation>
         </bpmn:task>
         <bpmn:endEvent id="EndEvent_05lzmv0">
             <bpmn:incoming>SequenceFlow_1oxa3z1</bpmn:incoming>
@@ -205,6 +208,8 @@
             targetRef="Task_1g7dsyu" />
         <bpmn:sequenceFlow id="SequenceFlow_1oxa3z1" sourceRef="Task_1g7dsyu"
             targetRef="EndEvent_05lzmv0" />
+        <bpmn:dataStoreReference id="DataStoreReference_07up32b" name="Tmp"
+            dataStoreRef="DataStore_0gug8sb" />
         <bpmn4frss:produces id="Produces_1umc4qc" sourceRef="EvidenceSource_0jtg7f1"
             targetRef="DataObjectReference_1dlfqte" />
         <bpmn4frss:produces id="Produces_1ff60wo" sourceRef="EvidenceSource_1kwas9a"
@@ -348,7 +353,7 @@
             dataObjectRef="DataObject_0mow4l3" isHashProof="[object Object]" />
         <bpmn:dataObject id="DataObject_0mow4l3">
             <bpmn4frss:potentialEvidence id="PotentialEvidence_0no0ipz">
-                <bpmn4frss:hashProof id="HashProof_0gvo6lj" />
+                <bpmn4frss:hashProof id="HashProof_1sa4dk5" />
             </bpmn4frss:potentialEvidence>
         </bpmn:dataObject>
         <bpmn4frss:evidenceSource id="EvidenceSource_0bampuw" attachedToRef="Task_0qzsr4w" />
@@ -375,6 +380,11 @@
     <bpmn:dataStore id="DataStore_0he63v2" />
     <bpmn:dataStore id="DataStore_0t6neg6">
         <bpmn4frss:evidenceStore id="EvidenceStore_0k1o0l2">
+            <bpmn4frss:stores>DataObject_0mow4l3</bpmn4frss:stores>
+        </bpmn4frss:evidenceStore>
+    </bpmn:dataStore>
+    <bpmn:dataStore id="DataStore_0gug8sb">
+        <bpmn4frss:evidenceStore id="EvidenceStore_0oad9qx">
             <bpmn4frss:stores>DataObject_0mow4l3</bpmn4frss:stores>
         </bpmn4frss:evidenceStore>
     </bpmn:dataStore>
@@ -530,6 +540,12 @@
             </bpmndi:BPMNShape>
             <bpmndi:BPMNShape id="BPMNShape_1crfs84" bpmnElement="EvidenceSource_0naeosx">
                 <dc:Bounds x="976" y="746" width="28" height="28" />
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_1sopf13" bpmnElement="DataStoreReference_07up32b">
+                <dc:Bounds x="995" y="885" width="50" height="50" />
+                <bpmndi:BPMNLabel id="BPMNLabel_109y5d4">
+                    <dc:Bounds x="1010" y="942" width="21" height="14" />
+                </bpmndi:BPMNLabel>
             </bpmndi:BPMNShape>
             <bpmndi:BPMNEdge id="BPMNEdge_04b6e16" bpmnElement="SequenceFlow_0qql00j">
                 <di:waypoint x="288" y="800" />
@@ -788,6 +804,10 @@
             <bpmndi:BPMNEdge id="BPMNEdge_095ot1q" bpmnElement="DataInputAssociation_10s6rdk">
                 <di:waypoint x="1168" y="867" />
                 <di:waypoint x="1206" y="840" />
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_0mnxci0" bpmnElement="DataOutputAssociation_0lha5kz">
+                <di:waypoint x="1170" y="828" />
+                <di:waypoint x="1045" y="899" />
             </bpmndi:BPMNEdge>
             <bpmndi:BPMNEdge id="BPMNEdge_15l1p84" bpmnElement="DataOutputAssociation_05mhjw2">
                 <di:waypoint x="1091" y="814" />
