@@ -119,7 +119,12 @@ class Parser:
 
             match tag:
                 case 'participant':
-                    new_elem = Pool(attr['id'], attr['processRef'], attr.get('name'))
+                    # Collapsed processes do not have 'processRef'
+                    # Store only the non-collapsed ones
+                    if 'processRef' in attr:
+                        new_elem = Pool(attr['id'], attr['processRef'], attr.get('name'))
+                    else:
+                        new_elem = Pool(attr['id'], None, attr.get('name'))
                 case 'messageFlow':
                     new_elem = MessageFlow(attr['id'], attr['sourceRef'],
                                            attr['targetRef'], attr.get('name'))
