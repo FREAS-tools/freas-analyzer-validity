@@ -1,5 +1,6 @@
 from z3 import *
 from zope.interface import implementer
+
 from typing import Dict, List, Optional
 
 from src.elements.artefact.data_object.data_object import DataObject
@@ -11,8 +12,8 @@ from src.elements.artefact.data_reference import DataObjectReference
 from src.rules.rule_result.result import Result
 from src.elements.frss.forensic_ready_task.computations import HashFunction
 
-from src.rules.utils.semantic import create_mock_data_objects, get_participant, get_task_output_object
-from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, object_name
+from src.rules.z3_types import data_object_sort, mk_data_object, task_id, object_type
+from src.rules.utils.semantic import create_mock_data_objects, create_z3_task_data_object, get_participant
 
 
 @implementer(IRule)
@@ -43,11 +44,7 @@ class KeyedHashFunOutput:
 
             s.push()
 
-            data_obj = get_task_output_object(elem, elem.computation.output, elements)
-            participant = get_participant(elements, data_obj.process_id)
-            
-            hash_output = mk_data_object(StringVal(participant), StringVal(elem_id), StringVal(data_obj.id),
-                                         StringVal(data_obj.name), StringVal(type(data_obj).__name__))
+            hash_output = create_z3_task_data_object(elem, elem.computation.output, elements)
 
             z3_task_outputs = []  # contains all output data objects from the current task
 

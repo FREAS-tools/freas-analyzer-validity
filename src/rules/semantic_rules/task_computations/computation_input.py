@@ -12,9 +12,8 @@ from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.frss.forensic_ready_task.computations import HashFunction
 
-from src.rules.utils.semantic import create_mock_data_objects, get_participant, get_task_input_object
-from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, \
-    object_name
+from src.rules.z3_types import data_object_sort, mk_data_object, task_id, object_type
+from src.rules.utils.semantic import create_mock_data_objects, get_participant, create_z3_task_data_object
 
 
 @implementer(IRule)
@@ -31,7 +30,7 @@ class ComputationInput:
         result.source = solutions
         result.severity = Severity.MEDIUM
         result.message = "Task performing a computation must have exactly one input, " \
-                          "being a Potential Evidence Type."
+                         "being a Potential Evidence Type."
 
         return result
 
@@ -43,19 +42,14 @@ class ComputationInput:
         # as it has multiple inputs (key and data)
         for key, elem in elements.items():
             if not isinstance(elem, Task) or elem.computation is None or \
-                (isinstance(elem.computation, HashFunction) and elem.computation.key is not None):
+                    (isinstance(elem.computation, HashFunction) and elem.computation.key is not None):
                 continue
-            
+
             s.push()
 
             # Get the data object associated with the task input
-            data_obj = get_task_input_object(elem, elem.computation.input, elements)
-            participant = get_participant(elements, data_obj.process_id)
-            
-            z3_input = mk_data_object(StringVal(participant), StringVal(key),
-                                      StringVal(data_obj.id), StringVal(data_obj.name),
-                                      StringVal(type(data_obj).__name__))
-            
+            z3_input = create_z3_task_data_object(elem, elem.computation.input, elements)
+
             z3_task_inputs = []
 
             for input_ in elem.data_input:
@@ -65,9 +59,10 @@ class ComputationInput:
 
                 assert data_obj is not None
 
+                participant = get_participant(elements, data_obj.process_id)
                 z3_task_inputs.append(mk_data_object(StringVal(participant), StringVal(key),
-                                             StringVal(data_obj.id), StringVal(ref_obj.name),
-                                             StringVal(type(data_obj).__name__)))
+                                                     StringVal(data_obj.id), StringVal(ref_obj.name),
+                                                     StringVal(type(data_obj).__name__)))
 
             if len(z3_task_inputs) == 0:
                 z3_task_inputs = create_mock_data_objects(0, 1, mk_data_object, key)

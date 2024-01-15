@@ -11,7 +11,7 @@ from src.elements.frss.evidence_type.proof import HashProof
 from src.elements.frss.forensic_ready_task.computations import IntegrityComputation
 
 from src.rules.utils.evidence_quality import get_all_ev_data_stores
-from src.rules.utils.semantic import create_z3_data_object
+from src.rules.utils.semantic import create_z3_task_data_object
 from src.rules.z3_types import mk_data_store, data_store_sort, stored_pe, pe_number, store_participant, \
                                object_name, object_id, object_type
 
@@ -44,8 +44,8 @@ class DiffEvidenceContext:
                 continue
             
             # Create Z3 data objects from function input and output data object
-            z3_fun_input = create_z3_data_object(elem, elem.computation.input, elements, True)
-            z3_fun_output = create_z3_data_object(elem, elem.computation.output, elements, False)
+            z3_fun_input = create_z3_task_data_object(elem, elem.computation.input, elements)
+            z3_fun_output = create_z3_task_data_object(elem, elem.computation.output, elements)
             
             if str(simplify(object_type(z3_fun_output))).strip('"') != "HashProof":
                 continue

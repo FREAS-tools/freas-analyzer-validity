@@ -11,8 +11,8 @@ from src.rules.rule_result.result import Result
 from src.rules.rule import IRule
 from src.elements.frss.forensic_ready_task.computations import HashFunction
 
-from src.rules.utils.semantic import get_participant, get_task_input_object
-from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, object_name, object_id
+from src.rules.utils.semantic import create_z3_task_data_object
+from src.rules.z3_types import data_object_sort, participant_id, object_name, object_id
 
 
 @implementer(IRule)
@@ -34,16 +34,12 @@ class ReusedKey:
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
         z3_keys = []
 
-        for elem_id, elem in elements.items():
+        for elem in elements.values():
             if not isinstance(elem, Task) or elem.computation is None or \
                not isinstance(elem.computation, HashFunction) or elem.computation.key is None:
                 continue
 
-            key = get_task_input_object(elem, elem.computation.key, elements)
-            participant = get_participant(elements, key.process_id)
-
-            z3_key = mk_data_object(StringVal(participant), StringVal(elem_id), StringVal(key.id),
-                                    StringVal(key.name), StringVal(type(key).__name__))
+            z3_key = create_z3_task_data_object(elem, elem.computation.key, elements)
             z3_keys.append(z3_key)
 
         # CONSTRAINTS

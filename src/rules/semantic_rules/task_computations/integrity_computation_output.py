@@ -9,12 +9,11 @@ from src.rules.rule_result.result import Result
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.severity import Severity
 from src.elements.artefact.data_store.data_store import DataStore
-from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.frss.forensic_ready_task.computations import IntegrityComputation
 
-from src.rules.utils.semantic import create_mock_data_objects, get_participant, get_task_output_object
-from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, object_name
+from src.rules.utils.semantic import create_mock_data_objects, create_z3_task_data_object, get_participant
+from src.rules.z3_types import data_object_sort, mk_data_object, task_id, object_type
 
 
 @implementer(IRule)
@@ -30,7 +29,7 @@ class IntegrityComputationOutput:
         result.source = solutions
         result.severity = Severity.MEDIUM
         result.message = "Task that executes the Integrity Computation must have exactly one output, " \
-                        "being a Potential Evidence or a Hash Proof."
+                         "being a Potential Evidence or a Hash Proof."
         return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
@@ -38,16 +37,13 @@ class IntegrityComputationOutput:
         solutions = []
 
         for key, elem in elements.items():
-            if not isinstance(elem, Task) or elem.computation is None or not isinstance(elem.computation, IntegrityComputation):
+            if (not isinstance(elem, Task) or elem.computation is None or
+                    not isinstance(elem.computation, IntegrityComputation)):
                 continue
-            
+
             s.push()
 
-            data_obj = get_task_output_object(elem, elem.computation.output, elements)
-            participant = get_participant(elements, data_obj.process_id)
-
-            z3_comp_output = mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id),
-                                         StringVal(data_obj.name), StringVal(type(data_obj).__name__))
+            z3_comp_output = create_z3_task_data_object(elem, elem.computation.output, elements)
 
             z3_task_outputs = []
 
@@ -58,9 +54,9 @@ class IntegrityComputationOutput:
 
                 if isinstance(data_obj, DataStore):
                     continue
-                
+
                 assert data_obj is not None
-                
+
                 participant = get_participant(elements, data_obj.process_id)
                 z3_task_outputs.append(mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id),
                                                       StringVal(ref_obj.name), StringVal(type(data_obj).__name__)))
@@ -72,7 +68,8 @@ class IntegrityComputationOutput:
                 return data_object == z3_comp_output
 
             def correct_type(data_object):
-                return Or(simplify(object_type(data_object)) == 'PotentialEvidenceType', simplify(object_type(data_object)) == 'HashProof')
+                return Or(simplify(object_type(data_object)) == 'PotentialEvidenceType',
+                          simplify(object_type(data_object)) == 'HashProof')
 
             # Compare output objects with the provided data object
             def exists(data_object):

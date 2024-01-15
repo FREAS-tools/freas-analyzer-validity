@@ -51,76 +51,50 @@ def get_participant(elements: Dict[str, Element], process_id) -> str:
     return ""
 
 
-def get_task_input_object(task: Task, input_association: str, elements: Dict[str, Element]) -> Optional[DataObject]:
+def create_task_data_object(task: Task, association_id: str, elements: Dict[str, Element], input=True) -> Optional[DataObject]:
     """
-    Get the data object associated with the given task and input association.
+    Get the data object associated with the given task and input/output association.
 
     Parameters:
-        task (Task): The task being checked.
-        input_association (str): The input association from the data object to the task.
+        task (Task): The task containing the data object.
+        association_id (str): Data object association ID.
         elements (Dict[str, Element]): A dictionary of model elements.
+        input (bool): Whether the data object is an input or output.
 
     Returns:
-        DataObject: The data object if found, otherwise None.
+        DataObject: DataObject object if found, otherwise None.
     """
+    data_objects = task.data_input if input else task.data_output
+
+    for obj in data_objects:
+        if obj.id == association_id:
+            ref_id: str = obj.source_ref if input else obj.target_ref
+            ref_obj: DataObjectReference = elements[ref_id]
+            data_object: DataObject = elements[ref_obj.data]
+            data_object.name = ref_obj.name
     
-    for input_ in task.data_input:
-        if input_.id == input_association:
-            ref_obj: Optional[DataObjectReference] = elements.get(input_.source_ref)
-            data_object = elements.get(ref_obj.data)
-            data_object.name = ref_obj.name
-
             return data_object
 
     return None
 
 
-def get_task_output_object(task: Task, output_association: str, elements: Dict[str, Element]) -> Optional[DataObject]:
-    """
-    Get the data object associated with the given task and output association.
-
-    Parameters:
-        task (Task): The task being checked.
-        output_association (str): The output association from the task to the data object.
-        elements (Dict[str, Element]): A dictionary of model elements.
-
-    Returns:
-        DataObject: The data object if found, otherwise None.
-    """
-    for output in task.data_output:
-        if output.id == output_association:
-            ref_obj: Optional[DataObjectReference] = elements.get(output.target_ref)
-            data_object = elements.get(ref_obj.data)
-            data_object.name = ref_obj.name
-
-            return data_object
-
-    return None
-
-
-def create_z3_data_object(task: Task, data_object_id: str, elements: Dict[str, Element], input=True):
+def create_z3_task_data_object(task: Task, association_id: str, elements: Dict[str, Element]):
     """
     Create a Z3 data object based on the given parameters.
 
     Parameters:
         task (Task): The task containing the data object.
-        data_object_id (str): The data object ID.
+        association_id (str): Data object association ID.
         elements (Dict[str, Element]): A dictionary of model elements.
-        input (bool): Whether the data object is an input or output.
 
     Returns:
-        Z3 DataObject: Z3 data object if found, otherwise None.
+        Z3 DataObject: Z3 data object.
     """
-    data_objects = task.data_input if input else task.data_output
+    # True if the data object is an input or a key, False if it is an output
+    input = False if task.computation.output == association_id else True
 
-    for obj in data_objects:
-        if obj.id == data_object_id:
-            ref_id: str = obj.source_ref if input else obj.target_ref
-            ref_obj: DataObjectReference = elements[ref_id]
-            data_object: DataObject = elements[ref_obj.data]
-            participant = get_participant(elements, data_object.process_id)
-    
-            return mk_data_object(StringVal(participant), StringVal(task.id), StringVal(data_object.id), 
-                                  StringVal(ref_obj.name), StringVal(type(data_object).__name__))
+    data_object: DataObject = create_task_data_object(task, association_id, elements, input)
+    participant = get_participant(elements, data_object.process_id)
 
-    return None
+    return mk_data_object(StringVal(participant), StringVal(task.id), StringVal(data_object.id), 
+                          StringVal(data_object.name), StringVal(type(data_object).__name__))

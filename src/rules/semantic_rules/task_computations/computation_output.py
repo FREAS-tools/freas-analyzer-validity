@@ -12,8 +12,8 @@ from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.frss.forensic_ready_task.computations import IntegrityComputation
 
-from src.rules.utils.semantic import create_mock_data_objects, get_participant, get_task_output_object
-from src.rules.z3_types import data_object_sort, mk_data_object, participant_id, task_id, object_id, object_type, object_name
+from src.rules.z3_types import data_object_sort, mk_data_object, task_id, object_type
+from src.rules.utils.semantic import create_mock_data_objects, create_z3_task_data_object, get_participant
 
 
 @implementer(IRule)
@@ -42,12 +42,7 @@ class ComputationOutput:
 
             s.push()
 
-
-            data_obj = get_task_output_object(elem, elem.computation.output, elements)
-            participant = get_participant(elements, data_obj.process_id)
-
-            z3_comp_output = mk_data_object(StringVal(participant), StringVal(key), StringVal(data_obj.id),
-                                         StringVal(data_obj.name), StringVal(type(data_obj).__name__))
+            z3_comp_output = create_z3_task_data_object(elem, elem.computation.output, elements)
 
             z3_task_outputs = []
 
