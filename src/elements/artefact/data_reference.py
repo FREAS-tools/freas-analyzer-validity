@@ -38,13 +38,15 @@ class DataStoreReference(DataReference):
     """
     Represents a BPMN4FRSS Data Store Reference.
     """
-    def __init__(self, elem_id, data, name=None):
+    def __init__(self, elem_id, data, process_id, name=None):
         """
         Constructor for DataStoreReference class.
 
         Parameters:
             elem_id (str): Element id
             data (str): id of the Data Store
+            process_id (str): Process id in which the Data Store is created
             name (Optional[str]): Element name
         """
         super().__init__(elem_id, data, name)
+        self.process_id = process_id

@@ -95,7 +95,7 @@ class Parser:
                                                    attr['dataObjectRef'], self.__get_name(child))
                 case "dataStoreReference":
                     new_elem = DataStoreReference(attr['id'],
-                                                  attr.get('dataStoreRef'), self.__get_name(child))
+                                                  attr.get('dataStoreRef'), process.id, self.__get_name(child))
                 case "dataObject":
                     new_elem = self.__parse_data_object(child, process.id)
                 case "evidenceSource":
