@@ -36,12 +36,16 @@ class MessageFlowPES:
                 source_ref = elements[value.source_ref]
                 target_ref = elements[value.target_ref]
 
-                # Ignore message flows between pools
-                if isinstance(source_ref, Pool) or isinstance(target_ref, Pool):
-                    continue
-
-                z3_flow_objects.append(mk_flow_object(StringVal(source_ref.id), source_ref.pe_source is not None))
-                z3_flow_objects.append(mk_flow_object(StringVal(target_ref.id), target_ref.pe_source is not None))
+                if isinstance(source_ref, Pool):
+                    # A Pool (collapsed) is the source, the target should have PES
+                    z3_flow_objects.append(mk_flow_object(StringVal(target_ref.id), target_ref.pe_source is not None))
+                elif isinstance(target_ref, Pool):
+                    # A Pool (collapsed) is the target, the source should have PES
+                    z3_flow_objects.append(mk_flow_object(StringVal(source_ref.id), source_ref.pe_source is not None))
+                else:
+                    # Both the target and the source should have PES
+                    z3_flow_objects.append(mk_flow_object(StringVal(source_ref.id), source_ref.pe_source is not None))
+                    z3_flow_objects.append(mk_flow_object(StringVal(target_ref.id), target_ref.pe_source is not None))
 
         # Check if flow object exists in the model
         def exists(flow_obj):
