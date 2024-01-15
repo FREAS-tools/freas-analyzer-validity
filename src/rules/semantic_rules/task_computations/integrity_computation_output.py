@@ -8,6 +8,7 @@ from src.elements.element import Element
 from src.rules.rule_result.result import Result
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.severity import Severity
+from src.elements.artefact.data_store.data_store import DataStore
 from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.frss.forensic_ready_task.computations import IntegrityComputation
@@ -53,8 +54,11 @@ class IntegrityComputationOutput:
             for output in elem.data_output:
                 data_ref: str = output.target_ref
                 ref_obj: Optional[DataObjectReference] = elements.get(data_ref)
-                data_obj: Optional[DataObject] = elements.get(ref_obj.data)
+                data_obj = elements.get(ref_obj.data)
 
+                if isinstance(data_obj, DataStore):
+                    continue
+                
                 assert data_obj is not None
                 
                 participant = get_participant(elements, data_obj.process_id)
