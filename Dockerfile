@@ -4,9 +4,7 @@ WORKDIR /app
 
 FROM base as build
 
-ARG POETRY_VERSION=1.7.0
-
-ENV API_PORT=5000
+ENV POETRY_VERSION=1.7.0
 
 RUN pip install "poetry==$POETRY_VERSION"
 
@@ -23,4 +21,4 @@ COPY --from=build /app/src ./src
 RUN pip install *.whl
 
 EXPOSE 5000
-CMD ["uvicorn", "src.api.api:app", "--host", "0.0.0.0", "--port", "$API_PORT"]
+CMD ["uvicorn", "src.api.api:app", "--host", "0.0.0.0", "--port", "5000"]
