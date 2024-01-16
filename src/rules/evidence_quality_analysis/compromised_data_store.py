@@ -35,13 +35,13 @@ class CompromisedDataStore:
 
         data_store_ref_obj: Optional[DataStoreReference] = elements.get(data_store_ref)
         if data_store_ref_obj is None:
-            return self.__create_result([], data_store_ref)
+            return None
 
         data_store_id: str = data_store_ref_obj.data
         data_store = elements[data_store_id]
 
         if not isinstance(data_store, EvidenceDataStore):
-            return self.__create_result([], data_store_ref)
+            return None
 
         # Get a list of potential evidence names that could indicate data store compromise
         z3_evidence = get_potential_evidence(elements, data_store)
@@ -90,6 +90,7 @@ class CompromisedDataStore:
                 s.add(store_id(dec()) != store_id(model[dec]))
                 # Add the ID of the found data store to the list
                 solution.append(str(simplify(store_id(model[dec]))).strip('"'))
+        
+        data_store_name = data_store_ref_obj.name if data_store_ref_obj.name is not None else data_store_ref_obj.id
 
-        return self.__create_result(solution, data_store_ref_obj.id if data_store_ref_obj.name is None else
-            data_store_ref_obj.name) if len(solution) > 0 else None
+        return self.__create_result(solution, data_store_name) if len(solution) > 0 else None

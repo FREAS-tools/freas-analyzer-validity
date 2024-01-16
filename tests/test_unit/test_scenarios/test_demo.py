@@ -2,6 +2,7 @@ from src.rules.semantic_hints.missing_pes import MissingPES
 from src.rules.rule_result.result import Result
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
 from src.rules.semantic_hints.different_evidence_context import DiffEvidenceContext
+from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
 from src.rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
 
 
@@ -43,5 +44,11 @@ def test_diff_ev_context(demo):
 def test_compromised_flow_object(demo):
     rule = CompromisedFlowObject()
     result = rule.evaluate(demo, "Task_0b32cz1")
+
+    assert result is None
+
+def test_compromised_data_store(demo):
+    rule = CompromisedDataStore()
+    result = rule.evaluate(demo, "DataStoreReference_0okf4uz")
 
     assert result is None

@@ -34,7 +34,7 @@ class CompromisedFlowObject:
 
         flow_object: Optional[Activity] = elements.get(flow_obj_id)
         if flow_object is None:
-            return self.__create_result([], flow_obj_id)
+            return None
 
         # Data stores that already contain altered information and do not need to be attacked
         disputable_data_stores = get_disputable_data_stores(elements, flow_object)
@@ -95,5 +95,6 @@ class CompromisedFlowObject:
                 s.add(store_id(dec()) != store_id(model[dec]))                    # no duplicates
                 solutions.append(str(simplify(store_id(model[dec]))).strip('"'))  # only element's ID
 
-        return self.__create_result(solutions, flow_object.name if flow_object.name is not None else flow_object.id) \
-            if len(solutions) > 0 else None
+        flow_object_name = flow_object.name if flow_object.name is not None else flow_object.id
+        
+        return self.__create_result(solutions, flow_object_name) if solutions else None
