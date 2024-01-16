@@ -27,8 +27,7 @@ class CompromisedFlowObject:
         result.source = solutions
 
         result.message = "Returned Data Stores contain potential evidence relevant in " \
-                           "case that " + flow_object + " is compromised."
-
+                           "case that '" + flow_object + "' is compromised."
         return result
 
     def evaluate(self, elements: Dict[str, Element], flow_obj_id: str) -> Optional[Result]:
@@ -37,9 +36,8 @@ class CompromisedFlowObject:
         if flow_object is None:
             return self.__create_result([], flow_obj_id)
 
-        # These already contain altered information and do not need to be attacked
-        disputable_data_stores = []
-        get_disputable_data_stores(elements, flow_object, disputable_data_stores)
+        # Data stores that already contain altered information and do not need to be attacked
+        disputable_data_stores = get_disputable_data_stores(elements, flow_object)
 
         # Get a list of data object that could indicate data store compromise
         z3_altered_data_objects, z3_unaltered_data_objects = get_flow_data_objects(elements, flow_object)
@@ -52,7 +50,7 @@ class CompromisedFlowObject:
             return Or([data_str == store for store in z3_data_stores])
 
         def valid_data_store(data_str):
-            return And([store_id(data_str) != store for store in disputable_data_stores])
+            return And([store_id(data_str) != StringVal(store) for store in disputable_data_stores])
 
         # Check if at least one piece of potential evidence is stored in the data store
         def has_unaltered_data_object(data_str):

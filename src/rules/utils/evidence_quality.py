@@ -133,40 +133,45 @@ def get_message_flow_target(elements: Dict[str, Element], source: str) -> List[E
             if isinstance(elem, MessageFlow) and elem.source_ref == source]
 
 
-def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[FlowObject],
-                               data_stores: List[str]):
+def get_disputable_data_stores(elements: Dict[str, Element], flow_obj: Optional[FlowObject]) -> List[str]:
     """
     Get all data stores that potentially contain altered data in case of a compromise of the provided flow object.
     (Get all subsequent data stores starting from the provided flow object)
     Parameters:
         elements (Dict[str, Element]): A dictionary of BPMN4FRSS elements.
         flow_obj (Optional[FlowObject]): Flow object.
-        data_stores (List[str]): List of data stores.
     Returns:
         List[str]: A list of data stores that are connected to or succeed the provided flow object in the process.
     """
-    if flow_obj is None:
-        return data_stores
+    data_stores: List[str] = []
+    visited: List[str] = []
 
-    if isinstance(flow_obj, Activity):
-        for assoc in flow_obj.data_output:
-            data_ref = elements[assoc.target_ref]
+    def get_disputable_data_stores_helper(flow_obj: Optional[FlowObject]):
+        if flow_obj is None or flow_obj.id in visited:
+            return
 
-            if isinstance(data_ref, DataStoreReference):
-                store_id = data_ref.data
-                data_stores.append(StringVal(store_id))
+        if isinstance(flow_obj, Activity):
+            for assoc in flow_obj.data_output:
+                data_ref = elements[assoc.target_ref]
 
-    # Take the following flow object/s
-    seq_flow_targets = get_sequence_flow_targets(elements, flow_obj)
-    for target in seq_flow_targets:
-        get_disputable_data_stores(elements, target, data_stores)
+                if isinstance(data_ref, DataStoreReference):
+                    store_id = data_ref.data
+                    data_stores.append(store_id)
 
-    message_flow_targets = get_message_flow_target(elements, flow_obj.id)
-    for message_flow_target in message_flow_targets:
-        # Disregard Pool elements
-        if isinstance(message_flow_target, FlowObject):
-            get_disputable_data_stores(elements, message_flow_target, data_stores)
+        visited.append(flow_obj.id)
 
+        message_flow_targets = get_message_flow_target(elements, flow_obj.id)
+        for message_flow_target in message_flow_targets:
+            # Disregard Pool elements
+            if isinstance(message_flow_target, FlowObject):
+                get_disputable_data_stores_helper(message_flow_target)
+
+        # Take the following flow object/s
+        seq_flow_targets = get_sequence_flow_targets(elements, flow_obj)
+        for target in seq_flow_targets:
+            get_disputable_data_stores_helper(target)
+
+    get_disputable_data_stores_helper(flow_obj)
     return data_stores
 
 

@@ -27,7 +27,7 @@ class CompromisedDataStore:
         result.source = solutions
 
         result.message = "Returned Data Stores contain potential evidence relevant in " \
-                         "case that " + data_store + " is compromised."
+                         "case that '" + data_store + "' is compromised."
 
         return result
 

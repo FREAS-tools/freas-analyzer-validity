@@ -100,17 +100,6 @@ def test_compromised_flow_object_1(evidence_quality):
     assert sorted(result.source) == sorted(expected_result.source)
 
 
-# def test_compromised_flow_object_2(evidence_quality):
-#     rule = CompromisedFlowObject()
-#     result = rule.evaluate(evidence_quality, "Task_1vtpjn5")
-
-#     expected_result = Result()
-#     expected_result.source = ["DataStore_1b4kf8o", "DataStore_1bfgusl"]
-
-#     assert isinstance(result, Result)
-#     assert sorted(result.source) == sorted(expected_result.source)
-
-
 def test_different_evidence_context(different_evidence_context):
     rule = CompromisedFlowObject()
     result = rule.evaluate(different_evidence_context, "Activity_1w16j14")
