@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "analyzer"
-version = "0.1.0"
+version = "0.1.1"
 description = "Model-Based Analysis of Forensic-Ready Software Systems"
-authors = ["SofijaMaksovic <maksovic@mail.muni.cz>"]
+authors = ["Sofija Maksovic <maksovic@mail.muni.cz>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
