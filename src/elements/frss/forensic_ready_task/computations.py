@@ -10,11 +10,11 @@ class Computation:
         Constructor for Computation class.
 
         Parameters:
-            input_ (str): Data Input Association id
-            output (str): Data Output Association id
+            input_ Optional[str]: Data Input Association id
+            output Optional[str]: Data Output Association id
         """
-        self.input: str = input_
-        self.output: str = output
+        self.input: Optional[str] = input_
+        self.output: Optional[str] = output
 
 
 class IntegrityComputation(Computation):
@@ -26,8 +26,8 @@ class IntegrityComputation(Computation):
         Constructor for IntegrityComputation class.
 
         Parameters:
-            input_ (str): Data Input Association id
-            output (str): Data Output Association id
+            input_ Optional[str]: Data Input Association id
+            output Optional[str]: Data Output Association id
         """
         super().__init__(input_, output)
 
@@ -41,8 +41,8 @@ class AuthenticityComputation(Computation):
         Constructor for AuthenticityComputation class.
 
         Parameters:
-            input_ (str): Data Input Association id
-            output (str): Data Output Association id
+            input_ Optional[str]: Data Input Association id
+            output Optional[str]: Data Output Association id
         """
         super().__init__(input_, output)
 
@@ -57,8 +57,8 @@ class DataTransformation(Computation):
         Constructor for DataTransformation class.
 
         Parameters:
-            input_ (str): Data Input Association id
-            output (str): Data Output Association id
+            input_ Optional[str]: Data Input Association id
+            output Optional[str]: Data Output Association id
         """
         super().__init__(input_, output)
 
@@ -72,9 +72,9 @@ class HashFunction(IntegrityComputation):
         Constructor for HashFunction class.
 
         Parameters:
-            input_ (str): Data Input Association id
-            output (str): Data Output Association id
-            key (str): Optional Key Data Object id
+            input_ Optional[str]: Data Input Association id
+            output Optional[str]: Data Output Association id
+            key Optional[str]: Optional Key Data Object id
         """
         super().__init__(input_, output)
         self.key: Optional[str] = key
