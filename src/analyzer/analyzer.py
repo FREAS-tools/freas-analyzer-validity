@@ -18,7 +18,6 @@ from src.rules.semantic_rules.task_computations.keyed_hash_input import KeyedHas
 from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHashFunOutput
 from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
 from src.rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
-from src.rules.semantic_rules.task_computations.integrity_computation_output import IntegrityComputationOutput
 
 
 class Analyzer:
@@ -70,7 +69,7 @@ class Analyzer:
 
         semantic_rules = [MissingPotentialEvidence(),
                           ComputationInput(), ComputationOutput(), 
-                          IntegrityComputationOutput(), KeyedHashFunInput(), KeyedHashFunOutput()]
+                          KeyedHashFunInput(), KeyedHashFunOutput()]
         results = []
 
         for rule in semantic_rules:
