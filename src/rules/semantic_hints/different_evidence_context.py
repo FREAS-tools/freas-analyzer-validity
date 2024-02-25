@@ -17,9 +17,9 @@ from src.rules.z3_types import mk_data_store, data_store_sort, stored_pe, pe_num
 
 
 @implementer(IRule)
-class DiffEvidenceContext:
+class HashDiffEvidenceContext:
     """
-    Rule: Different Evidence Context
+    Rule: Hash Different Evidence Context
     Description: This rule checks if the Hash Proof is stored independently of Potential Evidence,
     i.e., in a different Evidence Context.
     """

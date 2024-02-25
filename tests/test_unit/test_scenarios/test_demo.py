@@ -1,7 +1,7 @@
 from src.rules.semantic_hints.missing_pes import MissingPES
 from src.rules.rule_result.result import Result
 from src.rules.semantic_rules.missing_evidence import MissingPotentialEvidence
-from src.rules.semantic_hints.different_evidence_context import DiffEvidenceContext
+from src.rules.semantic_hints.different_evidence_context import HashDiffEvidenceContext
 from src.rules.evidence_quality_analysis.compromised_data_store import CompromisedDataStore
 from src.rules.evidence_quality_analysis.compromised_flow_object import CompromisedFlowObject
 
@@ -31,7 +31,7 @@ def test_missing_pes(demo):
 
 
 def test_diff_ev_context(demo):
-    rule = DiffEvidenceContext()
+    rule = HashDiffEvidenceContext()
     result = rule.evaluate(demo)
 
     expected_result = Result()
