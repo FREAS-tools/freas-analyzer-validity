@@ -112,12 +112,12 @@ class Analyzer:
             elements (Dict[str, Element]): Dictionary of model elements.
 
         Returns:
-            (List[Result], List[Result]): Lists of results, containing the tuple (Error, Warning) objects.
+            Tuple[List[Result], List[Result]]: Lists of results, containing the tuple (Error, Warning) objects.
         """
         semantic_rules_results = cls.__analyze_semantic_rules(elements)
         semantic_hints_results = cls.__analyze_semantic_hints(elements)
         
-        return (semantic_rules_results, semantic_hints_results)
+        return semantic_rules_results, semantic_hints_results
 
     @classmethod
     def __analyze_evidence_quality_rules(cls, elements, element_id: str) -> List[Result]:
