@@ -8,6 +8,7 @@ from src.elements.element import Element
 from src.rules.rule_result.result import Result
 from src.elements.flow_object.task.task import Task
 from src.rules.rule_result.severity import Severity
+from src.elements.artefact.data_store.data_store import DataStore
 from src.elements.artefact.data_object.data_object import DataObject
 from src.elements.artefact.data_reference import DataObjectReference
 from src.elements.frss.forensic_ready_task.computations import IntegrityComputation
@@ -20,7 +21,8 @@ from src.rules.utils.semantic import create_mock_data_objects, create_z3_task_da
 class ComputationOutput:
     """
     Rule: Computation Output
-    Description: This rule checks if the task computation has exactly one output, being a Potential Evidence.
+    Description: This rule checks if the task computation has exactly one output, being a Potential Evidence or 
+    in case of Integrity Computation also a Hash Proof.
     """
 
     @staticmethod
@@ -29,7 +31,7 @@ class ComputationOutput:
         result.source = solutions
         result.severity = Severity.MEDIUM
         result.message = "Task performing a computation must have exactly one output, " \
-                        "being a Potential Evidence."
+                         "being a Potential Evidence or in case of Integrity Computation also a Hash Proof."
         return result
 
     def evaluate(self, elements: Dict[str, Element]) -> Optional[Result]:
@@ -37,7 +39,7 @@ class ComputationOutput:
         solutions = []
 
         for key, elem in elements.items():
-            if not isinstance(elem, Task) or elem.computation is None or isinstance(elem.computation, IntegrityComputation):
+            if not isinstance(elem, Task) or elem.computation is None:
                 continue
 
             s.push()
@@ -49,7 +51,10 @@ class ComputationOutput:
             for output in elem.data_output:
                 data_ref: str = output.target_ref
                 ref_obj: Optional[DataObjectReference] = elements.get(data_ref)
-                data_obj: Optional[DataObject] = elements.get(ref_obj.data)
+                data_obj = elements.get(ref_obj.data)
+
+                if isinstance(data_obj, DataStore):
+                    continue
 
                 assert data_obj is not None
                 
@@ -63,18 +68,21 @@ class ComputationOutput:
             def single_output(data_object):
                 return data_object == z3_comp_output
 
-            def correct_type(data_object):
-                return Or(simplify(object_type(data_object)) == 'PotentialEvidenceType')
+            def correct_type(data_object, comp_type):
+                return Or(simplify(object_type(data_object)) == 'PotentialEvidenceType',
+                          And(simplify(comp_type) == "IntegrityComputation", simplify(object_type(data_object)) == 'HashProof'))
 
             # Compare output objects with the provided data object
             def exists(data_object):
                 return Or([data_object == obj for obj in z3_task_outputs])
 
+            
+            z3_comp_type = StringVal(type(elem.computation).__name__)
             z3_data_object = Const('data_object', data_object_sort)
 
             # Data object different from function output exists => multiple data outputs
             # or data object has different type then Hash Proof
-            s.add(Or(Not(single_output(z3_data_object)), Not(correct_type(z3_data_object))))
+            s.add(Or(Not(single_output(z3_data_object)), Not(correct_type(z3_data_object, z3_comp_type))))
             # s.add(Not(single_output(x)))
 
             # data object is contained in task output objects

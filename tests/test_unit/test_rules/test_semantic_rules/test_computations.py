@@ -4,7 +4,6 @@ from src.rules.semantic_rules.task_computations.keyed_hash_output import KeyedHa
 from src.rules.semantic_hints.computation_pes import ComputationPES
 from src.rules.semantic_rules.task_computations.computation_input import ComputationInput
 from src.rules.semantic_rules.task_computations.computation_output import ComputationOutput
-from src.rules.semantic_rules.task_computations.integrity_computation_output import IntegrityComputationOutput
 
 
 def test_integrity_computation_one_input(integrity_computation_one_input):
@@ -41,7 +40,7 @@ def test_integrity_computation_three_inputs(integrity_computation_three_inputs):
 
 
 def test_integrity_computation_output_good(integrity_computation_output_good):
-    rule = IntegrityComputationOutput()
+    rule = ComputationOutput()
     result = rule.evaluate(integrity_computation_output_good)
 
     assert result is None
@@ -79,9 +78,9 @@ def test_all_computations_bad_output_type(all_computations_bad_io_type):
     result = rule.evaluate(all_computations_bad_io_type)
 
     expected_result = Result()
-    expected_result.source = ["Task_1mgfm3r", "Task_1qg7d8p"]
+    expected_result.source = ["Task_1mgfm3r", "Task_1qg7d8p", "Task_14bpt81"]
     expected_result.message = "Task performing a computation must have exactly one output, " \
-                              "being a Potential Evidence."
+                              "being a Potential Evidence or in case of Integrity Computation also a Hash Proof."
 
     assert sorted(result.source) == sorted(expected_result.source) \
        and result.message == expected_result.message

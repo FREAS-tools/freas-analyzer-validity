@@ -51,7 +51,7 @@ def get_participant(elements: Dict[str, Element], process_id) -> str:
     return ""
 
 
-def create_task_data_object(task: Task, association_id: str, elements: Dict[str, Element], input=True) -> Optional[DataObject]:
+def get_task_data_object(task: Task, association_id: str, elements: Dict[str, Element], input=True) -> Optional[DataObject]:
     """
     Get the data object associated with the given task and input/output association.
 
@@ -78,22 +78,26 @@ def create_task_data_object(task: Task, association_id: str, elements: Dict[str,
     return None
 
 
-def create_z3_task_data_object(task: Task, association_id: str, elements: Dict[str, Element]):
+def create_z3_task_data_object(task: Task, association_id: Optional[str], elements: Dict[str, Element]):
     """
-    Create a Z3 data object based on the given parameters.
+    Create a Z3 data object connected to the provided association.
 
     Parameters:
         task (Task): The task containing the data object.
-        association_id (str): Data object association ID.
+        association_id (str): Association ID of the data object.
         elements (Dict[str, Element]): A dictionary of model elements.
 
     Returns:
         Z3 DataObject: Z3 data object.
     """
+
+    if association_id is None:
+        return create_mock_data_objects(0, 1, mk_data_object, task.id)[0]
+    
     # True if the data object is an input or a key, False if it is an output
     input = False if task.computation.output == association_id else True
 
-    data_object: DataObject = create_task_data_object(task, association_id, elements, input)
+    data_object: DataObject = get_task_data_object(task, association_id, elements, input)
     participant = get_participant(elements, data_object.process_id)
 
     return mk_data_object(StringVal(participant), StringVal(task.id), StringVal(data_object.id), 
