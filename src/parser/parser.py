@@ -85,7 +85,10 @@ class Parser:
             new_elem = None
 
             match tag:
-                case "task" | "startEvent" | "endEvent" | "intermediateCatchEvent" | "exclusiveGateway" | "subProcess":
+                case t if t in {"task", "subProcess"} or
+                "Task" in t or # Specific task type
+                "Event" in t or # Specific event type
+                "Gateway" in t: # Gateways
                     new_elem = self.__parse_flow_object(tag, child)
                 case "sequenceFlow":
                     new_elem = SequenceFlow(attr['id'], attr['sourceRef'],
@@ -135,8 +138,8 @@ class Parser:
         attr = elem.attrib
         flow_object = None
 
-        match tag:
-            case "task" | "subProcess":
+        match tags:
+            case t if t in {"task", "subProcess"} or "Task" in t:
                 flow_object = Task(attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
             case "startEvent":
