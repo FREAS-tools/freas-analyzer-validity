@@ -85,10 +85,8 @@ class Parser:
             new_elem = None
 
             match tag:
-                case t if t in {"task", "subProcess"} or
-                "Task" in t or # Specific task type
-                "Event" in t or # Specific event type
-                "Gateway" in t: # Gateways
+                # Supports specific tasks (*Task), events (*Event), and gateways (*Gateway)
+                case t if t in {"task", "subProcess"} or "Task" in t or "Event" in t or "Gateway" in t:
                     new_elem = self.__parse_flow_object(tag, child)
                 case "sequenceFlow":
                     new_elem = SequenceFlow(attr['id'], attr['sourceRef'],
@@ -102,13 +100,16 @@ class Parser:
                 case "dataObject":
                     new_elem = self.__parse_data_object(child, process.id)
                 case "evidenceSource":
-                    new_elem = PotentialEvidenceSource(attr['id'], attr['attachedToRef'])
+                    new_elem = PotentialEvidenceSource(
+                        attr['id'], attr['attachedToRef'])
                     self.__add_pe_source(new_elem)
                 case "produces":
-                    association = Association(attr['id'], attr['sourceRef'], attr['targetRef'])
+                    association = Association(
+                        attr['id'], attr['sourceRef'], attr['targetRef'])
                     self.__attach_association(association)
                 case "evidenceAssociation":
-                    new_elem = EvidenceDataRelation(attr['id'], attr['sourceRef'], attr['targetRef'])
+                    new_elem = EvidenceDataRelation(
+                        attr['id'], attr['sourceRef'], attr['targetRef'])
 
             self.__store_element(new_elem)
 
@@ -125,7 +126,8 @@ class Parser:
                     # Collapsed processes do not have 'processRef'
                     # Store only the non-collapsed ones
                     if 'processRef' in attr:
-                        new_elem = Pool(attr['id'], attr['processRef'], attr.get('name'))
+                        new_elem = Pool(
+                            attr['id'], attr['processRef'], attr.get('name'))
                     else:
                         new_elem = Pool(attr['id'], None, attr.get('name'))
                 case 'messageFlow':
@@ -138,7 +140,7 @@ class Parser:
         attr = elem.attrib
         flow_object = None
 
-        match tags:
+        match tag:
             case t if t in {"task", "subProcess"} or "Task" in t:
                 flow_object = Task(attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
@@ -149,7 +151,8 @@ class Parser:
                 flow_object = EndEvent(attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
             case "intermediateCatchEvent":
-                flow_object = IntermediateCatchEvent(attr['id'], attr.get('name'))
+                flow_object = IntermediateCatchEvent(
+                    attr['id'], attr.get('name'))
                 self.__parse_activity(flow_object, elem)
             case "exclusiveGateway":
                 flow_object = ExclusiveGateway(attr['id'], attr.get('name'))
@@ -170,22 +173,27 @@ class Parser:
                     activity.outgoing = child.text
                 case "dataOutputAssociation":
                     _, target = self.__get_source_target_ref(child)
-                    association = DataOutputAssociation(child.attrib['id'], activity.id, target)
+                    association = DataOutputAssociation(
+                        child.attrib['id'], activity.id, target)
                     activity.data_output.append(association)
                 case "dataInputAssociation":
                     source, _ = self.__get_source_target_ref(child)
-                    association = DataInputAssociation(child.attrib['id'], source, activity.id)
+                    association = DataInputAssociation(
+                        child.attrib['id'], source, activity.id)
                     activity.data_input.append(association)
                 # Task specific functions
                 case "authenticityComputation":
                     activity.computation = AuthenticityComputation(child.attrib.get('input'),
                                                                    child.attrib.get('output'))
                 case "integrityComputation":
-                    activity.computation = IntegrityComputation(child.attrib.get('input'), child.attrib.get('output'))
+                    activity.computation = IntegrityComputation(
+                        child.attrib.get('input'), child.attrib.get('output'))
                 case "dataTransformation":
-                    activity.computation = DataTransformation(child.attrib.get('input'), child.attrib.get('output'))
+                    activity.computation = DataTransformation(
+                        child.attrib.get('input'), child.attrib.get('output'))
                 case "hashFunction":
-                    activity.computation = HashFunction(child.attrib.get('input'), child.attrib.get('output'))
+                    activity.computation = HashFunction(
+                        child.attrib.get('input'), child.attrib.get('output'))
                 case "keyedHashFunction":
                     activity.computation = HashFunction(child.attrib.get('input'), child.attrib.get('output'),
                                                         child.attrib.get('key'))
@@ -245,7 +253,7 @@ class Parser:
     def __attach_association(self, association: Association):
         pe_source_id = association.source_ref
         pe_source = self.elements.get(pe_source_id)
-        
+
         if pe_source is not None:
             pe_source.association = association
 
@@ -274,9 +282,8 @@ class Parser:
             return tag_list[1]
         return tag_list[0]
 
-
     @staticmethod
     def __get_name(elem: XmlElement) -> str:
         name = elem.attrib.get('name')
-        
+
         return name.replace("\n", " ") if name else None
